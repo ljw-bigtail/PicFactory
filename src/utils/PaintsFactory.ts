@@ -106,12 +106,13 @@ export class PaintsFactory {
   toBlob(data:FileObject[]){
     const that = this
     return new Promise((res, rej) => {
+      if(data.length == 0){
+        this.blob = null
+        rej('数据为空')
+      }
       if(this.blob) {
         res(this.blob)
         return
-      }
-      if(data.length == 0){
-        rej('数据为空')
       }
       const opt = that.gifOpt
       const gif = new GIF(Object.assign({

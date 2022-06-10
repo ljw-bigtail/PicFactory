@@ -1,24 +1,27 @@
 <template>
-  <BaseLayout>
+  <BaseLayout @clearFile="clearFileCache">
     <template v-slot:header>
-      <span>图片编辑</span>
+      <span>Pic To Animation</span>
     </template>
     <template v-slot:main>
       <div class="left">
-        <Upload :max_size="MAX_SIZE" @change="fileChangeHandle" @log="addLog"></Upload>
-      </div>
-      <div class="center">
-        <GIFOption :value="gifForm" @change="gifFormChange"></GIFOption>
-        <div class="btn-group">
-          <button id="make-preview" class="button" @click="makePreview">生成预览</button>
-        </div>
+        <Upload
+          ref="fileUploader"
+          :max_size="MAX_SIZE"
+          @change="fileChangeHandle"
+          @log="addLog"
+        ></Upload>
       </div>
       <div class="right">
-        <img :src="previewSrc" alt="" class="gif-preview" />
-        <div class="btn-group">
-          <button class="button" @click="makeFile('gif')">下载GIF</button>
-          <button class="button" @click="makeFile('mp4')">下载MP4</button>
+        <div class="gif-preview">
+          <img :src="previewSrc" class="" />
         </div>
+        <div class="btn-group">
+          <button class="button large" @click="makePreview">生成预览</button>
+          <button class="button large C" @click="makeFile('gif')">下载GIF</button>
+          <button class="button large C" @click="makeFile('mp4')">下载MP4</button>
+        </div>
+        <GIFOption :value="gifForm" @change="gifFormChange"></GIFOption>
       </div>
     </template>
     <template v-slot:footer>
@@ -28,12 +31,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 
 import { dateFmt } from "../../utils/utils";
 import { PaintsFactory } from "../../utils/PaintsFactory";
 
-import BaseLayout from "../../layouts/base.vue";
+import BaseLayout from "../../layouts/BaseLayout.vue";
 import Log from "../../components/Log.vue";
 import Upload from "../../components/Upload.vue";
 import GIFOption from "../../components/GIFOption.vue";
@@ -50,6 +53,7 @@ type GIFOption = {
 
 const logs = ref([] as { value: string; timestamp: string }[]);
 const previewSrc = ref("");
+const fileUploader = ref();
 const gifForm = ref({
   width: 900,
   height: 1600,
@@ -71,6 +75,15 @@ const fileChangeHandle = (fileList: FileObject[]) => {
   fileListCache = fileList;
 };
 
+const clearFileCache = () => {
+  nextTick(() => {
+    fileListCache = [];
+    previewSrc.value = "";
+    fileUploader.value.clearFile();
+    addLog("清理成功");
+  });
+};
+
 const addLog = (mes: string) => {
   logs.value.push({
     value: mes,
@@ -79,6 +92,7 @@ const addLog = (mes: string) => {
 };
 
 const makePreview = function () {
+  console.log(fileListCache);
   paintsFactory.setOpt(gifForm.value);
   paintsFactory
     .toBlob(fileListCache)
@@ -103,11 +117,16 @@ const makeFile = function (type: "gif" | "mp4") {
 };
 </script>
 
-<style scoped lang="less">
+<style lang="less" scoped>
 .gif-preview {
-  width: 100%;
   max-width: 300px;
+  min-height: 400px;
   display: block;
-  margin: 20px auto;
+  margin: 0 auto var(--space-1);
+  box-shadow: var(--shadow);
+  img {
+    display: inline-block;
+    max-width: 100%;
+  }
 }
 </style>

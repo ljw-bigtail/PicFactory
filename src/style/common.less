@@ -1,149 +1,54 @@
-html,
-body,
-div,
-span,
-applet,
-object,
-iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-a,
-abbr,
-acronym,
-address,
-big,
-cite,
-code,
-del,
-dfn,
-em,
-img,
-ins,
-kbd,
-q,
-s,
-samp,
-small,
-strike,
-strong,
-sub,
-sup,
-tt,
-var,
-b,
-u,
-i,
-center,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-fieldset,
-form,
-label,
-legend,
-table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td,
-article,
-aside,
-canvas,
-details,
-embed,
-figure,
-figcaption,
-footer,
-header,
-hgroup,
-menu,
-nav,
-output,
-ruby,
-section,
-summary,
-time,
-mark,
-audio,
-video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  vertical-align: baseline;
-}
-
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-menu,
-nav,
-section {
-  display: block;
-}
-
-body {
-  line-height: 1;
-}
-
-ol,
-ul {
-  list-style: none;
-}
-
-blockquote,
-q {
-  quotes: none;
-}
-
-blockquote:before,
-blockquote:after,
-q:before,
-q:after {
-  content: "";
-  content: none;
-}
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
-html,
-body {
-  min-height: 100%;
-  overflow: hidden;
-}
+@import url(./clear.less);
 
 :root {
-  --main-color: #6ca53d;
-  --font-color: #222;
+  --color-A: #EC612A; // 红
+  --color-B: #51B2F9; // 蓝
+  --color-C: #F7D0EB; // 粉
+  --color-D: #62D590; // 绿
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+  --color-dark-gray: #94989c8c;
+  --color-light-gray: #e9e9e9;
+
+  --main-color: var(--color-B);
+  --font-color: var(--color-black);
   --min-size: 10px;
   --radius: 8px;
   --radius-mini: 4px;
-  --border: 1px solid #ccc;
-  --max-width: 600px;
+  --border-main: 1px solid var(--color-black);
+  --border: 1px solid var(--color-light-gray);
+  // --max-width: 1000px;
+  --max-width: 1200px;
   --header-height: 40px;
   --shadow: 0 0 20px 2px #e9e9e9;
-  --title-size: 20px;
+  --title-size: 18px;
+  --min-size: 14px;
+  --large-size: 20px;
   --space-1: var(--min-size);
+}
+
+//滚动条样式
+::-webkit-scrollbar{
+  width: 6px !important;
+}
+/*滚动条的设置*/
+::-webkit-scrollbar-thumb {
+	background-color: var(--color-light-gray) !important; 
+	background-clip:padding-box !important; 
+	-webkit-border-radius: 10em !important; 
+	-moz-border-radius: 10em !important; 
+	border-radius: 10em !important; 
+}
+/*滚动条凹槽的颜色，还可以设置边框属性 */
+::-webkit-scrollbar-track-piece {
+	background-color:transparent !important; 
+	-webkit-border-radius: 0em !important; 
+	-moz-border-radius: 0em !important; 
+	border-radius: 0em !important; 
+}
+/*滚动条鼠标移上去*/
+::-webkit-scrollbar-thumb:hover {
+	background-color:#bbb !important; 
 }
 
 body {
@@ -151,44 +56,56 @@ body {
   text-align: center;
 }
 
-* {
-  border-radius: var(--radius-mini);
-}
-
 input {
   border: var(--border);
-}
-
-input:focus {
-  outline: none;
+  &:focus {
+    outline: none;
+  }
 }
 
 .button {
-  padding: 12px 24px;
-  background-color: var(--main-color);
   display: inline-block;
-  color: #fff;
+  position: relative;
   cursor: pointer;
-  border: none;
-  display: inline-block;
-}
-
-.btn-group {
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  margin: var(--space-1);
-  border: 1px solid var(--main-color);
-  button {
-    font-size: 20px;
-    flex: 1;
-    margin: 0;
-    border-radius: 0;
-    &:nth-child(2n) {
-      background-color: #fff;
-      color: var(--main-color);
+  background-color: transparent;
+  color: var(--color-black);
+  padding: var(--space-1);
+  font-size: var(--min-size);
+  &.large{
+    font-size: var(--large-size);
+  }
+  &::after{
+    content: '';
+    position: absolute;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: var(--color-D);
+    border-radius: 50%;
+    left: 80%;
+    top: 58%;
+    z-index: -1;
+    transition: all 0.5s;
+  }
+  &.A::after{
+    background-color: var(--color-A);
+  }
+  &.B::after{
+    background-color: var(--color-B);
+  }
+  &.C::after{
+    background-color: var(--color-C);
+  }
+  &:hover{
+    &::after{
+      transform: translateX(-100%) scale(1.3) translateY(-20%);
     }
   }
+}
+
+.btn-group{
+  position: relative;
+  z-index: 0;
 }
 
 .flex-box {
@@ -203,19 +120,18 @@ input:focus {
   .left {
     width: 40%;
     max-width: 500px;
-    border-right: 1px solid #ccc;
+    // border-right: 1px solid #ccc;
   }
-  .center {
-    flex: 1;
-    border-right: 1px solid #ccc;
-  }
+  // .center {
+  //   flex: 1;
+  //   padding: 0 var(--space-1);
+  //   // border-right: 1px solid #ccc;
+  // }
   .right {
-    width: 30%;
-    max-width: 400px;
+    flex: 1;
+    // width: 30%;
+    // max-width: 400px;
+    padding-left: var(--space-1);
+    padding-top: var(--space-1);
   }
-}
-
-.title {
-  font-size: var(--min-size);
-  padding: 12px;
 }

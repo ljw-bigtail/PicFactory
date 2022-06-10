@@ -1,5 +1,6 @@
 <template>
   <div id="upload">
+    <input type="file" id="upload-drop-core" multiple="true" @change="fileAdd" />
     <div
       id="upload-drop"
       @drop="dropAdd"
@@ -8,10 +9,16 @@
       @dragover="stopHandler"
       :class="[inDrag ? 'drop-in' : '']"
     >
-      或将图片拖拽到此区域
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+        <path
+          fill="#51B2F9"
+          fill-opacity="1"
+          d="M0,224L48,213.3C96,203,192,181,288,170.7C384,160,480,160,576,144C672,128,768,96,864,106.7C960,117,1056,171,1152,186.7C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+        ></path>
+      </svg>
+      <span>或将图片拖拽到此区域</span>
+      <button id="upload-btn" class="button large" @click="triggerClick">上传图片</button>
     </div>
-    <input type="file" id="upload-drop-core" multiple="true" @change="fileAdd" />
-    <div id="upload-btn" class="button" @click="triggerClick">上传图片</div>
     <div class="upload-view-box">
       <draggable
         v-model="fileListPreview"
@@ -74,8 +81,15 @@ const addFiles = (file: FileList) => {
       log(`允许上传的文件格式为：jpeg、jpg、png、webp`);
     }
   }
-  renderPic(fileList);
+  renderPic();
 };
+
+const clearFile = function () {
+  fileList = [];
+  renderPic();
+};
+
+defineExpose({ clearFile });
 
 const fileAdd = function (e: Event) {
   const file = (e.target as HTMLInputElement).files;
@@ -84,7 +98,7 @@ const fileAdd = function (e: Event) {
 
 const handleDel = function (index: number) {
   fileList.splice(index, 1);
-  renderPic(fileList);
+  renderPic();
 };
 
 const stopHandler = function (e: Event) {
@@ -109,8 +123,8 @@ const dragLeave = function (e: DragEvent) {
   inDrag.value = false;
 };
 
-const renderPic = function (files: File[]) {
-  const _files = files.map((file, index) => {
+const renderPic = function () {
+  const _files = fileList.map((file, index) => {
     return {
       id: index,
       src: window.URL.createObjectURL(file),
@@ -129,7 +143,8 @@ const dragSortChange = function (res: any) {
   const _file = _fileList[newIndex];
   _fileList[newIndex] = _fileList[oldIndex];
   _fileList[oldIndex] = _file;
-  renderPic(_fileList);
+  fileList = _fileList;
+  renderPic();
 };
 </script>
 
@@ -149,10 +164,20 @@ const dragSortChange = function (res: any) {
   }
   #upload-drop {
     cursor: default;
-    border-bottom: 1px dashed #ccc;
     padding: 90px 0 40px;
+    position: relative;
     &.drop-in {
       background-color: #ccc;
+    }
+    span {
+      position: relative;
+      z-index: 1;
+      opacity: 0.4;
+    }
+    svg {
+      position: absolute;
+      left: 0;
+      bottom: 0;
     }
   }
   .upload-view-box {

@@ -1,35 +1,12 @@
 <template>
   <div id="size-form">
     <div>
-      <label for="width">宽：</label>
-      <input
-        type="number"
-        name="width"
-        placeholder=""
-        v-model="value.width"
-        @change="formChange"
-      />
-    </div>
-    <div>
-      <label for="height">高：</label>
-      <input
-        type="number"
-        name="height"
-        placeholder=""
-        v-model="value.height"
-        @change="formChange"
-      />
-    </div>
-    <div>
-      <label for="repeat">重复：</label>
-      <input
-        type="number"
-        name="repeat"
-        min="-1"
-        placeholder="-1 never 0 ever or number"
-        v-model="value.repeat"
-        @change="formChange"
-      />
+      <label>宽 / 高：</label>
+      <input type="number" name="width" v-model="value.width" @change="formChange" />
+      px
+      <i> / </i>
+      <input type="number" name="height" v-model="value.height" @change="formChange" />
+      px
     </div>
     <div>
       <label for="rule">截取规则：</label>
@@ -80,6 +57,17 @@
         @change="formChange"
       />
     </div>
+    <div>
+      <label for="repeat">重复次数：</label>
+      <input
+        type="number"
+        name="repeat"
+        min="-1"
+        placeholder="-1 never 0 ever or number"
+        v-model="value.repeat"
+        @change="formChange"
+      />
+    </div>
   </div>
 </template>
 
@@ -103,22 +91,31 @@ const formChange = function () {
 
 <style lang="less" scoped>
 #size-form {
-  margin: 0 auto;
-  padding: 20px 0;
+  margin: 20px auto;
+  font-size: var(--min-size);
   & > div {
-    padding: 12px 20px;
+    margin-top: var(--space-1);
     text-align: left;
     display: flex;
     align-items: center;
     label {
-      width: 18%;
+      width: 25%;
       display: inline-block;
+      text-align: right;
     }
-    input:not([type="color"]) {
-      padding: 6px 12px;
-      line-height: 18px;
-      font-size: 14px;
-      flex: 1;
+    i {
+      list-style: none;
+      padding-left: var(--space-1);
+    }
+    input {
+      border-radius: var(--radius);
+      margin: 0 var(--space-1);
+      &:not([type="color"]) {
+        padding: 6px 12px;
+        line-height: 18px;
+        font-size: 14px;
+        flex: 1;
+      }
     }
   }
 }

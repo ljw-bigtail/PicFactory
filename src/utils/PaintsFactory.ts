@@ -122,7 +122,7 @@ export class PaintsFactory {
         background: '#FFFFFF',
         // debug: true,
         dither: false, // 抖动方法 // FloydSteinberg FalseFloydSteinberg Stucki Atkinson
-        workerScript: '../../static/gif.worker.js'
+        workerScript: 'static/gif.worker.js'
       }, opt));
       that._loadPaint(data)
         .then(imgs => {

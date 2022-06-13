@@ -91,8 +91,9 @@ const formChange = function () {
 
 <style lang="less" scoped>
 #size-form {
-  margin: 20px auto;
+  margin: var(--space-1);
   font-size: var(--min-size);
+  box-sizing: border-box;
   & > div {
     margin-top: var(--space-1);
     text-align: left;

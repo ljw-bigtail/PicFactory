@@ -38,9 +38,11 @@ export class PaintsFactory {
   }
   setOpt(opt: {}) {
     this.gifOpt = Object.assign(this.gifOpt, opt)
+    return this
   }
   _loadPaint(data:FileObject[]) {
     const opt = this.gifOpt
+    console.log(opt);
     return Promise.all(data.map(item => {
       return new Promise((res, rej) => {
         const canvas = document.createElement("canvas")
@@ -110,10 +112,10 @@ export class PaintsFactory {
         this.blob = null
         rej('数据为空')
       }
-      if(this.blob) {
-        res(this.blob)
-        return
-      }
+      // if(this.blob) {
+      //   res(this.blob)
+      //   return
+      // }
       const opt = that.gifOpt
       const gif = new GIF(Object.assign({
         workers: 2,

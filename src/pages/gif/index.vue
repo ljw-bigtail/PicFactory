@@ -1,7 +1,7 @@
 <template>
   <BaseLayout :needLog="true">
     <template v-slot:header>
-      <span>Pic To Animation</span>
+      <span>Pic GIF</span>
     </template>
     <template v-slot:menu>
       <button class="button A" @click="clearFileCache">清理数据</button>

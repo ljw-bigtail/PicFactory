@@ -5,10 +5,13 @@
     </template>
     <template v-slot:menu>
       <button class="button C">
-        <a href="./gif.html">Pic Factory</a>
+        <a href="./gif.html">Pic GIF</a>
+      </button>
+      <button class="button C">
+        <a href="./collage.html">Pic Collage</a>
       </button>
       <button class="button B">
-        <a href="https://ljw-bigtail.github.io/blog/">Leo's Blog</a>
+        <a href="/blog/">Leo's Blog</a>
       </button>
     </template>
     <template v-slot:main>
@@ -41,22 +44,20 @@
       <ul class="nav">
         <li>
           <span class="piece-graph-3"></span>
-          <a href="https://ljw-bigtail.github.io/blog/">
+          <a href="/blog/">
             <h3>FE Store</h3>
             <div class="icon"></div>
           </a>
         </li>
         <li>
           <span class="piece-graph-4"></span>
-          <a
-            href="https://ljw-bigtail.github.io/blog/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"
-          >
+          <a href="/blog/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
             <h3>Reads</h3>
             <div class="icon"></div>
           </a>
         </li>
         <li>
-          <a href="https://ljw-bigtail.github.io/tools/gif">
+          <a href="./gif.html">
             <h3>Pic Factory</h3>
             <div class="icon"></div>
           </a>

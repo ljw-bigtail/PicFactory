@@ -10,7 +10,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         gif: resolve(__dirname, 'gif.html'),
-        pic: resolve(__dirname, 'pic.html'),
+        collage: resolve(__dirname, 'collage.html'),
       }
     }
   },

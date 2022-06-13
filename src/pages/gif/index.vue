@@ -96,8 +96,8 @@ const addLog = (mes: string) => {
 
 const makePreview = function () {
   console.log(fileListCache);
-  paintsFactory.setOpt(gifForm.value);
   paintsFactory
+    .setOpt(gifForm.value)
     .toBlob(fileListCache)
     .then(() => {
       previewSrc.value = paintsFactory.toPreView();
@@ -108,8 +108,8 @@ const makePreview = function () {
 };
 
 const makeFile = function (type: "gif" | "mp4") {
-  paintsFactory.setOpt(gifForm.value);
   paintsFactory
+    .setOpt(gifForm.value)
     .toBlob(fileListCache)
     .then(() => {
       paintsFactory.toFile(type);
@@ -123,7 +123,6 @@ const makeFile = function (type: "gif" | "mp4") {
 <style lang="less" scoped>
 .gif-preview {
   max-width: 300px;
-  min-height: 400px;
   display: block;
   margin: 0 auto var(--space-1);
   box-shadow: var(--shadow);
@@ -131,5 +130,11 @@ const makeFile = function (type: "gif" | "mp4") {
     display: inline-block;
     max-width: 100%;
   }
+}
+.right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: calc(var(--space-1) * 3);
 }
 </style>

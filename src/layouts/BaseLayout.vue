@@ -5,7 +5,7 @@
         <slot name="header"></slot>
       </div>
       <div class="btn-group">
-        <button class="button A" @click="clearFileListCache">清理数据</button>
+        <slot name="menu"></slot>
         <button class="button" @click="toggleFooter">
           {{ openFooter ? "关闭" : "打开" }}日志
         </button>
@@ -23,11 +23,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { Cache } from "../utils/utils";
-
-const emit = defineEmits(["clearFile"]);
-const clearFileListCache = () => {
-  emit("clearFile");
-};
 
 const cacheKey = "sys-opt-cache";
 const openFooter = ref(Cache.get(cacheKey)["open-footer"]);
@@ -74,8 +69,8 @@ const toggleFooter = function () {
         content: "";
         display: inline-block;
         margin-right: var(--space-1);
-        width: 52px;
-        height: calc(var(--title-size) * 1.2);
+        width: 80px;
+        height: calc(var(--title-size) * 1.6);
         background-color: var(--color-black);
         border-top-left-radius: var(--title-size);
         border-bottom-left-radius: var(--title-size);

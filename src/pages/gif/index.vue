@@ -1,7 +1,10 @@
 <template>
-  <BaseLayout @clearFile="clearFileCache">
+  <BaseLayout>
     <template v-slot:header>
       <span>Pic To Animation</span>
+    </template>
+    <template v-slot:menu>
+      <button class="button A" @click="clearFileCache">清理数据</button>
     </template>
     <template v-slot:main>
       <div class="left">

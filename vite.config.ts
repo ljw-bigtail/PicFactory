@@ -8,7 +8,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        // main: resolve(__dirname, 'index.html'),
+        main: resolve(__dirname, 'index.html'),
         gif: resolve(__dirname, 'gif.html'),
         pic: resolve(__dirname, 'pic.html'),
       }

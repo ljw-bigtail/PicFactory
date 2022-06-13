@@ -5,7 +5,7 @@
     </template>
     <template v-slot:menu>
       <button class="button C">
-        <a href="https://ljw-bigtail.github.io/tools/gif">Pic Factory</a>
+        <a href="./gif.html">Pic Factory</a>
       </button>
       <button class="button B">
         <a href="https://ljw-bigtail.github.io/blog/">Leo's Blog</a>

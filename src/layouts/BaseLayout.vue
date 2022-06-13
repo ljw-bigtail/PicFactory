@@ -6,7 +6,7 @@
       </div>
       <div class="btn-group">
         <slot name="menu"></slot>
-        <button class="button" @click="toggleFooter">
+        <button class="button" @click="toggleFooter" v-if="needLog">
           {{ openFooter ? "关闭" : "打开" }}日志
         </button>
       </div>
@@ -23,6 +23,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { Cache } from "../utils/utils";
+
+const prop = defineProps({
+  needLog: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 const cacheKey = "sys-opt-cache";
 const openFooter = ref(Cache.get(cacheKey)["open-footer"]);

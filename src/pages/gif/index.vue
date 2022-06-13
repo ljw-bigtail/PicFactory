@@ -1,5 +1,5 @@
 <template>
-  <BaseLayout>
+  <BaseLayout :needLog="true">
     <template v-slot:header>
       <span>Pic To Animation</span>
     </template>

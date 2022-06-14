@@ -8,12 +8,23 @@
     </template>
     <template v-slot:main>
       <div class="left">
-        <Upload
-          ref="fileUploader"
-          :max_size="MAX_SIZE"
-          @change="fileChangeHandle"
-          @log="addLog"
-        ></Upload>
+        <Tab v-model:selected="tabSelect">
+          <TabPanel key="setting" title="设置">
+            <CanvasOption
+              v-model:value="canvasForm"
+              @change="optionsChange"
+            ></CanvasOption>
+          </TabPanel>
+          <TabPanel key="library" title="图库">
+            <Upload
+              ref="fileUploader"
+              :max_size="MAX_SIZE"
+              @change="fileChangeHandle"
+              @log="addLog"
+            ></Upload>
+          </TabPanel>
+          <TabPanel key="letter" title="文字"> Coming Soon </TabPanel>
+        </Tab>
       </div>
       <div class="right">
         <div class="gif-preview">
@@ -40,12 +51,24 @@ import { CanvasFactory } from "../../utils/CanvasFactory";
 import BaseLayout from "../../layouts/BaseLayout.vue";
 import Log from "../../components/Log.vue";
 import Upload from "../../components/Upload.vue";
+import Tab from "../../components/Tab/Box.vue";
+import TabPanel from "../../components/Tab/Panel.vue";
+import CanvasOption from "../../components/OptionForm/canvas.vue";
 
 type FileObject = { id: number; src: string; file: File };
 
 const logs = ref([] as { value: string; timestamp: string }[]);
 const previewSrc = ref("");
 const fileUploader = ref();
+const tabSelect = ref("setting");
+const canvasForm = ref({
+  width: 900,
+  height: 1600,
+  padding: 0.25,
+  margin: 0.4,
+  radius: 0,
+  template: 0,
+});
 
 const MAX_SIZE: number = 1000; // KB
 let fileListCache: FileObject[] = [];
@@ -69,6 +92,10 @@ const addLog = (mes: string) => {
     value: mes,
     timestamp: dateFmt(),
   });
+};
+
+const optionsChange = () => {
+  console.log({ ...canvasForm.value }, "配置更新");
 };
 
 // const makePreview = function () {

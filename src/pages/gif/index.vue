@@ -24,7 +24,7 @@
           <button class="button large C" @click="makeFile('gif')">下载GIF</button>
           <button class="button large C" @click="makeFile('mp4')">下载MP4</button>
         </div>
-        <GIFOption :value="gifForm" @change="gifFormChange"></GIFOption>
+        <GIFOption :value="gifForm"></GIFOption>
       </div>
     </template>
     <template v-slot:footer>
@@ -42,17 +42,9 @@ import { PaintsFactory } from "../../utils/PaintsFactory";
 import BaseLayout from "../../layouts/BaseLayout.vue";
 import Log from "../../components/Log.vue";
 import Upload from "../../components/Upload.vue";
-import GIFOption from "../../components/GIFOption.vue";
+import GIFOption from "../../components/OptionForm/gif.vue";
 
 type FileObject = { id: number; src: string; file: File };
-type GIFOption = {
-  width: number;
-  height: number;
-  repeat: number;
-  delay: number;
-  background: string;
-  rule: number;
-};
 
 const logs = ref([] as { value: string; timestamp: string }[]);
 const previewSrc = ref("");
@@ -65,10 +57,6 @@ const gifForm = ref({
   background: "#FFFFFF",
   rule: 3,
 });
-
-const gifFormChange = function (value: GIFOption) {
-  gifForm.value = value;
-};
 
 const MAX_SIZE: number = 1000; // KB
 let fileListCache: FileObject[] = [];

@@ -1,5 +1,5 @@
 <template>
-  <div id="size-form">
+  <div class="form">
     <div>
       <label>宽 / 高：</label>
       <input type="number" name="width" v-model="value.width" @change="formChange" />
@@ -82,42 +82,13 @@ type GIFOption = {
 };
 
 const props = defineProps<{ value: GIFOption }>();
-const emit = defineEmits(["change"]);
+const emit = defineEmits(["update:value"]);
 
 const formChange = function () {
-  emit("change", props.value);
+  emit("update:value", props.value);
 };
 </script>
 
 <style lang="less" scoped>
-#size-form {
-  margin: var(--space-1);
-  font-size: var(--min-size);
-  box-sizing: border-box;
-  & > div {
-    margin-top: var(--space-1);
-    text-align: left;
-    display: flex;
-    align-items: center;
-    label {
-      width: 25%;
-      display: inline-block;
-      text-align: right;
-    }
-    i {
-      list-style: none;
-      padding-left: var(--space-1);
-    }
-    input {
-      border-radius: var(--radius);
-      margin: 0 var(--space-1);
-      &:not([type="color"]) {
-        padding: 6px 12px;
-        line-height: 18px;
-        font-size: 14px;
-        flex: 1;
-      }
-    }
-  }
-}
+@import url(./form.less);
 </style>

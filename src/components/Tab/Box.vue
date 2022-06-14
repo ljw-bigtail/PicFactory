@@ -38,16 +38,28 @@ onMounted(function () {
   const slots = context?.slots;
   if (!slots || !slots.default) return;
   const child = slots.default();
-  const childTitles = child.map((tag) => {
+  const _child = child.filter((tag) => {
     // if (tag.type !== TabPanel) {
     //   throw new Error("Tab 子标签名必须是 TabPanel");
     // }
+    if (!tag.props) {
+      return false;
+    }
+    const keys = Object.keys(tag.props);
+    return keys.includes("key") && keys.includes("title");
+  });
+  // if (child.length != _child.length) {
+  //   console.error("TabPanel 参数不全 ");
+  // }
+  const childTitles = _child.map((tag) => {
     return {
       title: tag.props?.title,
       key: tag.props?.key,
     };
   });
-  defaults.value = child;
+  console.log(childTitles);
+
+  defaults.value = _child;
   titles.value = childTitles;
 });
 

@@ -26,6 +26,7 @@ const to = ref("0");
 const emit = defineEmits(["update:value", "change"]);
 const handleChange = function () {
   emit("update:value", parseInt(num.value) / 100);
+  emit("change");
 };
 
 const handleInput = function () {

@@ -110,7 +110,6 @@ const optionsChange = () => {
 
 const makeFile = function (type: "png" | "jpeg") {
   console.log(type, canvasFactory);
-
   // paintsFactory.setOpt(gifForm.value);
   // paintsFactory
   //   .toBlob(fileListCache)

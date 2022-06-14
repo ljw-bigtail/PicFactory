@@ -7,15 +7,15 @@
     <Line />
     <div>
       <label>间距：</label>
-      <Range v-model:value="value.padding" />
+      <Range v-model:value="value.padding" @change="rangeChange" />
     </div>
     <div>
       <label>边框：</label>
-      <Range v-model:value="value.margin" />
+      <Range v-model:value="value.margin" @change="rangeChange" />
     </div>
     <div>
       <label>圆角：</label>
-      <Range v-model:value="value.radius" />
+      <Range v-model:value="value.radius" @change="rangeChange" />
     </div>
     <Line />
     <div class="template-types">
@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import Size from "./Item.vue/size.vue";
+import Size from "./Item/size.vue";
 import Line from "../Line.vue";
 import Range from "../Range.vue";
 
@@ -59,13 +59,17 @@ const sizeValue = ref({
   height: props.value.height,
 });
 
-const formChange = function (value: {}) {
+const formChange = function (value?: {}) {
   let _value = props.value;
   if (value) {
     _value = Object.assign(_value, value);
   }
   emit("update:value", _value);
   emit("change");
+};
+
+const rangeChange = function () {
+  formChange();
 };
 
 const sizeChange = function (value: SizeOption) {

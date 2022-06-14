@@ -58,7 +58,14 @@ const selectOption = [
   { name: "(公众号首图) 900 x 383 px", width: 900, height: 383 },
 ];
 
-const selectVal = ref("");
+const selectVal = ref(
+  (function () {
+    const initVal = `${props.value.width}&${props.value.height}`;
+    return selectOption.map((e) => `${e.width}&${e.height}`).includes(initVal)
+      ? initVal
+      : "-1&-1";
+  })()
+);
 
 const formChange = function (value?: SizeOption) {
   let _value = props.value;

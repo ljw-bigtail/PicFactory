@@ -85,8 +85,8 @@ const toggleFooter = function () {
     }
   }
   & > .main {
-    margin-top: calc(var(--space-1) * 2);
-    height: calc(100vh - var(--header-height) - var(--space-1) * 2);
+    margin-top: var(--space-2);
+    height: calc(100vh - var(--header-height) - var(--space-2));
     background-color: #fff;
   }
   & > .footer {
@@ -104,8 +104,8 @@ const toggleFooter = function () {
   }
   &.open-footer {
     & > .main {
-      margin-bottom: calc(var(--header-height) * 2 + var(--space-1) * 2);
-      height: calc(100vh - var(--header-height) * 3 - var(--space-1) * 4);
+      margin-bottom: calc(var(--header-height) * 2 + var(--space-2));
+      height: calc(100vh - var(--header-height) * 3 - var(--space-4));
     }
     & > .footer {
       opacity: 1;

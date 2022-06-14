@@ -135,6 +135,6 @@ const makeFile = function (type: "gif" | "mp4") {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-bottom: calc(var(--space-1) * 3);
+  padding-bottom: var(--space-3);
 }
 </style>

@@ -7,17 +7,18 @@
       @dragenter="dragEnter"
       @dragleave="dragLeave"
       @dragover="stopHandler"
+      @click="triggerClick"
       :class="[inDrag ? 'drop-in' : '']"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+      <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
         <path
           fill="#51B2F9"
           fill-opacity="1"
           d="M0,224L48,213.3C96,203,192,181,288,170.7C384,160,480,160,576,144C672,128,768,96,864,106.7C960,117,1056,171,1152,186.7C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
         ></path>
-      </svg>
+      </svg> -->
+      <button class="button large">点击上传</button>
       <span>或将图片拖拽到此区域</span>
-      <button id="upload-btn" class="button large" @click="triggerClick">上传图片</button>
     </div>
     <div class="upload-view-box">
       <draggable
@@ -156,33 +157,27 @@ const dragSortChange = function (res: any) {
   #upload-drop-core {
     display: none;
   }
-  #upload-btn {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
   #upload-drop {
-    cursor: default;
-    padding: 90px 0 40px;
-    position: relative;
+    cursor: pointer;
+    padding: 50px 0;
+    display: flex;
+    flex-direction: column;
+    border: 1px dashed var(--color-light-gray);
+    border-radius: var(--radius);
+    &:hover {
+      border-color: var(--color-dark-gray);
+    }
     &.drop-in {
       background-color: #ccc;
     }
     span {
-      position: relative;
-      z-index: 1;
       opacity: 0.4;
-    }
-    svg {
-      position: absolute;
-      left: 0;
-      bottom: 0;
+      padding: 20px 0;
     }
   }
   .upload-view-box {
     flex: 1;
-    overflow-y: auto;
+    overflow: hidden;
     #upload-view {
       height: max-content;
       display: flex;
@@ -190,7 +185,6 @@ const dragSortChange = function (res: any) {
       flex-wrap: wrap;
       justify-content: flex-start;
       margin-top: var(--space-1);
-      padding: var(--space-1);
       .upload-view-item {
         width: 23%;
         margin-right: 2%;
@@ -211,9 +205,13 @@ const dragSortChange = function (res: any) {
           background-color: rgba(0, 0, 0, 0.3);
           top: 0;
           right: 0;
-          transform: translate(30%, -30%) rotateZ(45deg);
+          transform: translate(26%, -26%) rotateZ(45deg);
           border-radius: 50%;
           font-size: 0;
+          opacity: 0.6;
+          &:hover {
+            opacity: 1;
+          }
           &::before,
           &::after {
             content: "";

@@ -21,12 +21,7 @@
       <span>或将图片拖拽到此区域</span>
     </div>
     <div class="upload-view-box">
-      <draggable
-        v-model="fileListPreview"
-        item-key="id"
-        id="upload-view"
-        @change="dragSortChange"
-      >
+      <draggable v-model="fileList" item-key="id" id="upload-view" @change="renderPic">
         <template #item="{ element }">
           <div class="upload-view-item">
             <img :src="element.src" alt="" srcset="" />
@@ -42,19 +37,25 @@
 import { ref } from "vue";
 import draggable from "vuedraggable";
 
+import { uuid } from "../utils/utils";
+
 const props = defineProps({
   max_size: {
     type: Number,
-    default: 10000,
+    default: 1024 * 10, // KB
+  },
+  value: {
+    type: Array,
+    default: [],
   },
 });
 
-const emit = defineEmits(["change", "log"]);
+type FileObject = { id: string; src: string; file: File };
+
+const emit = defineEmits(["update:value", "change", "log"]);
 
 const inDrag = ref(false);
-const fileListPreview = ref([] as { id: number; src: string }[]);
-
-let fileList: File[] = [];
+const fileList = ref(props.value as FileObject[]);
 
 const triggerClick = function () {
   const input: HTMLInputElement = document.querySelector(
@@ -73,7 +74,12 @@ const addFiles = (file: FileList) => {
     const item = file[i];
     if (["image/jpeg", "image/png", "image/webp"].includes(item.type)) {
       if (item.size < props.max_size * 1000) {
-        fileList.push(item);
+        // 队列添加完毕 获得文件 blob
+        fileList.value.push({
+          id: uuid(),
+          src: window.URL.createObjectURL(item),
+          file: item,
+        });
         log(`${item.name} 已上传，共${item.size / 1000}KB。`);
       } else {
         log(`允许上传的最大文件大小为：${props.max_size / 1000}MB`);
@@ -82,11 +88,10 @@ const addFiles = (file: FileList) => {
       log(`允许上传的文件格式为：jpeg、jpg、png、webp`);
     }
   }
-  renderPic();
 };
 
 const clearFile = function () {
-  fileList = [];
+  fileList.value = [];
   renderPic();
 };
 
@@ -97,8 +102,8 @@ const fileAdd = function (e: Event) {
   addFiles(file as FileList);
 };
 
-const handleDel = function (index: number) {
-  fileList.splice(index, 1);
+const handleDel = function (id: string) {
+  fileList.value = fileList.value.filter((e) => e.id != id);
   renderPic();
 };
 
@@ -125,27 +130,8 @@ const dragLeave = function (e: DragEvent) {
 };
 
 const renderPic = function () {
-  const _files = fileList.map((file, index) => {
-    return {
-      id: index,
-      src: window.URL.createObjectURL(file),
-      file: file,
-    };
-  });
-  fileListPreview.value = _files;
-  emit("change", _files);
-};
-
-const dragSortChange = function (res: any) {
-  const {
-    moved: { newIndex, oldIndex },
-  } = res;
-  const _fileList = fileList;
-  const _file = _fileList[newIndex];
-  _fileList[newIndex] = _fileList[oldIndex];
-  _fileList[oldIndex] = _file;
-  fileList = _fileList;
-  renderPic();
+  emit("change", [...fileList.value]);
+  emit("update:value", [...fileList.value]);
 };
 </script>
 

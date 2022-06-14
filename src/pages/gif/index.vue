@@ -11,7 +11,7 @@
     </template>
     <template v-slot:main>
       <div class="left">
-        <Upload ref="fileUploader" @change="fileChangeHandle" @log="addLog"></Upload>
+        <Upload ref="fileUploader" v-model:value="files" @log="addLog"></Upload>
       </div>
       <div class="right">
         <div class="gif-preview">
@@ -42,7 +42,14 @@ import Log from "../../components/Log.vue";
 import Upload from "../../components/Upload.vue";
 import GIFOption from "../../components/OptionForm/gif.vue";
 
-type FileObject = { id: number; src: string; file: File };
+type GIFOption = {
+  width: number;
+  height: number;
+  repeat: number;
+  delay: number;
+  background: string;
+  rule: number;
+};
 
 const logs = ref([] as { value: string; timestamp: string }[]);
 const previewSrc = ref("");
@@ -55,17 +62,17 @@ const gifForm = ref({
   background: "#FFFFFF",
   rule: 3,
 });
+const files = ref();
 
-let fileListCache: FileObject[] = [];
-const paintsFactory = new PaintsFactory();
-
-const fileChangeHandle = (fileList: FileObject[]) => {
-  fileListCache = fileList;
+const gifFormChange = function (value: GIFOption) {
+  gifForm.value = value;
 };
+
+const paintsFactory = new PaintsFactory();
 
 const clearFileCache = () => {
   nextTick(() => {
-    fileListCache = [];
+    files.value = [];
     previewSrc.value = "";
     fileUploader.value.clearFile();
     addLog("清理成功");
@@ -80,10 +87,9 @@ const addLog = (mes: string) => {
 };
 
 const makePreview = function () {
-  console.log(fileListCache);
   paintsFactory
     .setOpt(gifForm.value)
-    .toBlob(fileListCache)
+    .toBlob(files.value)
     .then(() => {
       previewSrc.value = paintsFactory.toPreView();
     })
@@ -95,7 +101,7 @@ const makePreview = function () {
 const makeFile = function (type: "gif" | "mp4") {
   paintsFactory
     .setOpt(gifForm.value)
-    .toBlob(fileListCache)
+    .toBlob(files.value)
     .then(() => {
       paintsFactory.toFile(type);
     })

@@ -58,7 +58,7 @@ const gifForm = ref({
   rule: 3,
 });
 
-const MAX_SIZE: number = 1000; // KB
+const MAX_SIZE: number = 10000; // KB
 let fileListCache: FileObject[] = [];
 const paintsFactory = new PaintsFactory();
 

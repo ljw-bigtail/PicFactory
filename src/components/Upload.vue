@@ -76,7 +76,7 @@ const addFiles = (file: FileList) => {
         fileList.push(item);
         log(`${item.name} 已上传，共${item.size / 1000}KB。`);
       } else {
-        log(`允许上传的最大文件大小为：${props.max_size * 1000}KB`);
+        log(`允许上传的最大文件大小为：${props.max_size / 1000}MB`);
       }
     } else {
       log(`允许上传的文件格式为：jpeg、jpg、png、webp`);

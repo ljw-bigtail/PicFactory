@@ -70,7 +70,7 @@ const gifFormChange = function (value: GIFOption) {
   gifForm.value = value;
 };
 
-const MAX_SIZE: number = 1000; // KB
+const MAX_SIZE: number = 10000; // KB
 let fileListCache: FileObject[] = [];
 const paintsFactory = new PaintsFactory();
 

@@ -16,12 +16,7 @@
             ></CanvasOption>
           </TabPanel>
           <TabPanel key="library" title="图库">
-            <Upload
-              ref="fileUploader"
-              :max_size="MAX_SIZE"
-              @change="fileChangeHandle"
-              @log="addLog"
-            ></Upload>
+            <Upload ref="fileUploader" @change="fileChangeHandle" @log="addLog"></Upload>
           </TabPanel>
           <TabPanel key="letter" title="文字"> Coming Soon </TabPanel>
         </Tab>
@@ -70,7 +65,6 @@ const canvasForm = ref({
   template: 0,
 });
 
-const MAX_SIZE: number = 1000; // KB
 let fileListCache: FileObject[] = [];
 const canvasFactory = new CanvasFactory();
 

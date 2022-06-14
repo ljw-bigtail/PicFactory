@@ -45,7 +45,7 @@ import draggable from "vuedraggable";
 const props = defineProps({
   max_size: {
     type: Number,
-    default: 1000,
+    default: 10000,
   },
 });
 

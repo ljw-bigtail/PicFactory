@@ -5,6 +5,9 @@
     </template>
     <template v-slot:menu>
       <button class="button A" @click="clearFileCache">清理数据</button>
+      <button class="button C">
+        <a href="./gif.html">Pic GIF</a>
+      </button>
     </template>
     <template v-slot:main>
       <div class="left">

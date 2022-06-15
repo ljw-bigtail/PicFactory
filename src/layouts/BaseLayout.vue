@@ -4,7 +4,7 @@
       <div class="title">
         <slot name="header"></slot>
       </div>
-      <div class="btn-group">
+      <div class="btn-group right">
         <slot name="menu"></slot>
         <button class="button" @click="toggleFooter" v-if="needLog">
           {{ openFooter ? "关闭" : "打开" }}日志
@@ -85,9 +85,10 @@ const toggleFooter = function () {
     }
   }
   & > .main {
-    margin-top: var(--space-2);
+    padding-top: var(--space-1);
     height: calc(100vh - var(--header-height) - var(--space-2));
     background-color: #fff;
+    box-sizing: border-box;
   }
   & > .footer {
     box-shadow: var(--shadow);

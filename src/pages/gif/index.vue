@@ -17,7 +17,7 @@
         <div class="gif-preview">
           <img :src="previewSrc" class="" />
         </div>
-        <div class="btn-group">
+        <div class="btn-group center">
           <button class="button large" @click="makePreview">生成预览</button>
           <button class="button large C" @click="makeFile('gif')">下载GIF</button>
           <button class="button large C" @click="makeFile('mp4')">下载MP4</button>
@@ -103,7 +103,8 @@ const makeFile = function (type: "gif" | "mp4") {
 .gif-preview {
   max-width: 300px;
   display: block;
-  margin: 0 auto var(--space-1);
+  margin: 0 auto var(--space-2);
+  transform: translateY(var(--space-1));
   box-shadow: var(--shadow);
   img {
     display: inline-block;

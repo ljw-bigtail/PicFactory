@@ -71,13 +71,15 @@ const select = (key: string) => {
 <style lang="less" scoped>
 .tab {
   &__header {
+    overflow-x: auto;
     &__wrapper {
       display: flex;
       flex-wrap: nowrap;
       align-items: flex-end;
+      width: max-content;
       &__item {
         margin: 0 var(--space-1);
-        padding: 0 var(--space-3) var(--space-1);
+        padding: var(--space-1) var(--space-2);
         cursor: pointer;
         position: relative;
         &::after {

@@ -1,7 +1,7 @@
 import GIF from "gif.js";
 import { saveAs } from 'file-saver';
 
-type GIFOption = {
+type Option = {
   width: number,
   height: number,
   repeat: number,
@@ -16,18 +16,11 @@ type ImageObject = {
 }
 
 export class PaintsFactory {
-  gif: null
-  list: never[]
-  formDom: null
+  options: Option
   blob: Blob | null
-  gifOpt: GIFOption
   constructor() {
-    this.gif = null
-    this.list = []
-    this.formDom = null
     this.blob = null
-
-    this.gifOpt = {
+    this.options = {
       width: 900,
       height: 1600,
       repeat: 0,
@@ -37,12 +30,11 @@ export class PaintsFactory {
     }
   }
   setOpt(opt: {}) {
-    this.gifOpt = Object.assign(this.gifOpt, opt)
+    this.options = Object.assign(this.options, opt)
     return this
   }
   _loadPaint(data:FileObject[]) {
-    const opt = this.gifOpt
-    console.log(opt);
+    const opt = this.options
     return Promise.all(data.map(item => {
       return new Promise((res, rej) => {
         const canvas = document.createElement("canvas")
@@ -62,7 +54,7 @@ export class PaintsFactory {
     }))
   }
   _paintFrame(imgLoadObject: ImageObject): CanvasImageSource | undefined {
-    const opt = this.gifOpt
+    const opt = this.options
     const {img, canvas} = imgLoadObject
     const ctx = canvas.getContext('2d')
     if(!canvas || !img || !ctx) return
@@ -105,7 +97,7 @@ export class PaintsFactory {
     }
     return canvas
   }
-  toBlob(data:FileObject[]){
+  toBlob(data:FileObject[] = []){
     const that = this
     return new Promise((res, rej) => {
       if(data.length == 0){
@@ -116,7 +108,7 @@ export class PaintsFactory {
       //   res(this.blob)
       //   return
       // }
-      const opt = that.gifOpt
+      const opt = that.options
       const gif = new GIF(Object.assign({
         workers: 2,
         quality: 10,

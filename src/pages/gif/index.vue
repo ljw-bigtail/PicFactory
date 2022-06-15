@@ -42,15 +42,6 @@ import Log from "../../components/Log.vue";
 import Upload from "../../components/Upload.vue";
 import GIFOption from "../../components/OptionForm/gif.vue";
 
-type GIFOption = {
-  width: number;
-  height: number;
-  repeat: number;
-  delay: number;
-  background: string;
-  rule: number;
-};
-
 const logs = ref([] as { value: string; timestamp: string }[]);
 const previewSrc = ref("");
 const fileUploader = ref();
@@ -62,11 +53,7 @@ const gifForm = ref({
   background: "#FFFFFF",
   rule: 3,
 });
-const files = ref();
-
-const gifFormChange = function (value: GIFOption) {
-  gifForm.value = value;
-};
+const files = ref([]);
 
 const paintsFactory = new PaintsFactory();
 
@@ -87,6 +74,7 @@ const addLog = (mes: string) => {
 };
 
 const makePreview = function () {
+  console.log(files.value);
   paintsFactory
     .setOpt(gifForm.value)
     .toBlob(files.value)

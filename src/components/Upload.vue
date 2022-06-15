@@ -88,6 +88,7 @@ const addFiles = (file: FileList) => {
       log(`允许上传的文件格式为：jpeg、jpg、png、webp`);
     }
   }
+  renderPic();
 };
 
 const clearFile = function () {

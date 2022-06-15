@@ -19,7 +19,7 @@
             ></CanvasOption>
           </TabPanel>
           <TabPanel key="library" title="图库">
-            <Upload ref="fileUploader" @change="fileChangeHandle" @log="addLog"></Upload>
+            <Upload ref="fileUploader" v-model:value="files" @log="addLog"></Upload>
           </TabPanel>
           <TabPanel key="letter" title="文字"> Coming Soon </TabPanel>
         </Tab>
@@ -53,8 +53,6 @@ import Tab from "../../components/Tab/Box.vue";
 import TabPanel from "../../components/Tab/Panel.vue";
 import CanvasOption from "../../components/OptionForm/canvas.vue";
 
-type FileObject = { id: number; src: string; file: File };
-
 const logs = ref([] as { value: string; timestamp: string }[]);
 const previewSrc = ref("");
 const fileUploader = ref();
@@ -67,17 +65,13 @@ const canvasForm = ref({
   radius: 0,
   template: 0,
 });
+const files = ref();
 
-let fileListCache: FileObject[] = [];
 const canvasFactory = new CanvasFactory();
-
-const fileChangeHandle = (fileList: FileObject[]) => {
-  fileListCache = fileList;
-};
 
 const clearFileCache = () => {
   nextTick(() => {
-    fileListCache = [];
+    files.value = [];
     previewSrc.value = "";
     fileUploader.value.clearFile();
     addLog("清理成功");
@@ -95,24 +89,11 @@ const optionsChange = () => {
   console.log({ ...canvasForm.value }, "配置更新");
 };
 
-// const makePreview = function () {
-//   console.log(fileListCache);
-//   paintsFactory.setOpt(gifForm.value);
-//   paintsFactory
-//     .toBlob(fileListCache)
-//     .then(() => {
-//       previewSrc.value = paintsFactory.toPreView();
-//     })
-//     .catch((e) => {
-//       console.log(e);
-//     });
-// };
-
 const makeFile = function (type: "png" | "jpeg") {
-  console.log(type, canvasFactory);
+  console.log(type, canvasFactory, files.value);
   // paintsFactory.setOpt(gifForm.value);
   // paintsFactory
-  //   .toBlob(fileListCache)
+  //   .toBlob(files.value)
   //   .then(() => {
   //     paintsFactory.toFile(type);
   //   })

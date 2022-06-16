@@ -20,7 +20,11 @@
     <Line />
     <div class="template-types">
       <ul>
-        <li v-for="(item, index) in templateArr" @click="templateChange(index)">
+        <li
+          v-for="(item, index) in templateArr"
+          @click="templateChange(index)"
+          :class="[value.template == index ? 'selected' : '']"
+        >
           <img :src="item.src" alt="" srcset="" />
         </li>
       </ul>
@@ -97,9 +101,11 @@ const templateChange = function (index: number) {
       position: relative;
       border-radius: var(--radius);
       overflow: hidden;
+      font-size: 0;
       img {
         width: 100%;
       }
+      &.selected::before,
       &:hover::before {
         cursor: pointer;
         content: "";
@@ -110,6 +116,9 @@ const templateChange = function (index: number) {
         right: var(--img-border);
         bottom: var(--img-border);
         background-color: var(--color-black);
+        opacity: 0.1;
+      }
+      &.selected::before {
         opacity: 0.2;
       }
     }

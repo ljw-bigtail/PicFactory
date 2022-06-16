@@ -57,8 +57,6 @@ onMounted(function () {
       key: tag.props?.key,
     };
   });
-  console.log(childTitles);
-
   defaults.value = _child;
   titles.value = childTitles;
 });

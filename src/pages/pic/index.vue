@@ -13,25 +13,26 @@
       <div class="left">
         <Tab v-model:selected="tabSelect">
           <TabPanel key="setting" title="设置">
-            <CanvasOption
-              v-model:value="canvasForm"
-              @change="optionsChange"
-            ></CanvasOption>
+            <CanvasOption v-model:value="canvasForm"></CanvasOption>
           </TabPanel>
           <TabPanel key="library" title="图库">
-            <Upload ref="fileUploader" v-model:value="files" @log="addLog"></Upload>
+            <Upload
+              ref="fileUploader"
+              :drop="false"
+              v-model:value="files"
+              @log="addLog"
+              @select="handlePicSekect"
+            ></Upload>
           </TabPanel>
           <TabPanel key="letter" title="文字"> Coming Soon </TabPanel>
         </Tab>
-      </div>
-      <div class="right">
-        <div class="gif-preview">
-          <img :src="previewSrc" class="" />
-        </div>
-        <div class="btn-group">
+        <div class="btn-group center">
           <button class="button large C" @click="makeFile('jpeg')">下载jpeg</button>
           <button class="button large C" @click="makeFile('png')">下载png</button>
         </div>
+      </div>
+      <div class="right">
+        <CanvasEditor ref="canvasEditor" :options="canvasForm"></CanvasEditor>
       </div>
     </template>
     <template v-slot:footer>
@@ -41,10 +42,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from "vue";
+import { ref, nextTick, onMounted } from "vue";
 
 import { dateFmt } from "../../utils/utils";
-import { CanvasFactory } from "../../utils/CanvasFactory";
+import { CanvasFactory, DefaultCanvasFactoryOptions } from "../../utils/CanvasFactory";
 
 import BaseLayout from "../../layouts/BaseLayout.vue";
 import Log from "../../components/Log.vue";
@@ -52,27 +53,33 @@ import Upload from "../../components/Upload.vue";
 import Tab from "../../components/Tab/Box.vue";
 import TabPanel from "../../components/Tab/Panel.vue";
 import CanvasOption from "../../components/OptionForm/canvas.vue";
+import CanvasEditor from "../../components/CanvasEditor.vue";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
-const previewSrc = ref("");
+// const previewSrc = ref("");
 const fileUploader = ref();
+const canvasEditor = ref();
 const tabSelect = ref("setting");
-const canvasForm = ref({
-  width: 900,
-  height: 1600,
-  padding: 0.25,
-  margin: 0.4,
-  radius: 0,
-  template: 0,
-});
+const canvasForm = ref(DefaultCanvasFactoryOptions);
 const files = ref();
 
-const canvasFactory = new CanvasFactory();
+type CanvasEditorFactory = CanvasFactory | null;
+
+let canvasFactory: CanvasEditorFactory = null;
+// onMounted(function () {
+//   canvasFactory = new CanvasFactory({
+//     id: "canvas-editor",
+//   });
+// });
+
+const handlePicSekect = function (data: {}) {
+  canvasEditor.value.setImg(data);
+};
 
 const clearFileCache = () => {
   nextTick(() => {
     files.value = [];
-    previewSrc.value = "";
+    // previewSrc.value = "";
     fileUploader.value.clearFile();
     addLog("清理成功");
   });
@@ -83,10 +90,6 @@ const addLog = (mes: string) => {
     value: mes,
     timestamp: dateFmt(),
   });
-};
-
-const optionsChange = () => {
-  console.log({ ...canvasForm.value }, "配置更新");
 };
 
 const makeFile = function (type: "png" | "jpeg") {
@@ -104,15 +107,15 @@ const makeFile = function (type: "png" | "jpeg") {
 </script>
 
 <style lang="less" scoped>
-.gif-preview {
-  max-width: 300px;
-  min-height: 400px;
-  display: block;
-  margin: 0 auto var(--space-1);
-  box-shadow: var(--shadow);
-  img {
-    display: inline-block;
-    max-width: 100%;
+.left {
+  position: relative;
+  .tab {
+    padding-bottom: 100px;
+    box-sizing: border-box;
+  }
+  .btn-group {
+    position: absolute;
+    top: calc(100% - 100px);
   }
 }
 </style>

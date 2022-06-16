@@ -21,14 +21,31 @@
       <span>或将图片拖拽到此区域</span>
     </div>
     <div class="upload-view-box">
-      <draggable v-model="fileList" item-key="id" id="upload-view" @change="renderPic">
+      <draggable
+        v-model="fileList"
+        item-key="id"
+        id="upload-view"
+        @change="renderPic"
+        v-if="drop"
+      >
         <template #item="{ element }">
           <div class="upload-view-item">
             <img :src="element.src" alt="" srcset="" />
-            <span class="del-btn" @click="handleDel(element.id)"></span>
+            <span class="del-btn round" @click="handleDel(element.id)"></span>
           </div>
         </template>
       </draggable>
+      <div id="upload-view" v-else>
+        <div
+          class="upload-view-item"
+          v-for="element in fileList"
+          :key="element.id"
+          @click="handelClick(element)"
+        >
+          <img :src="element.src" alt="" srcset="" />
+          <span class="del-btn round" @click="handleDel(element.id)"></span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -48,11 +65,15 @@ const props = defineProps({
     type: Array,
     default: [],
   },
+  drop: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 type FileObject = { id: string; src: string; file: File };
 
-const emit = defineEmits(["update:value", "change", "log"]);
+const emit = defineEmits(["update:value", "change", "select", "log"]);
 
 const inDrag = ref(false);
 const fileList = ref(props.value as FileObject[]);
@@ -62,6 +83,10 @@ const triggerClick = function () {
     "#upload-drop-core"
   ) as HTMLInputElement;
   input.click();
+};
+
+const handelClick = function (item: FileObject) {
+  emit("select", item);
 };
 
 const log = function (mes: string) {
@@ -183,36 +208,6 @@ const renderPic = function () {
         img {
           display: block;
           width: 100%;
-        }
-        .del-btn {
-          position: absolute;
-          width: 32px;
-          height: 32px;
-          cursor: pointer;
-          background-color: rgba(0, 0, 0, 0.3);
-          top: 0;
-          right: 0;
-          transform: translate(26%, -26%) rotateZ(45deg);
-          border-radius: 50%;
-          font-size: 0;
-          opacity: 0.6;
-          &:hover {
-            opacity: 1;
-          }
-          &::before,
-          &::after {
-            content: "";
-            display: block;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 16px;
-            border-bottom: 2px solid #fff;
-          }
-          &::after {
-            transform: translate(-50%, -50%) rotateZ(90deg);
-          }
         }
       }
     }

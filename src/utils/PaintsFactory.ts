@@ -9,8 +9,8 @@ type Option = {
   background: string,
   rule: number,
 }
-type FileObject = { id: number; src: string; file: File };
-type ImageObject = {
+type FileOption = { id: number; src: string; file: File };
+type ImageOption = {
   img: HTMLImageElement,
   canvas: HTMLCanvasElement
 }
@@ -33,7 +33,7 @@ export class PaintsFactory {
     this.options = Object.assign(this.options, opt)
     return this
   }
-  _loadPaint(data:FileObject[]) {
+  _loadPaint(data:FileOption[]) {
     const opt = this.options
     return Promise.all(data.map(item => {
       return new Promise((res, rej) => {
@@ -44,7 +44,7 @@ export class PaintsFactory {
         const img = new Image()
         img.src = window.URL.createObjectURL(item.file)
         img.onload = function (e) {
-          const _img:ImageObject = {
+          const _img:ImageOption = {
             canvas,
             img
           }
@@ -53,7 +53,7 @@ export class PaintsFactory {
       })
     }))
   }
-  _paintFrame(imgLoadObject: ImageObject): CanvasImageSource | undefined {
+  _paintFrame(imgLoadObject: ImageOption): CanvasImageSource | undefined {
     const opt = this.options
     const {img, canvas} = imgLoadObject
     const ctx = canvas.getContext('2d')
@@ -97,7 +97,7 @@ export class PaintsFactory {
     }
     return canvas
   }
-  toBlob(data:FileObject[] = []){
+  toBlob(data:FileOption[] = []){
     const that = this
     return new Promise((res, rej) => {
       if(data.length == 0){
@@ -121,7 +121,7 @@ export class PaintsFactory {
       that._loadPaint(data)
         .then(imgs => {
           imgs.forEach(imgLoadObjectas => {
-            const cancas = that._paintFrame(imgLoadObjectas as ImageObject)
+            const cancas = that._paintFrame(imgLoadObjectas as ImageOption)
             if(cancas){
               gif.addFrame(cancas, {
                 delay: opt.delay, // 延迟时间

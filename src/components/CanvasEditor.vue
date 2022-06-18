@@ -8,35 +8,33 @@
         height,
       }"
     >
-      <draggable v-model="cellsSort" item-key="id" @change="handleMove">
-        <template #item="{ element }">
-          <div
-            class="canvas-editor__element__cell"
-            :style="{
-              height: cellsFile[element].height + 'px',
-              width: cellsFile[element].width + 'px',
-              top: cellsFile[element].y + 'px',
-              left: cellsFile[element].x + 'px',
-              borderWidth: cellsFile[element].img != '' ? '0px' : '2px',
-            }"
-            @click="cellClick(element)"
-          >
-            <img
-              v-show="cellsFile[element].img != ''"
-              :src="cellsFile[element].img.src"
-            />
-            <span class="del-btn" @click="handleDel(element)"></span>
-          </div>
-        </template>
-      </draggable>
+      <div
+        class="canvas-editor__element__cell"
+        v-for="(element, index) in cellsImg"
+        :key="element.id"
+        :data-index="index"
+        :class="[inDrag != '' && inDrag === index.toString() ? 'drop-in' : '']"
+        :style="{
+          height: cellsList[index].height + 'px',
+          width: cellsList[index].width + 'px',
+          top: cellsList[index].y + 'px',
+          left: cellsList[index].x + 'px',
+          borderWidth: element.src && element.src != '' ? '0px' : '2px',
+        }"
+        @drop="dropAdd"
+        @dragenter="dragEnter"
+        @dragover="dragEnter"
+        @dragleave="dragLeave"
+      >
+        <img v-show="element.src != ''" :src="element.src" @dragstart="dragCacheChange" />
+        <span class="del-btn" @click="handleDel(element)"></span>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { type } from "os";
-import { ref, nextTick, onMounted, onUpdated, watch } from "vue";
-import draggable from "vuedraggable";
+import { ref, nextTick, onMounted, watch } from "vue";
 
 import {
   CanvasFactory,
@@ -44,21 +42,15 @@ import {
   templateArr,
 } from "../utils/CanvasFactory";
 
-type dragEvent = {
-  moved: {
-    element: any;
-    newIndex: number;
-    oldIndex: number;
-  };
-};
-
-type CellsFileType = {
+type CellsOptionType = {
   width: number;
   height: number;
   x: number;
   y: number;
   img?: any;
 };
+
+type FileOption = { id: string; src: string; file: File };
 
 type TypeObject = {
   [key: string]: any;
@@ -74,29 +66,35 @@ const props = defineProps({
 const width = ref("");
 const height = ref("");
 const template = ref(0);
-const selectIndex = ref(props.options.template);
 
-const cellsFile = ref();
-const cellsSort = ref();
-// const files = ref();
+const cellsList = ref();
+const cellsImg = ref();
+
+const inDrag = ref("");
+let dropCache: FileOption | null = null;
+let dropFrom: string = "";
 
 watch([props.options], function ([newOptions]) {
   console.log(newOptions, "配置更新");
   if (newOptions.height !== height.value || newOptions.width !== width.value) {
     resize();
+    initCells();
   }
   if (newOptions.template !== template.value) {
     initCells();
   }
 });
 
-const setImg = function (data: {}) {
-  // if (!cellsFile.value) return;
-  // if (!cellsFile.value[selectIndex.value]) return;
-  cellsFile.value[selectIndex.value].img = { ...data };
-  // console.log(data, cellsFile.value[selectIndex.value], "add img");
+const setDropCache = function (data: FileOption) {
+  // 设置图片缓存
+  if (!data || !data.id || !data.file || !data.src) {
+    dropCache = null;
+    console.warn("拖入文件数据异常");
+    return;
+  }
+  dropCache = { ...data };
 };
-defineExpose({ setImg });
+defineExpose({ setDropCache });
 
 onMounted(function () {
   // const canvasFactory = new CanvasFactory({
@@ -138,38 +136,67 @@ const initCells = function () {
   changeCell(template.cells);
 };
 
-const changeCell = function (cellsData: CellsFileType[]) {
-  var _cellsFile: TypeObject = {},
-    _cellsSort: number[] = [];
+const changeCell = function (cellsData: CellsOptionType[]) {
+  var _cellsList: TypeObject = {},
+    _cellsImg: {}[] = [];
   cellsData.forEach(function (item, index) {
     const [_width, _height] = [parseFloat(width.value), parseFloat(height.value)];
-    _cellsSort.push(index);
-    _cellsFile[index.toString()] = {
+    _cellsImg.push({});
+    _cellsList[index.toString()] = {
       width: item.width * _width,
       height: item.height * _height,
       x: item.x * _width,
       y: item.y * _height,
-      img: item.img ? item.img : "",
     };
   });
-  cellsFile.value = _cellsFile;
-  cellsSort.value = _cellsSort;
-};
-
-const handleMove = function (event: dragEvent) {
-  // emit("update:value", [...fileList.value]);
-  const cellsData = cellsSort.value.map((e: number) => {
-    return cellsFile.value[e.toString()];
-  });
-  cellsFile.value = cellsData;
+  cellsList.value = _cellsList;
+  cellsImg.value = _cellsImg;
 };
 
 const handleDel = function (item: {}) {
   console.log(item);
 };
 
-const cellClick = function (index: number) {
-  selectIndex.value = index;
+const stopHandler = function (e: Event) {
+  e.stopPropagation();
+  e.preventDefault();
+};
+
+const dragLeave = function (e: DragEvent) {
+  stopHandler(e);
+  inDrag.value = "";
+};
+
+const dropAdd = function (e: DragEvent) {
+  stopHandler(e);
+  if (inDrag.value == "") return;
+  // 放置在当前位置
+  cellsImg.value[inDrag.value] = dropCache;
+  inDrag.value = "";
+  // 清除来源 img cache
+  if (dropFrom != "") {
+    cellsImg.value[dropFrom] = {};
+    dropFrom = "";
+  }
+};
+
+const dragEnter = function (e: DragEvent) {
+  stopHandler(e);
+  let target = e.target as HTMLElement;
+  let index = target.dataset.index;
+  if (target.nodeName === "IMG") {
+    // 拖到img上 取上一级 index
+    index = target.parentElement?.dataset.index;
+  }
+  if (index == undefined || inDrag.value == index) return;
+  inDrag.value = index;
+};
+
+const dragCacheChange = function (e: DragEvent) {
+  let index = (e.target as HTMLElement).parentElement?.dataset.index;
+  if (index == undefined) return;
+  dropCache = { ...cellsImg.value[index] };
+  dropFrom = index;
 };
 </script>
 
@@ -195,9 +222,13 @@ const cellClick = function (index: number) {
     overflow: hidden;
     &__cell {
       position: absolute;
-      border: 2px dashed var(--color-C);
+      border: 2px dashed var(--main-color-opacity);
       overflow: hidden;
       box-sizing: border-box;
+      &.drop-in {
+        background-color: var(--main-color-opacity);
+        border-color: var(--main-color);
+      }
       img {
         max-width: 100%;
         max-height: 100%;

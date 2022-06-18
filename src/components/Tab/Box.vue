@@ -94,7 +94,7 @@ const select = (key: string) => {
         &:hover,
         &.selected {
           &::after {
-            background-color: var(--color-B);
+            background-color: var(--main-color);
           }
         }
         &:hover {

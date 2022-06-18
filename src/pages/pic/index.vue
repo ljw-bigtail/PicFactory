@@ -21,7 +21,7 @@
               :drop="false"
               v-model:value="files"
               @log="addLog"
-              @select="handlePicSekect"
+              @drop="handleDrop"
             ></Upload>
           </TabPanel>
           <TabPanel key="letter" title="文字"> Coming Soon </TabPanel>
@@ -72,8 +72,14 @@ let canvasFactory: CanvasEditorFactory = null;
 //   });
 // });
 
-const handlePicSekect = function (data: {}) {
-  canvasEditor.value.setImg(data);
+type FileOption = { id: string; src: string; file: File };
+
+const handleDrop = function (data: FileOption) {
+  const img = new Image();
+  img.src = data.src;
+  img.onload = function (e) {
+    canvasEditor.value.setDropCache({ ...data, width: img.width, height: img.height });
+  };
 };
 
 const clearFileCache = () => {

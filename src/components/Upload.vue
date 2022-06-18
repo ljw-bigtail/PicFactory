@@ -40,7 +40,7 @@
           class="upload-view-item"
           v-for="element in fileList"
           :key="element.id"
-          @click="handelClick(element)"
+          @dragstart="handelDropPic(element)"
         >
           <img :src="element.src" alt="" srcset="" />
           <span class="del-btn round" @click="handleDel(element.id)"></span>
@@ -71,12 +71,12 @@ const props = defineProps({
   },
 });
 
-type FileObject = { id: string; src: string; file: File };
+type FileOption = { id: string; src: string; file: File };
 
-const emit = defineEmits(["update:value", "change", "select", "log"]);
+const emit = defineEmits(["update:value", "change", "drop", "log"]);
 
 const inDrag = ref(false);
-const fileList = ref(props.value as FileObject[]);
+const fileList = ref(props.value as FileOption[]);
 
 const triggerClick = function () {
   const input: HTMLInputElement = document.querySelector(
@@ -85,8 +85,8 @@ const triggerClick = function () {
   input.click();
 };
 
-const handelClick = function (item: FileObject) {
-  emit("select", item);
+const handelDropPic = function (item: FileOption) {
+  emit("drop", item);
 };
 
 const log = function (mes: string) {

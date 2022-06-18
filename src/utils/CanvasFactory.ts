@@ -63,8 +63,8 @@ type Option = {
   radius: number;
   template: number;
 };
-type FileObject = { id: number; src: string; file: File };
-type ImageObject = {
+type FileOption = { id: number; src: string; file: File };
+type ImageOption = {
   img: HTMLImageElement;
   canvas: HTMLCanvasElement;
 };

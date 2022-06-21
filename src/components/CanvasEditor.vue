@@ -153,8 +153,6 @@ const initCells = function () {
   const _cellsList: TypeObject = {},
     _cellsImg: {}[] = [];
   template.cells.forEach(function (item, index) {
-    // 初始化img占位
-    _cellsImg.push({});
     // 初始化尺寸
     const [[start_x, start_y], [end_x, end_y]] = item;
     const _width = (end_x - start_x) * item_width + (end_x - start_x - 1) * margin,
@@ -169,13 +167,16 @@ const initCells = function () {
       radius: radius * Math.min(_width, _height),
     };
   });
-  if (
-    !cellsList.value ||
-    cellsList.value.findIndex((e: {}) => Object.keys(e).length > 0) == -1
-  ) {
-    cellsList.value = _cellsList;
-  }
-  cellsImg.value = _cellsImg;
+  // 初始化cell数据
+  cellsList.value = _cellsList;
+  // 初始化img占位
+  cellsImg.value = Object.keys(_cellsList).map(function (e, index) {
+    return cellsImg.value &&
+      cellsImg.value[index] &&
+      Object.keys(cellsImg.value[index]).length > 0
+      ? cellsImg.value[index]
+      : {};
+  });
 };
 
 const updateImgCache = function (json?: FileOption | null, index?: string) {

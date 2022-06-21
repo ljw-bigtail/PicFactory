@@ -11,18 +11,22 @@
     </template>
     <template v-slot:main>
       <div class="left">
-        <Upload ref="fileUploader" v-model:value="files" @log="addLog"></Upload>
-      </div>
-      <div class="right">
-        <div class="gif-preview">
-          <img :src="previewSrc" class="" />
-        </div>
+        <Tab v-model:selected="tabSelect">
+          <TabPanel key="library" title="图库">
+            <Upload ref="fileUploader" v-model:value="files" @log="addLog"></Upload>
+          </TabPanel>
+          <TabPanel key="setting" title="设置">
+            <GIFOption :value="gifForm"></GIFOption>
+          </TabPanel>
+        </Tab>
         <div class="btn-group center">
           <button class="button large" @click="makePreview">生成预览</button>
           <button class="button large C" @click="makeFile('gif')">下载GIF</button>
           <button class="button large C" @click="makeFile('mp4')">下载MP4</button>
         </div>
-        <GIFOption :value="gifForm"></GIFOption>
+      </div>
+      <div class="right">
+        <img :src="previewSrc" class="previewImg" />
       </div>
     </template>
     <template v-slot:footer>
@@ -39,10 +43,13 @@ import { PaintsFactory } from "../../utils/PaintsFactory";
 
 import BaseLayout from "../../layouts/BaseLayout.vue";
 import Log from "../../components/Log.vue";
+import Tab from "../../components/Tab/Box.vue";
+import TabPanel from "../../components/Tab/Panel.vue";
 import Upload from "../../components/Upload.vue";
 import GIFOption from "../../components/OptionForm/gif.vue";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
+const tabSelect = ref("library");
 const previewSrc = ref("");
 const fileUploader = ref();
 const gifForm = ref({
@@ -113,8 +120,26 @@ const makeFile = function (type: "gif" | "mp4") {
 }
 .right {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   padding-bottom: var(--space-3);
+  background-color: var(--color-light-gray);
+  .previewImg {
+    max-width: 72%;
+    max-height: 72%;
+    background-color: var(--color-white);
+    box-shadow: var(--shadow-dark);
+  }
+}
+.left {
+  position: relative;
+  .tab {
+    padding-bottom: 100px;
+    box-sizing: border-box;
+  }
+  .btn-group {
+    position: absolute;
+    top: calc(100% - 100px);
+  }
 }
 </style>

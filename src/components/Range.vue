@@ -2,7 +2,6 @@
   <div class="range">
     <input
       type="range"
-      name="background"
       v-model="num"
       @input="handleInput"
       @change="handleChange"
@@ -31,6 +30,7 @@ const handleChange = function () {
 
 const handleInput = function () {
   to.value = num.value;
+  handleChange(); // 立即刷新
 };
 handleInput();
 </script>

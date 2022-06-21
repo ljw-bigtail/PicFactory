@@ -4,7 +4,7 @@
       <span>Pic Collage</span>
     </template>
     <template v-slot:menu>
-      <button class="button A" @click="clearFileCache">清理数据</button>
+      <!-- <button class="button A" @click="clearFileCache">清理数据</button> -->
       <button class="button C">
         <a href="./gif.html">Pic GIF</a>
       </button>
@@ -27,7 +27,7 @@
           <TabPanel key="letter" title="文字"> Coming Soon </TabPanel>
         </Tab>
         <div class="btn-group center">
-          <button class="button large C" @click="makeFile('jpeg')">下载jpeg</button>
+          <button class="button large C" @click="makeFile('jpg')">下载jpeg</button>
           <button class="button large C" @click="makeFile('png')">下载png</button>
         </div>
       </div>
@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted } from "vue";
+import { ref, nextTick } from "vue";
 
 import { dateFmt } from "../../utils/utils";
 import { CanvasFactory, DefaultCanvasFactoryOptions } from "../../utils/CanvasFactory";
@@ -62,15 +62,6 @@ const canvasEditor = ref();
 const tabSelect = ref("setting");
 const canvasForm = ref(DefaultCanvasFactoryOptions);
 const files = ref();
-
-type CanvasEditorFactory = CanvasFactory | null;
-
-let canvasFactory: CanvasEditorFactory = null;
-// onMounted(function () {
-//   canvasFactory = new CanvasFactory({
-//     id: "canvas-editor",
-//   });
-// });
 
 type FileOption = { id: string; src: string; file: File };
 
@@ -98,17 +89,11 @@ const addLog = (mes: string) => {
   });
 };
 
-const makeFile = function (type: "png" | "jpeg") {
-  console.log(type, canvasFactory, files.value);
-  // paintsFactory.setOpt(gifForm.value);
-  // paintsFactory
-  //   .toBlob(files.value)
-  //   .then(() => {
-  //     paintsFactory.toFile(type);
-  //   })
-  //   .catch((e) => {
-  //     console.log(e);
-  //   });
+const makeFile = function (type: "png" | "jpg") {
+  const canvasFactory = new CanvasFactory({
+    id: "canvas-editor__canvas",
+  });
+  canvasFactory.toFile(type);
 };
 </script>
 

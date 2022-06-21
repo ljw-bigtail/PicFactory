@@ -1,115 +1,135 @@
-import { saveAs } from "file-saver";
-
-export const DefaultCanvasFactoryOptions = {
-  width: 1200,
-  height: 1200,
-  padding: 0.25,
-  margin: 0.4,
-  radius: 0,
-  template: 0,
-};
-
 import typeimg1 from "../assets/canvasTypePic/type1.png";
 import typeimg2 from "../assets/canvasTypePic/type2.png";
 import typeimg3 from "../assets/canvasTypePic/type3.png";
 import typeimg4 from "../assets/canvasTypePic/type4.png";
+import typeimg5 from "../assets/canvasTypePic/type5.png";
+import typeimg6 from "../assets/canvasTypePic/type6.png";
+import typeimg7 from "../assets/canvasTypePic/type7.png";
 
 export const templateArr = [
   {
     src: typeimg1,
+    qty: [2, 2],
     cells: [
-      {
-        width: 0.5,
-        height: 0.5,
-        x: 0,
-        y: 0,
-      },
-      {
-        width: 0.5,
-        height: 0.5,
-        x: 0.5,
-        y: 0,
-      },
-      {
-        width: 0.5,
-        height: 0.5,
-        x: 0,
-        y: 0.5,
-      },
-      {
-        width: 0.5,
-        height: 0.5,
-        x: 0.5,
-        y: 0.5,
-      },
+      [[0, 0], [1, 1]],
+      [[0, 1], [1, 2]],
+      [[1, 0], [2, 1]],
+      [[1, 1], [2, 2]],
     ],
   },
   {
     src: typeimg2,
+    qty: [2, 2],
+    cells: [
+      [[0, 0], [1, 2]],
+      [[1, 0], [2, 1]],
+      [[1, 1], [2, 2]],
+    ],
   },
   {
     src: typeimg3,
+    qty: [2, 2],
+    cells: [
+      [[0, 0], [1, 2]],
+      [[1, 0], [2, 2]],
+    ],
+  },
+  // {
+  //   src: typeimg4,
+  //   qty: [2, 2],
+  //   cells: [
+  //     [[0, 0], [1, 1]],
+  //     [[0, 1], [1, 2]],
+  //     [[1, 0], [2, 2]],
+  //   ],
+  // },
+  {
+    src: typeimg5,
+    qty: [4, 3],
+    cells: [
+      [[0, 0], [2, 2]],
+      [[0, 2], [1, 3]],
+      [[1, 2], [2, 3]],
+      [[2, 0], [4, 2]],
+      [[2, 2], [3, 4]],
+      [[3, 2], [4, 4]],
+    ],
   },
   {
-    src: typeimg4,
+    src: typeimg6,
+    qty: [4, 3],
+    cells: [
+      [[0, 0], [2, 2]],
+      [[0, 2], [1, 3]],
+      [[1, 2], [2, 3]],
+      [[2, 0], [3, 1]],
+      [[3, 0], [4, 1]],
+      [[2, 1], [4, 3]],
+    ],
+  },
+  {
+    src: typeimg7,
+    qty: [4, 3],
+    cells: [
+      [[0, 0], [1, 1]],
+      [[1, 0], [2, 1]],
+      [[0, 1], [2, 3]],
+      [[2, 0], [4, 2]],
+      [[2, 2], [3, 3]],
+      [[3, 2], [4, 4]],
+    ],
   },
 ];
 
-type Option = {
-  width: number;
-  height: number;
-  padding: number;
-  margin: number;
-  radius: number;
-  template: number;
-};
-type FileOption = { id: number; src: string; file: File };
-type ImageOption = {
-  img: HTMLImageElement;
-  canvas: HTMLCanvasElement;
+export const DefaultCellOptions = {
+  min_box_padding: 20, // px editor__box 与 editor__element 的最小间距 (编辑框与外部的最小间距)
+  element_padding: 30, // px editor__element 的 padding 在 options.padding = 100% 时的值
+  cell_margin: 30, // px editor__cell 的 margin 在 options.margin = 100% 时的值
+  element_radius: .5, // 50% 最大为短边圆角拉满 editor__element 的 border-radius 在 options.radius = 100% 时的值
 };
 
+export const DefaultCanvasFactoryOptions = {
+  width: 1200,
+  height: 1200,
+  padding: 0,
+  margin: 0.2,
+  radius: 0,
+  template: 0,
+};
+
+import { saveAs } from "file-saver";
+import html2canvas from "html2canvas";
+
 export class CanvasFactory {
-  options: Option;
-  canvas: null;
-  blob: Blob | null;
+  box: Element | null;
   constructor(data: { id: string }) {
+    this.box = null;
     this._init(data.id);
-    this.blob = null;
-    this.canvas = null;
-    this.options = DefaultCanvasFactoryOptions;
-    console.log(this.canvas);
   }
   _init(id: string) {
     const box = document.querySelector("#" + id);
     if (!box) {
       throw new Error("未找到元素" + id);
     }
-    // const canvasDom = document.createElement("canvas")
-    // canvasDom.id = id + "__canvas"
-    // box.appendChild(canvasDom)
-    // const cxt = this.canvas.getContext("2d");
-    // const canvasDom = document.createElement("canvas")
-    // canvasDom.id = id + "__canvas"
-    // box.appendChild(canvasDom)
-    // return {
-    //   canvas:
-    // }
+    this.box = box;
   }
-  setOpt(opt: {}) {
-    this.options = Object.assign(this.options, opt);
-  }
-  render() {}
-  toFile(fileType: "gif" | "mp4") {
-    if (!this.blob) return;
-    if (fileType == "gif") {
-      // 生成下载
-      saveAs(this.blob, "image.gif");
-    } else if (fileType == "mp4") {
-      // 生成mp4
-      // this.blob.type = 'video/mp4'
-      saveAs(this.blob, "video.mp4");
-    }
-    this.blob = null;
+  toFile(fileType: "png" | "jpg") {
+    if (!this.box) return;
+    // Error loading image : 由于image存在没有src属性的情况
+    html2canvas(this.box as HTMLElement, {
+      // logging: true,
+      logging: false,
+    })
+      .then((canvas: any) => {
+        canvas.toBlob(
+          function (blob: Blob) {
+            saveAs(blob, "image." + fileType);
+          },
+          fileType == "png" ? "image/png" : "image/jpeg"
+        );
+      })
+      .catch((e) => {
+        console.log("aaaaaaaa");
+      });
   }
 }

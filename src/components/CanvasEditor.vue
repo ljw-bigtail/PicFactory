@@ -1,7 +1,7 @@
 <template>
   <div class="canvas-editor__box">
-    <canvas id="canvas-editor__canvas"></canvas>
     <div
+      id="canvas-editor__canvas"
       class="canvas-editor__element"
       :style="{
         width,
@@ -19,6 +19,7 @@
           width: cellsList[index].width + 'px',
           top: cellsList[index].y + 'px',
           left: cellsList[index].x + 'px',
+          borderRadius: cellsList[index].radius + 'px',
           borderWidth: element.src && element.src != '' ? '0px' : '2px',
         }"
         @drop="dropAdd($event, index)"
@@ -53,16 +54,9 @@ import { ref, onMounted, watch } from "vue";
 import {
   CanvasFactory,
   DefaultCanvasFactoryOptions,
+  DefaultCellOptions,
   templateArr,
 } from "../utils/CanvasFactory";
-
-type CellsOptionType = {
-  width: number;
-  height: number;
-  x: number;
-  y: number;
-  img?: any;
-};
 
 type FileOption = {
   id: string;
@@ -99,30 +93,20 @@ let imgCache: FileOption | null = null;
 let clearIndexForImg: string = "";
 
 watch([props.options], function ([newOptions]) {
-  console.log(newOptions, "配置更新");
   if (newOptions.height !== height.value || newOptions.width !== width.value) {
     resize();
     initCells();
-  }
-  if (newOptions.template !== template.value) {
+  } else if (newOptions.template !== template.value) {
     initCells();
   }
 });
 
 onMounted(function () {
-  // const canvasFactory = new CanvasFactory({
-  //   id: "canvas-editor__canvas",
-  // });
   resize();
   initCells();
 });
 
-const config = {
-  min_box_padding: 80, // editor__box 与 editor__element 的最小间距 (编辑框与外部的最小间距)
-  element_padding: 40, // editor__element 的 padding 在 options.padding = 100% 时的值
-  element_radius: 20, // editor__element 的 border-radius 在 options.radius = 100% 时的值
-  cell_margin: 40, // editor__cell 的 margin 在 options.margin = 100% 时的值
-};
+const config = DefaultCellOptions;
 
 const resize = function () {
   let dom = document.querySelector(".canvas-editor__box");
@@ -132,11 +116,15 @@ const resize = function () {
   const { width: size_width, height: size_height } = props.options;
   const { scale_width, scale_height } = {
     scale_width: Math.max(
-      parseFloat((size_width / (dom.clientWidth - config.min_box_padding)).toFixed(2)),
+      parseFloat(
+        (size_width / (dom.clientWidth - config.min_box_padding * 2)).toFixed(2)
+      ),
       1
     ),
     scale_height: Math.max(
-      parseFloat((size_height / (dom.clientHeight - config.min_box_padding)).toFixed(2)),
+      parseFloat(
+        (size_height / (dom.clientHeight - config.min_box_padding * 2)).toFixed(2)
+      ),
       1
     ),
   };
@@ -152,29 +140,42 @@ const initCells = function () {
     console.warn("templateArr 数据异常");
     return;
   }
-  const changeCell = function (cellsData: CellsOptionType[]) {
-    var _cellsList: TypeObject = {},
-      _cellsImg: {}[] = [];
-    cellsData.forEach(function (item, index) {
-      const [_width, _height] = [parseFloat(width.value), parseFloat(height.value)];
-      _cellsImg.push({});
-      // _cellsList[index.toString()] = {
-      //   width: item.width * _width,
-      //   height: item.height * _height,
-      //   x: item.x * _width,
-      //   y: item.y * _height,
-      // };
-      _cellsList[index.toString()] = {
-        width: item.width * _width,
-        height: item.height * _height,
-        x: item.x * _width,
-        y: item.y * _height,
-      };
-    });
+  const [cell_width, cell_height] = [parseFloat(width.value), parseFloat(height.value)]; // 绘板宽高
+  const padding = config.element_padding * props.options.padding,
+    margin = config.cell_margin * props.options.margin,
+    radius = config.element_radius * props.options.radius;
+  const [x_qty, y_qty] = template.qty; // 网格长宽数量
+  const [item_width, item_height] = [
+    (cell_width - 2 * padding - (x_qty - 1) * margin) / x_qty,
+    (cell_height - 2 * padding - (y_qty - 1) * margin) / y_qty,
+  ]; // 每格占用
+  // 计算 cell 的大小与定位
+  const _cellsList: TypeObject = {},
+    _cellsImg: {}[] = [];
+  template.cells.forEach(function (item, index) {
+    // 初始化img占位
+    _cellsImg.push({});
+    // 初始化尺寸
+    const [[start_x, start_y], [end_x, end_y]] = item;
+    const _width = (end_x - start_x) * item_width + (end_x - start_x - 1) * margin,
+      _height = (end_y - start_y) * item_height + (end_y - start_y - 1) * margin,
+      _x = padding + start_x * (margin + item_width),
+      _y = padding + start_y * (margin + item_height);
+    _cellsList[index.toString()] = {
+      width: _width,
+      height: _height,
+      x: _x,
+      y: _y,
+      radius: radius * Math.min(_width, _height),
+    };
+  });
+  if (
+    !cellsList.value ||
+    cellsList.value.findIndex((e: {}) => Object.keys(e).length > 0) == -1
+  ) {
     cellsList.value = _cellsList;
-    cellsImg.value = _cellsImg;
-  };
-  changeCell(template.cells);
+  }
+  cellsImg.value = _cellsImg;
 };
 
 const updateImgCache = function (json?: FileOption | null, index?: string) {
@@ -336,9 +337,6 @@ const imgMove = function (e: MouseEvent, index: number) {
     display: flex;
     align-items: center;
     justify-content: center;
-    #canvas-editor__canvas {
-      display: none;
-    }
   }
   &__element {
     background-color: var(--color-white);

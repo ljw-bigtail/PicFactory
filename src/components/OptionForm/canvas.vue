@@ -7,11 +7,11 @@
     <Line />
     <div>
       <label>间距：</label>
-      <Range v-model:value="value.padding" @change="rangeChange" />
+      <Range v-model:value="value.margin" @change="rangeChange" />
     </div>
     <div>
       <label>边框：</label>
-      <Range v-model:value="value.margin" @change="rangeChange" />
+      <Range v-model:value="value.padding" @change="rangeChange" />
     </div>
     <div>
       <label>圆角：</label>

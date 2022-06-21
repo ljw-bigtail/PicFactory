@@ -12,9 +12,6 @@
     <template v-slot:main>
       <div class="left">
         <Tab v-model:selected="tabSelect">
-          <TabPanel key="setting" title="设置">
-            <CanvasOption v-model:value="canvasForm"></CanvasOption>
-          </TabPanel>
           <TabPanel key="library" title="图库">
             <Upload
               ref="fileUploader"
@@ -23,6 +20,9 @@
               @log="addLog"
               @drop="handleDrop"
             ></Upload>
+          </TabPanel>
+          <TabPanel key="setting" title="设置">
+            <CanvasOption v-model:value="canvasForm"></CanvasOption>
           </TabPanel>
           <TabPanel key="letter" title="文字"> Coming Soon </TabPanel>
         </Tab>

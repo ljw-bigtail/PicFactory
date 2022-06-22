@@ -28,6 +28,7 @@
   --large-size: 20px;
 
   --space-1: var(--min-size);
+  --space-1_5: calc(var(--min-size) * 1.5);
   --space-2: calc(var(--min-size) * 2);
   --space-3: calc(var(--min-size) * 3);
   --space-4: calc(var(--min-size) * 4);
@@ -162,6 +163,15 @@ select {
     &::before,
     &::after {
       border-color: var(--color-white);
+    }
+  }
+}
+
+.icon-group{
+  .icon{
+    margin-right: var(--space-1);
+    &:last-child{
+      margin-right: 0;
     }
   }
 }

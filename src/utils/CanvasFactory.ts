@@ -98,6 +98,11 @@ export const DefaultCanvasFactoryOptions = {
   rule: 2,
 };
 
+export const DefaultCanvasImgOptions = {
+  scale: 0,
+};
+
+
 import { saveAs } from "file-saver";
 import html2canvas from "html2canvas";
 

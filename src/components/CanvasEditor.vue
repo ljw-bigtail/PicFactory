@@ -1,5 +1,5 @@
 <template>
-  <div class="canvas-editor__box">
+  <div class="canvas-editor__box" @click="clearSelectHandler">
     <div
       id="canvas-editor__canvas"
       class="canvas-editor__element"
@@ -30,6 +30,7 @@
           <img
             v-show="element.src != ''"
             :src="element.src"
+            @click="selectImgHandler($event, index)"
             @mousedown="imgMoveStart($event, index)"
             @mouseup="imgMoveEnd()"
             @mousemove="imgMove($event, index)"
@@ -45,15 +46,25 @@
         </div>
       </div>
     </div>
+    <CanvasImgOption
+      v-model:value="canvasImgForm"
+      :visible="selectImgIndex > -1"
+      @change="scaleHandler"
+      @flipX="flipXHandler"
+      @flipY="flipYHandler"
+      @turnAnti="turnAntiHandler"
+      @turn="turnHandler"
+    ></CanvasImgOption>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, watch } from "vue";
+import CanvasImgOption from "./OptionForm/canvasImg.vue";
 
 import {
-  CanvasFactory,
   DefaultCanvasFactoryOptions,
+  DefaultCanvasImgOptions,
   DefaultCellOptions,
   templateArr,
 } from "../utils/CanvasFactory";
@@ -89,6 +100,7 @@ const cellsList = ref();
 const cellsImg = ref();
 
 const inDrag = ref("");
+
 let imgCache: FileOption | null = null;
 let clearIndexForImg: string = "";
 
@@ -338,6 +350,41 @@ const imgMove = function (e: MouseEvent, index: number) {
   }
 };
 // 图片内部挪动 end
+
+// 图片编辑 start
+const canvasImgForm = ref(DefaultCanvasImgOptions);
+const selectImgIndex = ref(-1);
+
+const selectImgHandler = function (e: Event, index: number) {
+  stopHandler(e);
+  selectImgIndex.value = index;
+};
+
+const clearSelectHandler = function (e: Event) {
+  stopHandler(e);
+  selectImgIndex.value = -1;
+};
+
+const scaleHandler = function () {
+  console.log("scaleHandler", canvasImgForm.value.scale);
+};
+
+const flipXHandler = function () {
+  console.log("flipXHandler");
+};
+
+const flipYHandler = function () {
+  console.log("flipYHandler");
+};
+
+const turnAntiHandler = function () {
+  console.log("turnAntiHandler");
+};
+
+const turnHandler = function () {
+  console.log("turnHandler");
+};
+// 图片编辑end
 </script>
 
 <style lang="less" scoped>
@@ -351,6 +398,8 @@ const imgMove = function (e: MouseEvent, index: number) {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    overflow: hidden;
   }
   &__element {
     background-color: var(--color-white);

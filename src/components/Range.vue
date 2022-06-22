@@ -85,5 +85,8 @@ input[type="range"] {
   input{
     margin-right: var(--space-1);
   }
+  span{
+    font-size: 80%;
+  }
 }
 </style>

@@ -100,10 +100,19 @@ export const DefaultCanvasFactoryOptions = {
 import { saveAs } from "file-saver";
 import html2canvas from "html2canvas";
 
+type CanvasOptions = {
+  width: number, 
+  height: number
+}
+
 export class CanvasFactory {
   box: Element | null;
-  constructor(data: { id: string }) {
+  width: number;
+  height: number;
+  constructor(data: { id: string, options: CanvasOptions }) {
     this.box = null;
+    this.width = data.options.width
+    this.height = data.options.height
     this._init(data.id);
   }
   _init(id: string) {
@@ -119,6 +128,9 @@ export class CanvasFactory {
     html2canvas(this.box as HTMLElement, {
       // logging: true,
       logging: false,
+      width: this.width,
+      height: this.height,
+      scale: 1, // 默认 window.devicePixelRatio 
     })
       .then((canvas: any) => {
         canvas.toBlob(
@@ -127,9 +139,6 @@ export class CanvasFactory {
           },
           fileType == "png" ? "image/png" : "image/jpeg"
         );
-      })
-      .catch((e) => {
-        console.log("aaaaaaaa");
       });
   }
 }

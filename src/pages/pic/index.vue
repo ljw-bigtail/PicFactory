@@ -92,6 +92,7 @@ const addLog = (mes: string) => {
 const makeFile = function (type: "png" | "jpg") {
   const canvasFactory = new CanvasFactory({
     id: "canvas-editor__canvas",
+    options: { ...canvasForm.value },
   });
   canvasFactory.toFile(type);
 };

@@ -95,6 +95,7 @@ export const DefaultCanvasFactoryOptions = {
   margin: 0.2,
   radius: 0,
   template: 0,
+  rule: 2,
 };
 
 import { saveAs } from "file-saver";

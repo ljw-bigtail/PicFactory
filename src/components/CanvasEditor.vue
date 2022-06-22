@@ -245,14 +245,27 @@ const dropAdd = function (e: DragEvent, index: number) {
   stopHandler(e);
   const _index = index.toString();
   if (_index == "" || clearIndexForImg == _index) return;
+  // 缓存移出img数据数据
+  const _old_target_img = { ...cellsImg.value[_index] };
   // 放置在当前位置
   updateImgCache(imgCache, _index);
   cellsImg.value[_index] = imgCache;
   inDrag.value = "";
-  // 清除来源 img cache
-  if (clearIndexForImg != "") {
-    cellsImg.value[clearIndexForImg] = {};
-    clearIndexForImg = "";
+  switch (props.options.rule) {
+    case 1:
+      // 清除来源 img cache
+      if (clearIndexForImg != "") {
+        cellsImg.value[clearIndexForImg] = {};
+        clearIndexForImg = "";
+      }
+      break;
+    case 2:
+      // 替换
+      if (clearIndexForImg != "") {
+        cellsImg.value[clearIndexForImg] = _old_target_img;
+        clearIndexForImg = "";
+      }
+      break;
   }
 };
 

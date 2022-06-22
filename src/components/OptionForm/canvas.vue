@@ -18,6 +18,26 @@
       <Range v-model:value="value.radius" @change="rangeChange" />
     </div>
     <Line />
+    <div>
+      <label>移图方式：</label>
+      <input
+        type="radio"
+        name="rule"
+        :value="1"
+        v-model="value.rule"
+        @change="formChange"
+      />
+      清理
+      <input
+        type="radio"
+        name="rule"
+        :value="2"
+        v-model="value.rule"
+        @change="formChange"
+      />
+      交换
+    </div>
+    <Line />
     <div class="template-types">
       <ul>
         <li
@@ -53,6 +73,7 @@ type CanvasOption = {
   margin: number;
   radius: number;
   template: number;
+  rule: number;
 };
 
 const props = defineProps<{ value: CanvasOption }>();

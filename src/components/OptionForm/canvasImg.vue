@@ -2,7 +2,7 @@
   <div :class="['img-tool', visible ? 'active' : '']" @click="stopHandler">
     <div>
       <label>缩放</label>
-      <Range v-model:value="value.scale" @change="rangeChange" />
+      <Range ref="scaleRange" v-model:value="value.scale" @change="rangeChange" />
     </div>
     <Line type="vertical" />
     <div class="icon-group">
@@ -18,6 +18,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
+
 import Line from "../Line.vue";
 import Range from "../Range.vue";
 import Icon from "../Icon.vue";
@@ -49,6 +51,14 @@ const formChange = function (value?: {}) {
   emit("update:value", _value);
   emit("change");
 };
+
+const scaleRange = ref();
+
+const setScale = function (value: number) {
+  scaleRange.value.setVal(value);
+};
+
+defineExpose({ setScale });
 
 const rangeChange = function () {
   formChange();

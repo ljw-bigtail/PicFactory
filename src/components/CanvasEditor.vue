@@ -36,10 +36,11 @@
             @mousemove="imgMove($event, index)"
             @mouseleave="imgMoveEnd()"
             :style="{
-              height: element.height + 'px',
-              width: element.width + 'px',
+              height: element.height * element.scale + 'px',
+              width: element.width * element.scale + 'px',
               top: element.y + 'px',
               left: element.x + 'px',
+              transform: `rotateX(${element.rotateX}deg) rotateY(${element.rotateY}deg) rotateZ(${element.rotateZ}deg)`,
             }"
           />
           <span class="del-btn" @click="handleDel(index)"></span>
@@ -47,6 +48,7 @@
       </div>
     </div>
     <CanvasImgOption
+      ref="canvasImgOption"
       v-model:value="canvasImgForm"
       :visible="selectImgIndex > -1"
       @change="scaleHandler"
@@ -77,7 +79,10 @@ type FileOption = {
   y: number;
   width: number;
   height: number;
-  scale: "x" | "y";
+  scale: number;
+  rotateX: number;
+  rotateY: number;
+  rotateZ: number;
 };
 
 type TypeObject = {
@@ -162,8 +167,7 @@ const initCells = function () {
     (cell_height - 2 * padding - (y_qty - 1) * margin) / y_qty,
   ]; // 每格占用
   // 计算 cell 的大小与定位
-  const _cellsList: TypeObject = {},
-    _cellsImg: {}[] = [];
+  const _cellsList: TypeObject = {};
   template.cells.forEach(function (item, index) {
     // 初始化尺寸
     const [[start_x, start_y], [end_x, end_y]] = item;
@@ -200,7 +204,6 @@ const updateImgCache = function (json?: FileOption | null, index?: string) {
   const { id, src, file, width, height } = json;
   let _width = width;
   let _height = height;
-  let _scale = "x";
   if (index != undefined && imgCache) {
     // 根据 cell 的宽高计算 img 的
     const xScale = cellsList.value[index].width / width;
@@ -208,17 +211,19 @@ const updateImgCache = function (json?: FileOption | null, index?: string) {
     const scale = Math.max(xScale, yScale);
     _width = width * scale;
     _height = height * scale;
-    _scale = scale == xScale ? "y" : "x";
   }
   imgCache = {
     id,
     src,
     file,
-    x: 0,
-    y: 0,
     width: _width,
     height: _height,
-    scale: _scale as "x" | "y",
+    x: 0, // 定位 x
+    y: 0, // 定位 y
+    scale: 1, // 缩放 100% ～ 200%
+    rotateX: 0, // X轴对称
+    rotateY: 0, // Y轴对称
+    rotateZ: 0, // 中心旋转
   };
 };
 
@@ -296,7 +301,10 @@ const dragEnter = function (e: DragEvent, index: number) {
 // 图库挪入 end
 
 // 图片内部挪动 start
-let dragPositionCache = 0; // 鼠标指针位置缓存
+let dragPositionCache = {
+  x: 0,
+  y: 0,
+}; // 鼠标指针位置缓存
 let moveState = -1; // 是否开启移动事件
 
 const imgMoveStart = function (e: MouseEvent, index: number) {
@@ -304,9 +312,10 @@ const imgMoveStart = function (e: MouseEvent, index: number) {
   // 缓存： 记录当前的position 拖拽进其他cell
   dragStart(index);
   // 初始化移动起点
-  const disX = e.clientX - (e.target as HTMLElement).offsetLeft;
-  const disY = e.clientY - (e.target as HTMLElement).offsetTop;
-  dragPositionCache = cellsImg.value[index].scale == "x" ? disX : disY;
+  dragPositionCache = {
+    x: e.clientX - (e.target as HTMLElement).offsetLeft,
+    y: e.clientY - (e.target as HTMLElement).offsetTop,
+  };
 };
 
 const imgMoveEnd = function () {
@@ -317,47 +326,55 @@ const imgMove = function (e: MouseEvent, index: number) {
   stopHandler(e);
   if (moveState == -1) return;
   if (moveState !== index) return;
-  function getValByMax(len: number, max_len: number) {
-    // 边界判断
-    // 根据边距修改值
-    if (len > 0) {
-      return 0;
-    } else if (len < -max_len) {
-      return -max_len;
-    } else {
-      return len;
+  function getSize(type: "x" | "y") {
+    function getValByMax(len: number, max_len: number) {
+      // 边界判断 根据边距修改值
+      if (len > 0) {
+        return 0;
+      } else if (len < -max_len) {
+        return -max_len;
+      } else {
+        return len;
+      }
+    }
+    if (type == "x") {
+      return e.clientX != dragPositionCache.x
+        ? (function () {
+            const disX = e.clientX - (e.target as HTMLElement).offsetLeft;
+            const len = cellsImg.value[index].x + disX - dragPositionCache.x;
+            const max_len =
+              cellsImg.value[index].width * cellsImg.value[index].scale -
+              cellsList.value[index].width;
+            return getValByMax(len, max_len);
+          })()
+        : 0;
+    } else if (type == "y") {
+      return e.clientY != dragPositionCache.y
+        ? (function () {
+            const disY = e.clientY - (e.target as HTMLElement).offsetTop; // 鼠标位移距离
+            const len = cellsImg.value[index].y + disY - dragPositionCache.y; // 图片位移距离
+            const max_len =
+              cellsImg.value[index].height * cellsImg.value[index].scale -
+              cellsList.value[index].height; // 图片位移边距
+            return getValByMax(len, max_len);
+          })()
+        : 0;
     }
   }
-  switch (cellsImg.value[index].scale) {
-    case "x":
-      if (e.clientX != dragPositionCache) {
-        const disX = e.clientX - (e.target as HTMLElement).offsetLeft;
-        const len = cellsImg.value[index].x + disX - dragPositionCache;
-        const max_len = cellsImg.value[index].width - cellsList.value[index].width;
-        cellsImg.value[index].x = getValByMax(len, max_len);
-        cellsImg.value[index].y = 0;
-      }
-      break;
-    case "y":
-      if (e.clientY != dragPositionCache) {
-        const disY = e.clientY - (e.target as HTMLElement).offsetTop; // 鼠标位移距离
-        const len = cellsImg.value[index].y + disY - dragPositionCache; // 图片位移距离
-        const max_len = cellsImg.value[index].height - cellsList.value[index].height; // 图片位移边距
-        cellsImg.value[index].x = 0;
-        cellsImg.value[index].y = getValByMax(len, max_len);
-      }
-      break;
-  }
+  cellsImg.value[index].x = getSize("x");
+  cellsImg.value[index].y = getSize("y");
 };
 // 图片内部挪动 end
 
 // 图片编辑 start
+const canvasImgOption = ref();
 const canvasImgForm = ref(DefaultCanvasImgOptions);
 const selectImgIndex = ref(-1);
 
 const selectImgHandler = function (e: Event, index: number) {
   stopHandler(e);
   selectImgIndex.value = index;
+  canvasImgOption.value.setScale(cellsImg.value[index].scale - 1);
 };
 
 const clearSelectHandler = function (e: Event) {
@@ -366,23 +383,26 @@ const clearSelectHandler = function (e: Event) {
 };
 
 const scaleHandler = function () {
-  console.log("scaleHandler", canvasImgForm.value.scale);
+  if (selectImgIndex.value == -1) return;
+  cellsImg.value[selectImgIndex.value].scale = canvasImgForm.value.scale + 1;
 };
 
 const flipXHandler = function () {
-  console.log("flipXHandler");
+  cellsImg.value[selectImgIndex.value].rotateY =
+    cellsImg.value[selectImgIndex.value].rotateY == 0 ? 180 : 0;
 };
 
 const flipYHandler = function () {
-  console.log("flipYHandler");
+  cellsImg.value[selectImgIndex.value].rotateX =
+    cellsImg.value[selectImgIndex.value].rotateX == 0 ? 180 : 0;
 };
 
 const turnAntiHandler = function () {
-  console.log("turnAntiHandler");
+  cellsImg.value[selectImgIndex.value].rotateZ -= 90;
 };
 
 const turnHandler = function () {
-  console.log("turnHandler");
+  cellsImg.value[selectImgIndex.value].rotateZ += 90;
 };
 // 图片编辑end
 </script>

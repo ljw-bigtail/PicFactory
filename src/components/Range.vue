@@ -1,12 +1,6 @@
 <template>
   <div class="range">
-    <input
-      type="range"
-      v-model="num"
-      @input="handleInput"
-      @change="handleChange"
-      :style="{ '--to': to }"
-    />
+    <input type="range" v-model="num" @input="handleChange" :style="{ '--to': to }" />
     <span>{{ to }}</span>
     <span>%</span>
   </div>
@@ -24,15 +18,20 @@ const num = ref((props.value * 100).toString());
 const to = ref("0");
 const emit = defineEmits(["update:value", "change"]);
 const handleChange = function () {
+  // 刷新背景
+  to.value = num.value;
+  // 刷新结果
   emit("update:value", parseInt(num.value) / 100);
   emit("change");
 };
 
-const handleInput = function () {
-  to.value = num.value;
+const setVal = function (value: number) {
+  num.value = (value * 100).toFixed(0).toString();
   handleChange(); // 立即刷新
 };
-handleInput();
+defineExpose({ setVal });
+
+handleChange();
 </script>
 
 <style lang="less" scoped>

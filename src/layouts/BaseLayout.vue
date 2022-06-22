@@ -30,9 +30,8 @@ const prop = defineProps({
     default: false,
   },
 });
-
 const cacheKey = "sys-opt-cache";
-const openFooter = ref(Cache.get(cacheKey)["open-footer"]);
+const openFooter = ref(prop.needLog ? Cache.get(cacheKey)["open-footer"] : false);
 const toggleFooter = function () {
   openFooter.value = !openFooter.value;
   Cache.set(cacheKey, {

@@ -69,7 +69,6 @@ const select = (key: string) => {
 <style lang="less" scoped>
 .tab {
   &__header {
-    overflow-x: auto;
     &__wrapper {
       display: flex;
       flex-wrap: nowrap;

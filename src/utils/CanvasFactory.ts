@@ -128,10 +128,25 @@ export class CanvasFactory {
     }
     this.box = box;
   }
-  toFile(fileType: "png" | "jpg") {
+  _copyCanvas(){
     if (!this.box) return;
+    const canvas = document.createElement('div')
+    canvas.innerHTML = this.box.outerHTML
+    const scaleWidth = canvas.firstElementChild?.getAttribute('style')?.replace(/^width: ([0-9]*)px; height: ([0-9]*)px;*/, '$1')
+    if(!scaleWidth) return
+    const scale = this.width / parseInt(scaleWidth)
+    canvas.style.transform = `scale(${scale})`
+    // canvas.style.position = 'fixed'
+    // canvas.style.left = '-10000%'
+    // canvas.style.top = '-10000%'
+    document.body.appendChild(canvas)
+    return canvas
+  }
+  toFile(fileType: "png" | "jpg") {
     // Error loading image : 由于image存在没有src属性的情况
-    html2canvas(this.box as HTMLElement, {
+    const canvas = this._copyCanvas()
+    if (!canvas) return;
+    html2canvas(canvas, {
       // logging: true,
       logging: false,
       width: this.width,
@@ -146,5 +161,6 @@ export class CanvasFactory {
           fileType == "png" ? "image/png" : "image/jpeg"
         );
       });
+    document.body.removeChild(canvas)
   }
 }

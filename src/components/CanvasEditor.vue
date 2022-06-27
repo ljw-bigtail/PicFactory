@@ -187,11 +187,14 @@ const initCells = function () {
   cellsList.value = _cellsList;
   // 初始化img占位
   cellsImg.value = Object.keys(_cellsList).map(function (e, index) {
-    return cellsImg.value &&
+    if (
+      cellsImg.value &&
       cellsImg.value[index] &&
       Object.keys(cellsImg.value[index]).length > 0
-      ? cellsImg.value[index]
-      : {};
+    ) {
+      return updateImgCache(cellsImg.value[index], index.toString());
+    }
+    return {};
   });
 };
 
@@ -225,6 +228,7 @@ const updateImgCache = function (json?: FileOption | null, index?: string) {
     rotateY: 0, // Y轴对称
     rotateZ: 0, // 中心旋转
   };
+  return imgCache;
 };
 
 const handleDel = function (index: number) {

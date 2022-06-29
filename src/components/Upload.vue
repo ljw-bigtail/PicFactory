@@ -29,7 +29,7 @@
         v-if="drop"
       >
         <template #item="{ element }">
-          <div class="upload-view-item">
+          <div class="upload-view-item" @dragstart="handelDropPic(element)">
             <img :src="element.src" alt="" srcset="" />
             <span class="del-btn round" @click="handleDel(element.id)"></span>
           </div>

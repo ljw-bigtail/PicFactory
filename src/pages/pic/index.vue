@@ -15,7 +15,7 @@
           <TabPanel key="library" title="图库">
             <Upload
               ref="fileUploader"
-              :drop="false"
+              :drop="true"
               v-model:value="files"
               @log="addLog"
               @drop="handleDrop"

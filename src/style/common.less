@@ -129,20 +129,23 @@ select {
   }
 }
 
-.del-btn {
-  position: absolute;
+.icon-group{
+  .icon,
+  .css-icon{
+    margin-right: var(--space-1);
+    &:last-child{
+      margin-right: 0;
+    }
+  }
+}
+
+.css-icon,
+.icon-btn{
+  position: relative;
   width: 32px;
   height: 32px;
-  cursor: pointer;
-  top: 0;
-  right: 0;
-  transform: translate(26%, -26%) rotateZ(45deg);
-  transition: all .8s;
+  transition: all .3s;
   font-size: 0;
-  opacity: 0.5;
-  &:hover {
-    opacity: 1;
-  }
   &::before,
   &::after {
     content: "";
@@ -151,27 +154,58 @@ select {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 16px;
     border-bottom: 2px solid var(--color-black);
   }
-  &::after {
-    transform: translate(-50%, -50%) rotateZ(90deg);
-  }
-  &.round {
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 50%;
+  &.plus {
     &::before,
     &::after {
-      border-color: var(--color-white);
+      width: 16px;
+    }
+    &::after {
+      transform: translate(-50%, -50%) rotateZ(90deg);
+    }
+  }
+  &.delete {
+    transform: rotateZ(45deg);
+    &::before,
+    &::after {
+      width: 16px;
+    }
+    &::after {
+      transform: translate(-50%, -50%) rotateZ(90deg);
+    }
+  }
+  &.select {
+    &::before{
+      width: 6px;
+      transform: translate(-50%, calc(-50% - 1px)) rotateZ(45deg);
+    }
+    &::after {
+      width: 16px;
+      transform: translate(calc(-50% + 10px), -50%) rotateZ(-60deg);
+      transform-origin: 0;
     }
   }
 }
 
-.icon-group{
-  .icon{
-    margin-right: var(--space-1);
-    &:last-child{
-      margin-right: 0;
+.icon-btn {
+  transform: translate(26%, -26%);
+  opacity: 0.5;
+  position: absolute;
+  top: 0;
+  right: 0;
+  &.delete {
+    transform: translate(26%, -26%) rotateZ(45deg)!important;
+  }
+  &:hover {
+    opacity: 1;
+  }
+  &.round {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 50%;
+    &::before,
+    &::after {
+      border-color: var(--color-white)!important;
     }
   }
 }

@@ -1,8 +1,8 @@
 <template>
-  <div id="upload">
-    <input type="file" id="upload-drop-core" multiple="true" @change="fileAdd" />
+  <div id="gallery-box" @contextmenu="stopHandler">
+    <input type="file" id="gallery-input-core" multiple="true" @change="fileAdd" />
     <div
-      id="upload-drop"
+      id="gallery-drop"
       @drop="dropAdd"
       @dragenter="dragEnter"
       @dragleave="dragLeave"
@@ -10,40 +10,44 @@
       @click="triggerClick"
       :class="[inDrag ? 'drop-in' : '']"
     >
-      <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-        <path
-          fill="#51B2F9"
-          fill-opacity="1"
-          d="M0,224L48,213.3C96,203,192,181,288,170.7C384,160,480,160,576,144C672,128,768,96,864,106.7C960,117,1056,171,1152,186.7C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-        ></path>
-      </svg> -->
       <button class="button large">点击上传</button>
       <span>或将图片拖拽到此区域</span>
     </div>
-    <div class="upload-view-box">
+    <div class="btn-group right">
+      <button class="button large C" @click="handleTopping">
+        <Icon type="topping" />
+      </button>
+    </div>
+    <div class="gallery-view">
       <draggable
         v-model="fileList"
         item-key="id"
-        id="upload-view"
+        id="gallery-img-box"
         @change="renderPic"
+        :move="() => !inSelect"
         v-if="drop"
       >
-        <template #item="{ element }">
-          <div class="upload-view-item" @dragstart="handelDropPic(element)">
-            <img :src="element.src" alt="" srcset="" />
-            <span class="del-btn round" @click="handleDel(element.id)"></span>
-          </div>
+        <template #item="{ element, index }">
+          <PicItem
+            :element="element"
+            :inselect="inSelect"
+            @select="handelSelect(index)"
+            @drag="handelDropPic(element)"
+            @del="handleDel(element.id)"
+            @mousedown="handlerRight($event, index)"
+          />
         </template>
       </draggable>
-      <div id="upload-view" v-else>
-        <div
-          class="upload-view-item"
-          v-for="element in fileList"
-          :key="element.id"
-          @dragstart="handelDropPic(element)"
-        >
-          <img :src="element.src" alt="" srcset="" />
-          <span class="del-btn round" @click="handleDel(element.id)"></span>
+      <div id="gallery-img-box" v-else>
+        <div v-for="(element, index) in fileList" :key="element.id">
+          <PicItem
+            :element="element"
+            :inselect="inSelect"
+            @select="handelSelect(index)"
+            @drag="handelDropPic(element)"
+            @del="handleDel(element.id)"
+            @mousedown="handlerRight($event, index)"
+          />
         </div>
       </div>
     </div>
@@ -54,7 +58,12 @@
 import { ref } from "vue";
 import draggable from "vuedraggable";
 
-import { uuid } from "../utils/utils";
+import { uuid } from "../../utils/utils";
+
+import PicItem from "./pic.vue";
+import Icon from "../Icon.vue";
+
+// TODO 拖拽组件：批量拖拽
 
 const props = defineProps({
   max_size: {
@@ -71,16 +80,17 @@ const props = defineProps({
   },
 });
 
-type FileOption = { id: string; src: string; file: File };
+type FileOption = { id: string; src: string; file: File; selected: boolean };
 
 const emit = defineEmits(["update:value", "change", "drop", "log"]);
 
 const inDrag = ref(false);
+const inSelect = ref(false);
 const fileList = ref(props.value as FileOption[]);
 
 const triggerClick = function () {
   const input: HTMLInputElement = document.querySelector(
-    "#upload-drop-core"
+    "#gallery-input-core"
   ) as HTMLInputElement;
   input.click();
 };
@@ -104,6 +114,7 @@ const addFiles = (file: FileList) => {
           id: uuid(),
           src: window.URL.createObjectURL(item),
           file: item,
+          selected: false,
         });
         log(`${item.name} 已上传，共${item.size / 1000}KB。`);
       } else {
@@ -159,17 +170,57 @@ const renderPic = function () {
   emit("change", [...fileList.value]);
   emit("update:value", [...fileList.value]);
 };
+
+const clearSelect = function (index?: number) {
+  // 清理选中状态
+  fileList.value = [...fileList.value].map((e, i) => {
+    return Object.assign(e, { selected: i == index });
+  });
+};
+
+const handlerRight = function (event: MouseEvent, index: number) {
+  // 右键
+  if (event.button == 2) {
+    inSelect.value = !inSelect.value;
+    if (inSelect.value) {
+      clearSelect(index);
+    }
+  }
+};
+
+const handelSelect = function (index: number) {
+  // 选中
+  fileList.value[index].selected = !fileList.value[index].selected;
+};
+
+const handleTopping = function () {
+  // 置顶
+  if (!inSelect.value) return;
+  const select: FileOption[] = [],
+    other: FileOption[] = [];
+  [...fileList.value].forEach((e) => {
+    if (e.selected) {
+      select.push(e);
+    } else {
+      other.push(e);
+    }
+  });
+  fileList.value = ([] as FileOption[]).concat(select, other);
+  // 清除状态
+  clearSelect();
+  inSelect.value = false;
+};
 </script>
 
 <style scoped lang="less">
-#upload {
+#gallery-box {
   position: relative;
   display: flex;
   flex-direction: column;
-  #upload-drop-core {
+  #gallery-input-core {
     display: none;
   }
-  #upload-drop {
+  #gallery-drop {
     cursor: pointer;
     padding: 50px 0;
     display: flex;
@@ -187,29 +238,16 @@ const renderPic = function () {
       padding: 20px 0;
     }
   }
-  .upload-view-box {
+  .gallery-view {
     flex: 1;
     overflow: hidden;
-    #upload-view {
+    #gallery-img-box {
       height: max-content;
       display: flex;
       align-items: flex-start;
       flex-wrap: wrap;
       justify-content: flex-start;
       margin-top: var(--space-1);
-      .upload-view-item {
-        width: 23%;
-        margin-right: 2%;
-        margin-bottom: var(--space-1);
-        position: relative;
-        &:nth-child(4n) {
-          margin-right: 0;
-        }
-        img {
-          display: block;
-          width: 100%;
-        }
-      }
     }
   }
 }

@@ -35,5 +35,8 @@ const props = defineProps(["type"]);
   &.rotate-90 {
     transform: rotateZ(90deg) translateY(-1px);
   }
+  &.topping {
+    background-image: url("../assets/icon/topping.svg");
+  }
 }
 </style>

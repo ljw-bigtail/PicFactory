@@ -13,13 +13,12 @@
       <div class="left">
         <Tab v-model:selected="tabSelect">
           <TabPanel key="library" title="图库">
-            <Upload
-              ref="fileUploader"
-              :drop="true"
+            <Gallery
+              ref="galleryLoader"
               v-model:value="files"
               @log="addLog"
               @drop="handleDrop"
-            ></Upload>
+            ></Gallery>
           </TabPanel>
           <TabPanel key="setting" title="设置">
             <CanvasOption v-model:value="canvasForm"></CanvasOption>
@@ -49,7 +48,7 @@ import { CanvasFactory, DefaultCanvasFactoryOptions } from "../../utils/CanvasFa
 
 import BaseLayout from "../../layouts/BaseLayout.vue";
 import Log from "../../components/Log.vue";
-import Upload from "../../components/Upload.vue";
+import Gallery from "../../components/Gallery/index.vue";
 import Tab from "../../components/Tab/Box.vue";
 import TabPanel from "../../components/Tab/Panel.vue";
 import CanvasOption from "../../components/OptionForm/canvas.vue";
@@ -57,7 +56,7 @@ import CanvasEditor from "../../components/CanvasEditor.vue";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
 // const previewSrc = ref("");
-const fileUploader = ref();
+const galleryLoader = ref();
 const canvasEditor = ref();
 const tabSelect = ref("setting");
 const canvasForm = ref(DefaultCanvasFactoryOptions);
@@ -77,7 +76,7 @@ const clearFileCache = () => {
   nextTick(() => {
     files.value = [];
     // previewSrc.value = "";
-    fileUploader.value.clearFile();
+    galleryLoader.value.clearFile();
     addLog("清理成功");
   });
 };

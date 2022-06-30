@@ -1,6 +1,9 @@
-/*
-  * 时间格式化处理
-*/
+/**
+ * 时间格式化处理
+ * @param fmt 
+ * @param date 
+ * @returns 
+ */
 export function dateFmt(fmt?: any, date?: any) {
   if (!date) {
     date = new Date()
@@ -36,9 +39,10 @@ export function dateFmt(fmt?: any, date?: any) {
   }
 }
 
-/*
-  * uuid
-*/
+/**
+ * uuid
+ * @returns 
+ */
 export function uuid () {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     var r = (Math.random() * 16) | 0,
@@ -47,6 +51,9 @@ export function uuid () {
   });
 };
 
+/**
+ * localStorage
+ */
 export const Cache = {
   get: (key: string)=>{
     const json = window.localStorage.getItem(key)

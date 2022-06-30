@@ -43,7 +43,7 @@
               transform: `rotateX(${element.rotateX}deg) rotateY(${element.rotateY}deg) rotateZ(${element.rotateZ}deg)`,
             }"
           />
-          <span class="del-btn" @click="handleDel(index)"></span>
+          <span class="icon-btn delete" @click="handleDel(index)"></span>
         </div>
       </div>
     </div>

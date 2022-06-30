@@ -13,7 +13,7 @@
       <div class="left">
         <Tab v-model:selected="tabSelect">
           <TabPanel key="library" title="图库">
-            <Upload ref="fileUploader" v-model:value="files" @log="addLog"></Upload>
+            <Gallery ref="galleryLoader" v-model:value="files" @log="addLog"></Gallery>
           </TabPanel>
           <TabPanel key="setting" title="设置">
             <GIFOption :value="gifForm"></GIFOption>
@@ -45,13 +45,13 @@ import BaseLayout from "../../layouts/BaseLayout.vue";
 import Log from "../../components/Log.vue";
 import Tab from "../../components/Tab/Box.vue";
 import TabPanel from "../../components/Tab/Panel.vue";
-import Upload from "../../components/Upload.vue";
+import Gallery from "../../components/Gallery/index.vue";
 import GIFOption from "../../components/OptionForm/gif.vue";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
 const tabSelect = ref("library");
 const previewSrc = ref("");
-const fileUploader = ref();
+const galleryLoader = ref();
 const gifForm = ref({
   width: 900,
   height: 1600,
@@ -68,7 +68,7 @@ const clearFileCache = () => {
   nextTick(() => {
     files.value = [];
     previewSrc.value = "";
-    fileUploader.value.clearFile();
+    galleryLoader.value.clearFile();
     addLog("清理成功");
   });
 };

@@ -51,7 +51,7 @@ import Log from "../../components/Log.vue";
 import Gallery from "../../components/Gallery/index.vue";
 import Tab from "../../components/Tab/Box.vue";
 import TabPanel from "../../components/Tab/Panel.vue";
-import CanvasOption from "../../components/OptionForm/canvas.vue";
+import CanvasOption from "../../components/Options/collage-canvas.vue";
 import CanvasEditor from "../../components/CanvasEditor.vue";
 
 const logs = ref([] as { value: string; timestamp: string }[]);

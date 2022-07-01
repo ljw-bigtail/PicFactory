@@ -62,7 +62,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, watch } from "vue";
-import CanvasImgOption from "./OptionForm/canvasImg.vue";
+import CanvasImgOption from "./Options/collage-img.vue";
 
 import {
   DefaultCanvasFactoryOptions,
@@ -123,7 +123,7 @@ onMounted(function () {
   initCells();
 });
 
-const config = DefaultCellOptions;
+const config = { ...DefaultCellOptions };
 
 const resize = function () {
   let dom = document.querySelector(".canvas-editor__box");
@@ -372,7 +372,7 @@ const imgMove = function (e: MouseEvent, index: number) {
 
 // 图片编辑 start
 const canvasImgOption = ref();
-const canvasImgForm = ref(DefaultCanvasImgOptions);
+const canvasImgForm = ref({ ...DefaultCanvasImgOptions });
 const selectImgIndex = ref(-1);
 
 const selectImgHandler = function (e: Event, index: number) {

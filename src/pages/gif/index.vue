@@ -46,7 +46,7 @@ import Log from "../../components/Log.vue";
 import Tab from "../../components/Tab/Box.vue";
 import TabPanel from "../../components/Tab/Panel.vue";
 import Gallery from "../../components/Gallery/index.vue";
-import GIFOption from "../../components/OptionForm/gif.vue";
+import GIFOption from "../../components/Options/gif-canvas.vue";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
 const tabSelect = ref("library");

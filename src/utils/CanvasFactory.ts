@@ -1,7 +1,7 @@
 import typeimg1 from "../assets/canvasTypePic/type1.png";
 import typeimg2 from "../assets/canvasTypePic/type2.png";
 import typeimg3 from "../assets/canvasTypePic/type3.png";
-import typeimg4 from "../assets/canvasTypePic/type4.png";
+// import typeimg4 from "../assets/canvasTypePic/type4.png";
 import typeimg5 from "../assets/canvasTypePic/type5.png";
 import typeimg6 from "../assets/canvasTypePic/type6.png";
 import typeimg7 from "../assets/canvasTypePic/type7.png";

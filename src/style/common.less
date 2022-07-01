@@ -74,13 +74,16 @@ select {
 }
 
 .button {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   cursor: pointer;
   background-color: transparent;
   color: var(--color-black);
   padding: var(--space-1);
   font-size: var(--min-size);
+  border-radius: var(--radius-mini);
   &.large {
     font-size: var(--large-size);
   }
@@ -97,18 +100,34 @@ select {
     z-index: -1;
     transition: all 0.5s;
   }
-  &.A::after {
-    background-color: var(--color-A);
-  }
-  &.B::after {
-    background-color: var(--color-B);
-  }
-  &.C::after {
-    background-color: var(--color-C);
-  }
+  .A::after {background-color: var(--color-A);}
+  .B::after {background-color: var(--color-B);}
+  .C::after {background-color: var(--color-C);}
+  .D::after {background-color: var(--color-D);}
   &:hover {
     &::after {
       transform: translateX(-100%) scale(1.3) translateY(-20%);
+    }
+  }
+  &.button-icon{
+    background-color: var(--border-main);
+    padding: 3px var(--space-1);
+    color: var(--color-white);
+    &.A {background-color: var(--color-A) !important;}
+    &.B {background-color: var(--color-B) !important;}
+    &.C {background-color: var(--color-C) !important;}
+    &.D {background-color: var(--color-D) !important;}
+    .css-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 2px;
+      transform: scale(0.7);
+      &::after, &::before{
+        border-color: var(--color-white)
+      }
+    }
+    &:hover {
+      box-shadow: var(--shadow);
     }
   }
 }

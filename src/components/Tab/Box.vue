@@ -37,8 +37,13 @@ const context = getCurrentInstance();
 onMounted(function () {
   const slots = context?.slots;
   if (!slots || !slots.default) return;
-  const child = slots.default();
-  const _child = child.filter((tag) => {
+  let child: any = slots.default();
+  if (child.length == 0) return;
+  if (child.length == 1) {
+    // fix: 循环 tabpanel 的情况
+    child = child[0].children;
+  }
+  const _child = child.filter((tag: { props: string }) => {
     // if (tag.type !== TabPanel) {
     //   throw new Error("Tab 子标签名必须是 TabPanel");
     // }
@@ -51,7 +56,7 @@ onMounted(function () {
   // if (child.length != _child.length) {
   //   console.error("TabPanel 参数不全 ");
   // }
-  const childTitles = _child.map((tag) => {
+  const childTitles = _child.map((tag: { props: { title: string; key: string } }) => {
     return {
       title: tag.props?.title,
       key: tag.props?.key,

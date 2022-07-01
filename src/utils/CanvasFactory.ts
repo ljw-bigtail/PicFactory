@@ -120,6 +120,37 @@ export const DefaultCanvasImgOptions = {
   scale: 0,
 };
 
+import sticker_1_1 from "../assets/sticker/pixel/1.svg";
+import sticker_1_2 from "../assets/sticker/pixel/2.svg";
+import sticker_1_3 from "../assets/sticker/pixel/3.svg";
+import sticker_1_4 from "../assets/sticker/pixel/4.svg";
+import sticker_1_5 from "../assets/sticker/pixel/5.svg";
+import sticker_1_6 from "../assets/sticker/pixel/6.svg";
+import sticker_1_7 from "../assets/sticker/pixel/7.svg";
+
+import sticker_2_1 from "../assets/sticker/clothes/1.svg";
+import sticker_2_2 from "../assets/sticker/clothes/2.svg";
+import sticker_2_3 from "../assets/sticker/clothes/3.svg";
+import sticker_2_4 from "../assets/sticker/clothes/4.svg";
+import sticker_2_5 from "../assets/sticker/clothes/5.svg";
+import sticker_2_6 from "../assets/sticker/clothes/6.svg";
+import sticker_2_7 from "../assets/sticker/clothes/7.svg";
+import sticker_2_8 from "../assets/sticker/clothes/8.svg";
+import sticker_2_9 from "../assets/sticker/clothes/9.svg";
+
+export const stickerArr = [
+  {
+    seriesName: '像素',
+    key: 'pixel',
+    src: [sticker_1_1,sticker_1_2,sticker_1_3,sticker_1_4,sticker_1_5,sticker_1_6,sticker_1_7]
+  },
+  {
+    seriesName: '服饰',
+    key: 'clothes',
+    src: [sticker_2_1,sticker_2_2,sticker_2_3,sticker_2_4,sticker_2_5,sticker_2_6,sticker_2_7,sticker_2_8,sticker_2_9]
+  },
+]
+
 
 import { saveAs } from "file-saver";
 import html2canvas from "html2canvas";

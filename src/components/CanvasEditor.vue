@@ -43,7 +43,7 @@
               transform: `rotateX(${element.rotateX}deg) rotateY(${element.rotateY}deg) rotateZ(${element.rotateZ}deg)`,
             }"
           />
-          <span class="icon-btn delete" @click="handleDel(index)"></span>
+          <span class="css-icon delete bold" @click="handleDel(index)"></span>
         </div>
       </div>
     </div>
@@ -439,10 +439,13 @@ const turnHandler = function () {
         background-color: var(--main-color-opacity);
         border-color: var(--main-color);
       }
-      .del-btn {
+      .delete {
         opacity: 0;
+        right: 0;
+        position: absolute;
+        border-radius: 50%;
       }
-      &:hover .del-btn {
+      &:hover .delete {
         opacity: 0.5;
         &:hover {
           opacity: 1;

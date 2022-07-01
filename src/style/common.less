@@ -23,6 +23,7 @@
   --header-height: 40px;
   --shadow: 0 0 20px 2px var(--color-light-gray);
   --shadow-dark: 0 0 20px 2px var(--color-dark-gray);
+  --shadow-light: 0 0 0 2px #fff;
   --title-size: 18px;
   --min-size: 14px;
   --large-size: 20px;
@@ -141,6 +142,7 @@ select {
 
 .css-icon,
 .icon-btn{
+  display: inline-block;
   position: relative;
   width: 32px;
   height: 32px;
@@ -173,6 +175,12 @@ select {
     }
     &::after {
       transform: translate(-50%, -50%) rotateZ(90deg);
+    }
+    &.bold{
+      &::before,
+      &::after {
+        box-shadow: var(--shadow-light);
+      }
     }
   }
   &.select {

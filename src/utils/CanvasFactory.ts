@@ -5,6 +5,7 @@ import typeimg4 from "../assets/canvasTypePic/type4.png";
 import typeimg5 from "../assets/canvasTypePic/type5.png";
 import typeimg6 from "../assets/canvasTypePic/type6.png";
 import typeimg7 from "../assets/canvasTypePic/type7.png";
+import typeimg8 from "../assets/canvasTypePic/type8.png";
 
 export const templateArr = [
   {
@@ -84,6 +85,17 @@ export const templateArr = [
       [[2, 2], [3, 3]],
       [[3, 2], [4, 3]],
     ],
+  },
+  {
+    src: typeimg8,
+    qty: [1, 1],
+    cells: [
+      [[0, 0], [1, 1]],
+    ],
+    default:{
+      height: 1080,
+      width: 1080,
+    }
   },
 ];
 

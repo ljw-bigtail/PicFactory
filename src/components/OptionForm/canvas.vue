@@ -1,25 +1,25 @@
 <template>
   <div class="form">
     <div>
-      <label>尺寸：</label>
+      <span>尺寸：</span>
       <Size :value="sizeValue" @change="sizeChange"></Size>
     </div>
     <Line />
     <div>
-      <label>间距：</label>
+      <span>间距：</span>
       <Range v-model:value="value.margin" @change="rangeChange" />
     </div>
     <div>
-      <label>边框：</label>
+      <span>边框：</span>
       <Range v-model:value="value.padding" @change="rangeChange" />
     </div>
     <div>
-      <label>圆角：</label>
+      <span>圆角：</span>
       <Range v-model:value="value.radius" @change="rangeChange" />
     </div>
     <Line />
     <div>
-      <label>移图方式：</label>
+      <span>移图方式：</span>
       <input
         type="radio"
         name="rule"
@@ -59,7 +59,7 @@ import Size from "./Item/size.vue";
 import Line from "../Line.vue";
 import Range from "../Range.vue";
 
-import { templateArr } from "../../utils/CanvasFactory";
+import { templateArr, DefaultCanvasFactoryOptions } from "../../utils/CanvasFactory";
 
 type SizeOption = {
   width: number;
@@ -104,6 +104,8 @@ const sizeChange = function (value: SizeOption) {
 const templateChange = function (index: number) {
   formChange({
     template: index,
+    width: templateArr[index].default?.width || DefaultCanvasFactoryOptions.width,
+    height: templateArr[index].default?.height || DefaultCanvasFactoryOptions.height,
   });
 };
 </script>

@@ -59,7 +59,7 @@ const logs = ref([] as { value: string; timestamp: string }[]);
 const galleryLoader = ref();
 const canvasEditor = ref();
 const tabSelect = ref("setting");
-const canvasForm = ref(DefaultCanvasFactoryOptions);
+const canvasForm = ref({ ...DefaultCanvasFactoryOptions });
 const files = ref();
 
 type FileOption = { id: string; src: string; file: File };

@@ -92,7 +92,7 @@ type TypeObject = {
 const props = defineProps({
   options: {
     type: Object,
-    default: DefaultCanvasFactoryOptions,
+    default: { ...DefaultCanvasFactoryOptions },
   },
 });
 

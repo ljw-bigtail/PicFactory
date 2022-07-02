@@ -31,22 +31,25 @@
                 插入
               </button>
             </div>
-            <!-- <button class="button large C" @click="makeFile('png')">插入贴纸</button> -->
             <Line />
             <div class="sticker-img">
-              <Tab v-model:selected="stickerTabSelect">
-                <TabPanel
+              <Accordion v-model:selected="stickerTabSelect">
+                <AccordionPanel
                   v-for="stickerItem in stickerArr"
                   :key="stickerItem.key"
                   :title="stickerItem.seriesName"
                 >
                   <ul class="sticker-list">
-                    <li v-for="item in stickerItem.src" @click="stickerAdd(item)">
-                      <img :src="item" alt="" srcset="" />
+                    <li
+                      v-for="item in stickerItem.src"
+                      @click="stickerAdd($event, item)"
+                      @mousedown="() => false"
+                    >
+                      <img :src="item" alt="" srcset="" @mousedown="stopHandler" />
                     </li>
                   </ul>
-                </TabPanel>
-              </Tab>
+                </AccordionPanel>
+              </Accordion>
             </div>
           </TabPanel>
         </Tab>
@@ -68,7 +71,7 @@
 <script setup lang="ts">
 import { ref, nextTick } from "vue";
 
-import { dateFmt } from "../../utils/utils";
+import { dateFmt, uuid } from "../../utils/utils";
 import {
   CanvasFactory,
   DefaultCanvasFactoryOptions,
@@ -80,6 +83,8 @@ import Log from "../../components/Log.vue";
 import Gallery from "../../components/Gallery/index.vue";
 import Tab from "../../components/Tab/Box.vue";
 import TabPanel from "../../components/Tab/Panel.vue";
+import Accordion from "../../components/Accordion/Box.vue";
+import AccordionPanel from "../../components/Accordion/Panel.vue";
 import CanvasOption from "../../components/Options/collage-canvas.vue";
 import CanvasEditor from "../../components/CanvasEditor.vue";
 import Line from "../../components/Line.vue";
@@ -92,9 +97,16 @@ const canvasEditor = ref();
 const tabSelect = ref("sticker");
 const canvasForm = ref({ ...DefaultCanvasFactoryOptions });
 const files = ref();
-const stickerTabSelect = ref(stickerArr[0].key);
+const stickerTabSelect = ref();
+// const stickerTabSelect = ref(stickerArr[0].key); // TODO 默认打开第一套贴纸
 const textSticker = ref();
+const fragmentData = ref([] as fragmentOpt[]);
 
+type fragmentOpt = {
+  type: "text" | "img";
+  value: string;
+  id: string;
+};
 type FileOption = { id: string; src: string; file: File };
 
 const handleDrop = function (data: FileOption) {
@@ -103,6 +115,10 @@ const handleDrop = function (data: FileOption) {
   img.onload = function (e) {
     canvasEditor.value.setDropCache({ ...data, width: img.width, height: img.height });
   };
+};
+const stopHandler = function (e: Event) {
+  e.stopPropagation();
+  e.preventDefault();
 };
 
 const clearFileCache = () => {
@@ -129,15 +145,30 @@ const makeFile = function (type: "png" | "jpg") {
   canvasFactory.toFile(type);
 };
 
-const stickerAdd = function (src: string) {
+const addFragment = function (opt: {}) {
+  canvasEditor.value.addFragment({
+    id: uuid(),
+    ...opt,
+  } as fragmentOpt);
+};
+
+const stickerAdd = function (e: Event, src: string) {
   // 添加贴纸
-  if (!src || src.trim() == "") return;
-  console.log(src, "src");
+  stopHandler(e);
+  if (!src) return;
+  addFragment({
+    type: "img",
+    value: src,
+  });
 };
 
 const textAdd = function () {
   // 添加文字
-  console.log(textSticker.value, "textSticker");
+  if (!textSticker.value || textSticker.value.trim() == "") return;
+  addFragment({
+    type: "text",
+    value: textSticker.value,
+  });
 };
 </script>
 
@@ -173,7 +204,7 @@ const textAdd = function () {
     justify-content: flex-start;
     font-size: 0;
     li {
-      width: 23%;
+      width: 18%;
       margin-right: 2%;
       margin-top: var(--space-1);
       border-radius: var(--radius-mini);

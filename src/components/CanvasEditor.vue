@@ -8,6 +8,7 @@
         height,
         padding,
       }"
+      @mousemove="fragmentMove"
     >
       <div
         class="canvas-editor__element__cell"
@@ -24,17 +25,17 @@
         }"
         @drop="dropAdd($event, index)"
         @dragover="dragEnter($event, index)"
-        @dragleave="dragLeave($event, index)"
+        @dragleave="dragLeave"
       >
         <div class="canvas-editor__element__cell__box">
           <img
             v-show="element.src != ''"
             :src="element.src"
-            @click="selectImgHandler($event, index)"
+            @click="imgSelectHandler($event, index)"
             @mousedown="imgMoveStart($event, index)"
-            @mouseup="imgMoveEnd()"
+            @mouseup="moveStop"
             @mousemove="imgMove($event, index)"
-            @mouseleave="imgMoveEnd()"
+            @mouseleave="moveStop"
             :style="{
               height: element.height * element.scale + 'px',
               width: element.width * element.scale + 'px',
@@ -46,23 +47,72 @@
           <span class="css-icon delete bold" @click="handleDel(index)"></span>
         </div>
       </div>
+      <div class="canvas-editor__element__fragment">
+        <div
+          class="canvas-editor__element__fragment__box"
+          v-for="(element, index) in fragmentList"
+          :key="`fragment_${index}}`"
+          :style="{
+            height: element.height * element.scale + 'px',
+            width: element.width * element.scale + 'px',
+            top: element.y + 'px',
+            left: element.x + 'px',
+          }"
+          @click="selectFragmentHandler($event, index)"
+          @mousedown="fragmentMoveStart($event, index)"
+          @mouseup="moveStop"
+        >
+          <div
+            v-if="element.type == 'img'"
+            :style="{
+              transform: `rotateZ(${element.rotateZ}deg)`,
+            }"
+          >
+            <img :src="element.value" />
+            <span class="css-icon delete bold" @click="handleFragmentDel(index)"></span>
+          </div>
+          <div
+            class="canvas-editor__element__fragment__box__text"
+            v-else-if="element.type == 'text'"
+            :style="{
+              transform: `rotateZ(${element.rotateZ}deg)`,
+            }"
+          >
+            <span>{{ element.value }}</span>
+            <span class="css-icon delete bold" @click="handleFragmentDel(index)"></span>
+          </div>
+        </div>
+      </div>
     </div>
-    <CanvasImgOption
-      ref="canvasImgOption"
-      v-model:value="canvasImgForm"
+    <CollageImgOption
+      ref="collageImgOption"
+      v-model:value="collageImgForm"
       :visible="selectImgIndex > -1"
       @change="scaleHandler"
       @flipX="flipXHandler"
       @flipY="flipYHandler"
       @turnAnti="turnAntiHandler"
       @turn="turnHandler"
-    ></CanvasImgOption>
+    ></CollageImgOption>
+    <!-- <CollageStickerOption
+      ref="collageStickerOption"
+      v-model:value="collageStickerForm"
+      :visible="selectStickerIndex > -1"
+      @change="scaleHandler"
+      @flipX="flipXHandler"
+      @flipY="flipYHandler"
+      @turnAnti="turnAntiHandler"
+      @turn="turnHandler"
+    ></CollageStickerOption> -->
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, watch } from "vue";
-import CanvasImgOption from "./Options/collage-img.vue";
+
+import CollageImgOption from "./Options/collage-img.vue";
+import CollageStickerOption from "./Options/collage-sticker.vue";
+import CollageTextOption from "./Options/collage-text.vue";
 
 import {
   DefaultCanvasFactoryOptions,
@@ -70,6 +120,16 @@ import {
   DefaultCellOptions,
   templateArr,
 } from "../utils/CanvasFactory";
+
+type CanvasOption = {
+  width: number;
+  height: number;
+  padding: number;
+  margin: number;
+  radius: number;
+  template: number;
+  rule: number;
+};
 
 type FileOption = {
   id: string;
@@ -85,15 +145,37 @@ type FileOption = {
   rotateZ: number;
 };
 
+type FragmentOption = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  scale: number;
+  rotateX: number;
+  rotateY: number;
+  rotateZ: number;
+};
+
+type fragmentProps = {
+  type: "text" | "img";
+  value: string;
+  id: string;
+};
+
 type TypeObject = {
   [key: string]: any;
 };
 
-const props = defineProps({
-  options: {
-    type: Object,
-    default: { ...DefaultCanvasFactoryOptions },
+type Props = {
+  options?: CanvasOption;
+  fragment?: fragmentProps[];
+};
+
+const props = withDefaults(defineProps<Props>(), {
+  options: () => {
+    return { ...DefaultCanvasFactoryOptions };
   },
+  fragment: () => [],
 });
 
 const width = ref("");
@@ -104,13 +186,26 @@ const template = ref(0);
 const cellsList = ref();
 const cellsImg = ref();
 
-const inDrag = ref("");
+const inDrag = ref(""); // 挪入的cell index
+
+const fragmentList = ref([] as any[]);
 
 let imgCache: FileOption | null = null;
 let clearIndexForImg: string = "";
 
-watch([props.options], function ([newOptions]) {
-  if (newOptions.height !== height.value || newOptions.width !== width.value) {
+// 缓存挪动对象数据
+let dragCache = {
+  position: {
+    x: 0, // 鼠标指针位置缓存x
+    y: 0, // 鼠标指针位置缓存y
+  },
+  index: -1, // 需要移动的对象index， -1为不选中
+  type: "", // img fragment
+};
+
+watch(props.options, function (newOptions, oldOptions) {
+  // 刷新配置属性
+  if (newOptions.height !== oldOptions.height || newOptions.width !== oldOptions.width) {
     resize();
     initCells();
   } else if (newOptions.template !== template.value) {
@@ -238,32 +333,40 @@ const handleDel = function (index: number) {
   }
 };
 
+const handleFragmentDel = function (index: number) {
+  // 清除贴纸
+  fragmentList.value.splice(index, 1);
+};
+
 const stopHandler = function (e: Event) {
   e.stopPropagation();
   e.preventDefault();
 };
 
+const moveStop = function () {
+  dragCache.index = -1;
+  dragCache.type = "";
+};
+
 // 图库挪入 start
-// 外部调用： 缓存挪入的图片数据
 const setDropCache = function (data: FileOption) {
-  // 设置图片缓存
+  // 外部调用： 缓存挪入的图片数据
   if (!data || !data.id || !data.file || !data.src) {
-    // updateImgCache();
     throw new Error("拖入文件数据异常");
   }
   // 拖入的图片 设置缓存
   updateImgCache({ ...data });
   clearIndexForImg = "";
 };
-defineExpose({ setDropCache });
 
-const dragLeave = function (e: DragEvent, index: number) {
+const dragLeave = function (e: DragEvent) {
   stopHandler(e);
   inDrag.value = "";
 };
 
 const dropAdd = function (e: DragEvent, index: number) {
   stopHandler(e);
+  if (dragCache.type != "") return;
   const _index = index.toString();
   if (_index == "" || clearIndexForImg == _index) return;
   // 缓存移出img数据数据
@@ -292,6 +395,7 @@ const dropAdd = function (e: DragEvent, index: number) {
 
 const dragStart = function (index: number) {
   // 缓存： 记录当前的position 拖拽进其他cell
+  if (dragCache.type != "") return;
   const _index = index.toString();
   updateImgCache({ ...cellsImg.value[_index] }, _index);
   clearIndexForImg = _index.toString();
@@ -299,37 +403,55 @@ const dragStart = function (index: number) {
 
 const dragEnter = function (e: DragEvent, index: number) {
   stopHandler(e);
+  if (dragCache.type != "") return;
   if (inDrag.value == index.toString()) return;
   inDrag.value = index.toString();
 };
 // 图库挪入 end
 
-// 图片内部挪动 start
-let dragPositionCache = {
-  x: 0,
-  y: 0,
-}; // 鼠标指针位置缓存
-let moveState = -1; // 是否开启移动事件
+// 添加贴纸 start
+const addFragment = function (data: fragmentProps) {
+  fragmentList.value.push(
+    Object.assign({
+      // 文字用
+      size: 12,
+      color: "#fff",
+      // 图片用
+      width: 60,
+      height: 60,
+      // public
+      x: 0, // 定位 x
+      y: 0, // 定位 y
+      scale: 1, // 缩放 100% ～ 200%
+      rotateZ: 0, // 中心旋转
+      value: data.value,
+      id: data.id,
+      type: data.type,
+    })
+  );
+};
+// 添加贴纸 end
+defineExpose({ setDropCache, addFragment });
 
+// 图片内部挪动 start
 const imgMoveStart = function (e: MouseEvent, index: number) {
-  moveState = index;
-  // 缓存： 记录当前的position 拖拽进其他cell
   dragStart(index);
-  // 初始化移动起点
-  dragPositionCache = {
-    x: e.clientX - (e.target as HTMLElement).offsetLeft,
-    y: e.clientY - (e.target as HTMLElement).offsetTop,
+  // 缓存：记录当前的position 拖拽进其他cell
+  // 移动起点
+  dragCache = {
+    position: {
+      x: e.clientX - (e.target as HTMLElement).offsetLeft,
+      y: e.clientY - (e.target as HTMLElement).offsetTop,
+    },
+    index,
+    type: "img",
   };
 };
 
-const imgMoveEnd = function () {
-  moveState = -1;
-};
-
 const imgMove = function (e: MouseEvent, index: number) {
-  stopHandler(e);
-  if (moveState == -1) return;
-  if (moveState !== index) return;
+  e.preventDefault();
+  if (dragCache.type !== "img" || dragCache.index == -1) return;
+  if (dragCache.index !== index) return;
   function getSize(type: "x" | "y") {
     function getValByMax(len: number, max_len: number) {
       // 边界判断 根据边距修改值
@@ -342,10 +464,10 @@ const imgMove = function (e: MouseEvent, index: number) {
       }
     }
     if (type == "x") {
-      return e.clientX != dragPositionCache.x
+      return e.clientX != dragCache.position.x
         ? (function () {
             const disX = e.clientX - (e.target as HTMLElement).offsetLeft;
-            const len = cellsImg.value[index].x + disX - dragPositionCache.x;
+            const len = cellsImg.value[index].x + disX - dragCache.position.x;
             const max_len =
               cellsImg.value[index].width * cellsImg.value[index].scale -
               cellsList.value[index].width;
@@ -353,10 +475,10 @@ const imgMove = function (e: MouseEvent, index: number) {
           })()
         : 0;
     } else if (type == "y") {
-      return e.clientY != dragPositionCache.y
+      return e.clientY != dragCache.position.y
         ? (function () {
             const disY = e.clientY - (e.target as HTMLElement).offsetTop; // 鼠标位移距离
-            const len = cellsImg.value[index].y + disY - dragPositionCache.y; // 图片位移距离
+            const len = cellsImg.value[index].y + disY - dragCache.position.y; // 图片位移距离
             const max_len =
               cellsImg.value[index].height * cellsImg.value[index].scale -
               cellsList.value[index].height; // 图片位移边距
@@ -367,18 +489,47 @@ const imgMove = function (e: MouseEvent, index: number) {
   }
   cellsImg.value[index].x = getSize("x");
   cellsImg.value[index].y = getSize("y");
+  // 因为图片较大，所以这里不需要缓存新的鼠标位置
 };
 // 图片内部挪动 end
 
+// 碎片挪动 start
+const fragmentMoveStart = function (e: MouseEvent, index: number) {
+  stopHandler(e);
+  // 初始化移动起点
+  dragCache = {
+    position: {
+      x: e.clientX,
+      y: e.clientY,
+    },
+    index,
+    type: "fragment",
+  };
+};
+const fragmentMove = function (e: MouseEvent) {
+  // 贴纸拖拽
+  if (dragCache.type != "fragment" || dragCache.index == -1) return;
+  stopHandler(e);
+  // 刷新位置
+  fragmentList.value[dragCache.index].x += e.clientX - dragCache.position.x;
+  fragmentList.value[dragCache.index].y += e.clientY - dragCache.position.y;
+  // 缓存
+  dragCache.position = {
+    x: e.clientX,
+    y: e.clientY,
+  };
+};
+// 碎片挪动 end
+
 // 图片编辑 start
-const canvasImgOption = ref();
-const canvasImgForm = ref({ ...DefaultCanvasImgOptions });
+const collageImgOption = ref();
+const collageImgForm = ref({ ...DefaultCanvasImgOptions });
 const selectImgIndex = ref(-1);
 
-const selectImgHandler = function (e: Event, index: number) {
+const imgSelectHandler = function (e: Event, index: number) {
   stopHandler(e);
   selectImgIndex.value = index;
-  canvasImgOption.value.setScale(cellsImg.value[index].scale - 1);
+  collageImgOption.value.setScale(cellsImg.value[index].scale - 1);
 };
 
 const clearSelectHandler = function (e: Event) {
@@ -388,7 +539,7 @@ const clearSelectHandler = function (e: Event) {
 
 const scaleHandler = function () {
   if (selectImgIndex.value == -1) return;
-  cellsImg.value[selectImgIndex.value].scale = canvasImgForm.value.scale + 1;
+  cellsImg.value[selectImgIndex.value].scale = collageImgForm.value.scale + 1;
 };
 
 const flipXHandler = function () {
@@ -409,6 +560,19 @@ const turnHandler = function () {
   cellsImg.value[selectImgIndex.value].rotateZ += 90;
 };
 // 图片编辑end
+
+// 碎片编辑 start
+const collageStickerOption = ref();
+const collageStickerForm = ref({ ...DefaultCanvasImgOptions });
+const selectStickerIndex = ref(-1);
+
+const selectFragmentHandler = function (e: Event, index: number) {
+  stopHandler(e);
+  selectStickerIndex.value = index;
+  // collageImgOption.value.setScale(cellsImg.value[index].scale - 1);
+};
+
+// 碎片编辑 end
 </script>
 
 <style lang="less" scoped>
@@ -444,6 +608,7 @@ const turnHandler = function () {
         right: 0;
         position: absolute;
         border-radius: 50%;
+        cursor: pointer;
       }
       &:hover .delete {
         opacity: 0.5;
@@ -458,6 +623,35 @@ const turnHandler = function () {
         width: 100%;
         img {
           position: absolute;
+        }
+      }
+    }
+    &__fragment {
+      &__box {
+        position: absolute;
+        cursor: pointer;
+        &__text {
+          padding: var(--space-1);
+          border-radius: var(--radius-mini);
+          border: var(--border-main);
+          border-color: var(--color-white);
+          &:hover {
+            border-color: var(--color-black);
+          }
+        }
+        img {
+          width: 100%;
+          height: 100%;
+        }
+        .delete {
+          position: absolute;
+          right: 0;
+          top: 0;
+          opacity: 0;
+          transform: rotateZ(45deg) translate(0, -60%);
+        }
+        &:hover .delete {
+          opacity: 1;
         }
       }
     }

@@ -53,8 +53,6 @@
           v-for="(element, index) in fragmentList"
           :key="`fragment_${index}}`"
           :style="{
-            height: element.height * element.scale + 'px',
-            width: element.width * element.scale + 'px',
             top: element.y + 'px',
             left: element.x + 'px',
           }"
@@ -65,20 +63,30 @@
           <div
             v-if="element.type == 'img'"
             :style="{
-              transform: `rotateZ(${element.rotateZ}deg)`,
+              height: element.height * element.scale + 'px',
+              width: element.width * element.scale + 'px',
             }"
           >
-            <img :src="element.value" />
+            <img
+              :src="element.value"
+              :style="{
+                transform: `rotateZ(${element.rotateZ}deg)`,
+              }"
+            />
             <span class="css-icon delete bold" @click="handleFragmentDel(index)"></span>
           </div>
           <div
             class="canvas-editor__element__fragment__box__text"
             v-else-if="element.type == 'text'"
-            :style="{
-              transform: `rotateZ(${element.rotateZ}deg)`,
-            }"
           >
-            <span>{{ element.value }}</span>
+            <span
+              :style="{
+                transform: `rotateZ(${element.rotateZ}deg)`,
+                color: `${element.color}`,
+                fontSize: `${Math.floor(element.size * (80 - 12)) + 12}px`,
+              }"
+              >{{ element.value }}</span
+            >
             <span class="css-icon delete bold" @click="handleFragmentDel(index)"></span>
           </div>
         </div>
@@ -93,17 +101,19 @@
       @flipY="flipYHandler"
       @turnAnti="turnAntiHandler"
       @turn="turnHandler"
-    ></CollageImgOption>
-    <!-- <CollageStickerOption
-      ref="collageStickerOption"
+    />
+    <CollageStickerOption
       v-model:value="collageStickerForm"
-      :visible="selectStickerIndex > -1"
-      @change="scaleHandler"
-      @flipX="flipXHandler"
-      @flipY="flipYHandler"
-      @turnAnti="turnAntiHandler"
-      @turn="turnHandler"
-    ></CollageStickerOption> -->
+      :visible="selectStickerIndex > -1 && fragmentList[selectStickerIndex].type == 'img'"
+      @change="stickerChangeHandler"
+    />
+    <CollageTextOption
+      v-model:value="collageTextForm"
+      :visible="
+        selectStickerIndex > -1 && fragmentList[selectStickerIndex].type == 'text'
+      "
+      @change="textChangeHandler"
+    />
   </div>
 </template>
 
@@ -117,6 +127,8 @@ import CollageTextOption from "./Options/collage-text.vue";
 import {
   DefaultCanvasFactoryOptions,
   DefaultCanvasImgOptions,
+  DefaultCanvasStickerOptions,
+  DefaultCanvasTextOptions,
   DefaultCellOptions,
   templateArr,
 } from "../utils/CanvasFactory";
@@ -414,15 +426,15 @@ const addFragment = function (data: fragmentProps) {
   fragmentList.value.push(
     Object.assign({
       // 文字用
-      size: 12,
-      color: "#fff",
+      size: DefaultCanvasTextOptions.size,
+      color: DefaultCanvasTextOptions.color,
       // 图片用
-      width: 60,
-      height: 60,
+      width: DefaultCanvasStickerOptions.width,
+      height: DefaultCanvasStickerOptions.height,
+      scale: DefaultCanvasStickerOptions.scale, // 缩放 50% ～ 150%
       // public
       x: 0, // 定位 x
       y: 0, // 定位 y
-      scale: 1, // 缩放 100% ～ 200%
       rotateZ: 0, // 中心旋转
       value: data.value,
       id: data.id,
@@ -533,8 +545,9 @@ const imgSelectHandler = function (e: Event, index: number) {
 };
 
 const clearSelectHandler = function (e: Event) {
-  stopHandler(e);
+  e.stopPropagation();
   selectImgIndex.value = -1;
+  selectStickerIndex.value = -1;
 };
 
 const scaleHandler = function () {
@@ -562,16 +575,38 @@ const turnHandler = function () {
 // 图片编辑end
 
 // 碎片编辑 start
-const collageStickerOption = ref();
-const collageStickerForm = ref({ ...DefaultCanvasImgOptions });
 const selectStickerIndex = ref(-1);
-
 const selectFragmentHandler = function (e: Event, index: number) {
   stopHandler(e);
   selectStickerIndex.value = index;
-  // collageImgOption.value.setScale(cellsImg.value[index].scale - 1);
 };
 
+// 碎片-图片
+const collageStickerForm = ref({
+  ...DefaultCanvasStickerOptions,
+  rotateZ: 0,
+});
+const stickerChangeHandler = function () {
+  if (selectStickerIndex.value == -1 || !fragmentList.value[selectStickerIndex.value])
+    return;
+  fragmentList.value[selectStickerIndex.value].rotateZ =
+    collageStickerForm.value.rotateZ * 360;
+  fragmentList.value[selectStickerIndex.value].scale = collageStickerForm.value.scale;
+};
+
+// 碎片-文本
+const collageTextForm = ref({
+  ...DefaultCanvasTextOptions,
+  rotateZ: 0,
+});
+const textChangeHandler = function () {
+  if (selectStickerIndex.value == -1 || !fragmentList.value[selectStickerIndex.value])
+    return;
+  fragmentList.value[selectStickerIndex.value].rotateZ =
+    collageTextForm.value.rotateZ * 360;
+  fragmentList.value[selectStickerIndex.value].size = collageTextForm.value.size;
+  fragmentList.value[selectStickerIndex.value].color = collageTextForm.value.color;
+};
 // 碎片编辑 end
 </script>
 
@@ -634,9 +669,13 @@ const selectFragmentHandler = function (e: Event, index: number) {
           padding: var(--space-1);
           border-radius: var(--radius-mini);
           border: var(--border-main);
+          border-style: dashed;
           border-color: var(--color-white);
           &:hover {
             border-color: var(--color-black);
+          }
+          span {
+            display: block;
           }
         }
         img {

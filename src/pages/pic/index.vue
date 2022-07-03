@@ -25,7 +25,7 @@
           </TabPanel>
           <TabPanel key="sticker" title="贴纸">
             <div class="sticker-text">
-              <input v-model="textSticker" placeholder="请输入需要插入的文字" />
+              <textarea v-model="textSticker" placeholder="请输入需要插入的文字" />
               <button class="button button-icon B" @click="textAdd">
                 <span class="css-icon plus"></span>
                 插入
@@ -93,14 +93,11 @@ const logs = ref([] as { value: string; timestamp: string }[]);
 // const previewSrc = ref("");
 const galleryLoader = ref();
 const canvasEditor = ref();
-// const tabSelect = ref("setting");
-const tabSelect = ref("sticker");
+const tabSelect = ref("setting");
 const canvasForm = ref({ ...DefaultCanvasFactoryOptions });
 const files = ref();
-const stickerTabSelect = ref();
-// const stickerTabSelect = ref(stickerArr[0].key); // TODO 默认打开第一套贴纸
+const stickerTabSelect = ref(stickerArr[0].key); // 默认打开第一套贴纸
 const textSticker = ref();
-const fragmentData = ref([] as fragmentOpt[]);
 
 type fragmentOpt = {
   type: "text" | "img";
@@ -169,6 +166,7 @@ const textAdd = function () {
     type: "text",
     value: textSticker.value,
   });
+  textSticker.value = "";
 };
 </script>
 
@@ -186,14 +184,20 @@ const textAdd = function () {
 }
 .sticker-text {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: var(--space-1) 0 var(--space-2);
-  input {
-    text-align: center;
-    padding: 6px 12px;
-    border-radius: var(--radius-mini);
+  align-items: flex-end;
+  justify-content: space-between;
+  box-shadow: var(--shadow);
+  margin: var(--space-1) 0;
+  padding: var(--space-1);
+  textarea {
+    flex: 1;
+    padding: 0 var(--space-1);
+    border: none;
+    height: 8em;
     margin-right: var(--space-1);
+    &:focus {
+      outline: none;
+    }
   }
 }
 .sticker-img {

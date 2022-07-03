@@ -119,6 +119,15 @@ export const DefaultCanvasFactoryOptions = {
 export const DefaultCanvasImgOptions = {
   scale: 0,
 };
+export const DefaultCanvasStickerOptions = {
+  scale: 0.5,
+  width: 120,
+  height: 120,
+};
+export const DefaultCanvasTextOptions = {
+  size: 0,
+  color: "#000000",
+};
 
 import sticker_1_1 from "../assets/sticker/pixel/1.svg";
 import sticker_1_2 from "../assets/sticker/pixel/2.svg";

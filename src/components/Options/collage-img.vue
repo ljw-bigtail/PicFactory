@@ -66,30 +66,5 @@ const rangeChange = function () {
 </script>
 
 <style lang="less" scoped>
-.img-tool {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%) translateY(calc(100% + 10px));
-  background-color: var(--color-white);
-  box-shadow: var(--shadow-dark);
-  border-radius: var(--radius-mini);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-1_5);
-  transition: all 0.3s;
-  &.active {
-    transform: translateX(-50%) translateY(0);
-  }
-  > div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    label {
-      white-space: nowrap;
-      font-size: 80%;
-    }
-  }
-}
+@import url("./collage-float-opt.less");
 </style>

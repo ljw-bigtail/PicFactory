@@ -41,7 +41,7 @@ const toggleFooter = function () {
 </script>
 
 <style lang="less">
-@import "../style/common.less";
+@import url("../style/common.less");
 .layout {
   position: relative;
   height: 100vh;

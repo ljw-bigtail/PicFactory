@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 const { resolve } = require('path')
+import addHeadersPlugin from './src/plugins/addHeaders.js'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [addHeadersPlugin(), vue()],
   build: {
     rollupOptions: {
       input: {
@@ -14,5 +15,5 @@ export default defineConfig({
       }
     }
   },
-  base: "/tools/"
+  base: "/tools/",
 })

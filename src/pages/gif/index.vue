@@ -26,7 +26,14 @@
         </div>
       </div>
       <div class="right">
-        <img :src="previewSrc" class="previewImg" />
+        <video
+          :src="previewSrc"
+          class="previewImg"
+          width=""
+          height=""
+          controls
+          autoplay
+        ></video>
       </div>
     </template>
     <template v-slot:footer>
@@ -81,12 +88,11 @@ const addLog = (mes: string) => {
 };
 
 const makePreview = function () {
-  console.log(files.value);
   paintsFactory
     .setOpt(gifForm.value)
     .toBlob(files.value)
-    .then(() => {
-      previewSrc.value = paintsFactory.toPreView();
+    .then(async () => {
+      previewSrc.value = await paintsFactory.toPreView();
     })
     .catch((e) => {
       console.log(e);

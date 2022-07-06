@@ -8,6 +8,7 @@
     "preview": "yarn run build && vite preview"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.10.1",
     "file-saver": "^2.0.5",
     "gif.js": "^0.2.0",
     "html2canvas": "^1.4.1",
@@ -15,6 +16,7 @@
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
+    "@ffmpeg/core": "^0.10.0",
     "@types/file-saver": "^2.0.5",
     "@types/gif.js": "^0.2.2",
     "@types/node": "^17.0.41",

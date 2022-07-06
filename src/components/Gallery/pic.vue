@@ -24,7 +24,6 @@ const handleDel = () => {
   emit("del");
 };
 const handleClick = () => {
-  console.log(props.inselect);
   if (props.inselect) {
     emit("select");
   }

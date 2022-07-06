@@ -1,5 +1,7 @@
 import GIF from "gif.js";
 import { saveAs } from 'file-saver';
+import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
+import { dateFmt } from "./utils";
 
 type Option = {
   width: number,
@@ -15,11 +17,18 @@ type ImageOption = {
   canvas: HTMLCanvasElement
 }
 
+const ffmpeg = createFFmpeg({
+  log: true,
+});
+
 export class PaintsFactory {
   options: Option
   blob: Blob | null
+  buffer: ArrayBufferLike|null
+  ffmpeg: any
   constructor() {
     this.blob = null
+    this.buffer = null
     this.options = {
       width: 900,
       height: 1600,
@@ -28,6 +37,9 @@ export class PaintsFactory {
       background: '#FFFFFF',
       rule: 3,
     }
+    this.ffmpeg = createFFmpeg({
+      log: true,
+    });
   }
   setOpt(opt: {}) {
     this.options = Object.assign(this.options, opt)
@@ -140,21 +152,54 @@ export class PaintsFactory {
       });
     })
   }
-  toPreView(){
+  async toPreView(){
     if(!this.blob) return ''
+    await this.mixinMusic()
+    if(!this.buffer) return ''
     // 生成预览
-    return URL.createObjectURL(this.blob)
+    return URL.createObjectURL(new Blob([this.buffer], { type: 'video/mp4' }))
   }
-  toFile(fileType: 'gif' | 'mp4') {
-    if(!this.blob) return
-    if (fileType == 'gif') {
-      // 生成下载
-      saveAs(this.blob, 'image.gif');
-    } else if (fileType == 'mp4') {
-      // 生成mp4
-      // this.blob.type = 'video/mp4'
-      saveAs(this.blob, 'video.mp4');
+  async toFile(fileType: 'gif' | 'mp4') {
+    const fileName = `${fileType}-${dateFmt()}.${fileType}`
+    switch(fileType){
+      case 'gif': 
+        if(this.blob){ // 生成gif
+          saveAs(this.blob, fileName);
+          this.blob = null
+        }
+      break;
+      case 'mp4': 
+        if(!this.buffer){  // 生成mp4
+          await this.mixinMusic()
+        }
+        if(this.buffer){
+          saveAs(new Blob([this.buffer], { type: 'video/mp4' }), fileName);
+          this.buffer = null
+        }
+
+      break;
     }
-    this.blob = null
+  }
+  async mixinMusic(){
+    if(!this.blob) return
+
+    if(!ffmpeg.isLoaded()){
+      await ffmpeg.load();
+    }
+
+    const inFile = 'in.mp4', outFile = 'out.mp4';
+
+    // ffmpeg.FS("writeFile", "video.mp4", await fetchFile('../assets/1.mp4'));
+    console.log(typeof this.blob);
+    
+    ffmpeg.FS('writeFile', inFile, await fetchFile(this.blob));
+    // ffmpeg.FS('writeFile', inFile, await fetchFile(testFile));
+    // ffmpeg.FS('writeFile', 'music.mp3', await fetchFile('../assets/music.mp3'));
+    
+    // ffmpeg -i video.mp4 -i audio.wav -c:v copy -c:a aac -strict experimental -map 0:v:0 -map 1:a:0 output.mp4
+    // await ffmpeg.run('-i', 'bj.mp4', '-i', 'music.mp3', '-c:v', 'copy', '-c:a', 'aac', '-strict', 'experimental', '-map', '0:v:0', '-map', '1:a:0', 'output.mp4');
+    await ffmpeg.run('-i', inFile, outFile);
+    
+    this.buffer = ffmpeg.FS('readFile', outFile).buffer
   }
 } 

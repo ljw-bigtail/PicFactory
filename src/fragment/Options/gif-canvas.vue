@@ -78,7 +78,8 @@
 import { ref } from "vue";
 
 import Size from "./Item/size.vue";
-import Line from "../Line.vue";
+import Line from "../../components/Line.vue";
+
 type GIFOption = {
   width: number;
   height: number;

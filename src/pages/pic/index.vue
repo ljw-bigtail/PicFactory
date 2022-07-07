@@ -80,14 +80,15 @@ import {
 
 import BaseLayout from "../../layouts/BaseLayout.vue";
 import Log from "../../components/Log.vue";
-import Gallery from "../../components/Gallery/index.vue";
 import Tab from "../../components/Tab/Box.vue";
 import TabPanel from "../../components/Tab/Panel.vue";
 import Accordion from "../../components/Accordion/Box.vue";
 import AccordionPanel from "../../components/Accordion/Panel.vue";
-import CanvasOption from "../../components/Options/collage-canvas.vue";
-import CanvasEditor from "../../components/CanvasEditor.vue";
 import Line from "../../components/Line.vue";
+
+import Gallery from "../../fragment/Gallery/index.vue";
+import CanvasOption from "../../fragment/Options/collage-canvas.vue";
+import CanvasEditor from "../../fragment/CanvasEditor.vue";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
 // const previewSrc = ref("");

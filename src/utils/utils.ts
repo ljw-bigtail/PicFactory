@@ -70,6 +70,24 @@ export const Cache = {
   }
 }
 
+type FileOption = {
+  id: string;
+  src: string;
+  file: File;
+  selected: boolean;
+};
+
+type ImgsOption = FileOption & {
+  rotateX: number;
+  rotateY: number;
+  rotateZ: number;
+};
+
+export const imgFilp = (imgs: ImgsOption[])=>{
+
+  
+}
+
 export default {
   dateFmt,
   uuid,

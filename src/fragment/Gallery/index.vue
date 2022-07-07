@@ -66,6 +66,8 @@ import { uuid } from "../../utils/utils";
 import PicItem from "./pic.vue";
 import Icon from "../../components/Icon.vue";
 
+import { Img } from "../../type/img";
+
 // TODO 拖拽组件：批量拖拽
 
 const props = defineProps({
@@ -87,13 +89,11 @@ const props = defineProps({
   },
 });
 
-type FileOption = { id: string; src: string; file: File; selected: boolean };
-
 const emit = defineEmits(["update:value", "change", "drop", "log", "decision"]);
 
 const inDrag = ref(false);
 const inSelect = ref(false);
-const fileList = ref(props.value as FileOption[]);
+const fileList = ref(props.value as Img[]);
 
 const triggerClick = function () {
   const input: HTMLInputElement = document.querySelector(
@@ -102,7 +102,7 @@ const triggerClick = function () {
   input.click();
 };
 
-const handelDropPic = function (item: FileOption) {
+const handelDropPic = function (item: Img) {
   emit("drop", item);
 };
 
@@ -204,8 +204,8 @@ const handleSelect = function (index: number) {
 const handleTopping = function () {
   // 置顶
   if (!inSelect.value) return;
-  const select: FileOption[] = [],
-    other: FileOption[] = [];
+  const select: Img[] = [],
+    other: Img[] = [];
   [...fileList.value].forEach((e) => {
     if (e.selected) {
       select.push(e);
@@ -213,7 +213,7 @@ const handleTopping = function () {
       other.push(e);
     }
   });
-  fileList.value = ([] as FileOption[]).concat(select, other);
+  fileList.value = ([] as Img[]).concat(select, other);
   // 清除状态
   inSelect.value = false;
   if (!props.need_decision) {

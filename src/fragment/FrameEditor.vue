@@ -14,9 +14,9 @@
         </div>
         <div class="tools icon-group">
           <Icon type="flip-x" @click="flipXHandler(index)"></Icon>
-          <Icon type="flip-y" @click="flipYHandler(index)"></Icon>
-          <Icon type="rotate" @click="turnAntiHandler(index)"></Icon>
-          <Icon type="rotate-90" @click="turnHandler(index)"></Icon>
+          <!-- <Icon type="flip-y" @click="flipYHandler(index)"></Icon> -->
+          <!-- <Icon type="rotate" @click="turnAntiHandler(index)"></Icon> -->
+          <!-- <Icon type="rotate-90" @click="turnHandler(index)"></Icon> -->
         </div>
       </li>
     </ul>
@@ -26,24 +26,13 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 
+import { Img, Frame } from "../type/video";
+
 import Icon from "../components/Icon.vue";
 
-type FileOption = {
-  id: string;
-  src: string;
-  file: File;
-  selected: boolean;
-};
+const props = defineProps<{ list: Frame[] }>();
 
-type ImgsOption = FileOption & {
-  rotateX: number;
-  rotateY: number;
-  rotateZ: number;
-};
-
-const props = defineProps<{ list: FileOption[] }>();
-
-const imgs = ref([] as ImgsOption[]);
+const imgs = ref([] as Img[]);
 
 watch(props, function () {
   imgs.value = props.list.map((e) => {
@@ -60,6 +49,10 @@ watch(props, function () {
         );
   });
 });
+
+const getImgPaint = function () {};
+
+defineExpose({ getImgPaint });
 
 const flipXHandler = function (index: number) {
   imgs.value[index].rotateY = imgs.value[index].rotateY == 0 ? 180 : 0;

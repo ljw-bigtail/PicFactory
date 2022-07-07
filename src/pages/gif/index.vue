@@ -21,22 +21,23 @@
         </Tab>
         <div class="btn-group center">
           <button class="button large" @click="makePreview">生成预览</button>
-          <button class="button large C" @click="makeFile('gif')">下载GIF</button>
-          <button class="button large C" @click="makeFile('mp4')">下载MP4</button>
+          <!-- <button class="button large C" @click="makeFile('gif')">下载GIF</button>
+          <button class="button large C" @click="makeFile('mp4')">下载MP4</button> -->
         </div>
       </div>
       <div class="right">
-        <img :src="previewSrc" class="previewImg" />
+        <VideoEditor></VideoEditor>
       </div>
     </template>
     <template v-slot:footer>
       <Log :logs="logs"></Log>
     </template>
   </BaseLayout>
+  <PreViewDialog ref="previewDialog" @footer-click="makeFile" />
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from "vue";
+import { ref, nextTick, onMounted } from "vue";
 
 import { dateFmt } from "../../utils/utils";
 import { PaintsFactory } from "../../utils/PaintsFactory";
@@ -47,11 +48,13 @@ import Tab from "../../components/Tab/Box.vue";
 import TabPanel from "../../components/Tab/Panel.vue";
 import Gallery from "../../components/Gallery/index.vue";
 import GIFOption from "../../components/Options/gif-canvas.vue";
+import PreViewDialog from "../../components/PreViewDialog.vue";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
 const tabSelect = ref("library");
 const previewSrc = ref("");
 const galleryLoader = ref();
+const previewDialog = ref();
 const gifForm = ref({
   width: 900,
   height: 1600,
@@ -81,12 +84,12 @@ const addLog = (mes: string) => {
 };
 
 const makePreview = function () {
-  console.log(files.value);
+  previewDialog.value.load();
   paintsFactory
     .setOpt(gifForm.value)
     .toBlob(files.value)
     .then(() => {
-      previewSrc.value = paintsFactory.toPreView();
+      previewDialog.value.display(paintsFactory.toPreView());
     })
     .catch((e) => {
       console.log(e);

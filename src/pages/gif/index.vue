@@ -32,7 +32,7 @@
         <div class="btn-group right">
           <button class="button A" @click="clearFileCache">清理帧</button>
         </div>
-        <FrameEditor :list="listImgs"></FrameEditor>
+        <FrameEditor ref="frameEditor" :list="listImgs"></FrameEditor>
       </div>
     </template>
     <template v-slot:footer>
@@ -63,6 +63,7 @@ const tabSelect = ref("library");
 const previewSrc = ref("");
 const galleryLoader = ref();
 const previewDialog = ref();
+const frameEditor = ref();
 const gifForm = ref({
   width: 900,
   height: 1600,
@@ -92,11 +93,13 @@ const addLog = (mes: string) => {
   });
 };
 
-const makePreview = function () {
+const makePreview = async function () {
   previewDialog.value.load();
+  var frames = frameEditor.value.getFrames();
   paintsFactory
     .setOpt(gifForm.value)
-    .toBlob(files.value)
+    .setFrame(frames)
+    .toBlob()
     .then(() => {
       previewDialog.value.display(paintsFactory.toPreView());
     })
@@ -106,9 +109,11 @@ const makePreview = function () {
 };
 
 const makeFile = function (type: "gif" | "mp4") {
+  var frames = frameEditor.value.getFrames();
   paintsFactory
     .setOpt(gifForm.value)
-    .toBlob(files.value)
+    .setFrame(frames)
+    .toBlob()
     .then(() => {
       paintsFactory.toFile(type);
     })

@@ -14,9 +14,9 @@
         </div>
         <div class="tools icon-group">
           <Icon type="flip-x" @click="flipXHandler(index)"></Icon>
-          <!-- <Icon type="flip-y" @click="flipYHandler(index)"></Icon> -->
-          <!-- <Icon type="rotate" @click="turnAntiHandler(index)"></Icon> -->
-          <!-- <Icon type="rotate-90" @click="turnHandler(index)"></Icon> -->
+          <!-- <Icon type="flip-y" @click="flipYHandler(index)"></Icon>
+          <Icon type="rotate" @click="turnAntiHandler(index)"></Icon>
+          <Icon type="rotate-90" @click="turnHandler(index)"></Icon> -->
         </div>
       </li>
     </ul>
@@ -30,9 +30,9 @@ import { Img, Frame } from "../type/video";
 
 import Icon from "../components/Icon.vue";
 
-const props = defineProps<{ list: Frame[] }>();
+const props = defineProps<{ list: Img[] }>();
 
-const imgs = ref([] as Img[]);
+const imgs = ref([] as Frame[]);
 
 watch(props, function () {
   imgs.value = props.list.map((e) => {
@@ -50,9 +50,11 @@ watch(props, function () {
   });
 });
 
-const getImgPaint = function () {};
+const getFrames = function () {
+  return imgs.value.map((e) => ({ ...e }));
+};
 
-defineExpose({ getImgPaint });
+defineExpose({ getFrames });
 
 const flipXHandler = function (index: number) {
   imgs.value[index].rotateY = imgs.value[index].rotateY == 0 ? 180 : 0;

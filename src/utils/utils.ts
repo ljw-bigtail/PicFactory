@@ -83,11 +83,6 @@ type ImgsOption = FileOption & {
   rotateZ: number;
 };
 
-export const imgFilp = (imgs: ImgsOption[])=>{
-
-  
-}
-
 export default {
   dateFmt,
   uuid,

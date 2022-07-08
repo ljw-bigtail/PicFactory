@@ -60,7 +60,7 @@ import Size from "./Item/size.vue";
 import Line from "../../components/Line.vue";
 import Range from "../../components/Range.vue";
 
-import { templateArr, DefaultCanvasFactoryOptions } from "../../utils/CanvasFactory.ts";
+import { templateArr, DefaultCanvasFactoryOptions } from "../../utils/CanvasFactory";
 
 type SizeOption = {
   width: number;

@@ -215,14 +215,10 @@ let dragCache = {
   type: "", // img fragment
 };
 
-watch(props.options, function (newOptions, oldOptions) {
+watch(props.options, function () {
   // 刷新配置属性
-  if (newOptions.height !== oldOptions.height || newOptions.width !== oldOptions.width) {
-    resize();
-    initCells();
-  } else if (newOptions.template !== template.value) {
-    initCells();
-  }
+  resize();
+  initCells();
 });
 
 onMounted(function () {

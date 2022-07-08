@@ -104,8 +104,14 @@ const sizeChange = function (value: SizeOption) {
 const templateChange = function (index: number) {
   formChange({
     template: index,
-    width: templateArr[index].default?.width || DefaultCanvasFactoryOptions.width,
-    height: templateArr[index].default?.height || DefaultCanvasFactoryOptions.height,
+    width:
+      templateArr[index].default?.width ||
+      sizeValue.value.width ||
+      DefaultCanvasFactoryOptions.width,
+    height:
+      templateArr[index].default?.height ||
+      sizeValue.value.height ||
+      DefaultCanvasFactoryOptions.height,
   });
 };
 </script>

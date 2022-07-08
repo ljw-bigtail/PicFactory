@@ -56,8 +56,9 @@
 import { ref } from "vue";
 
 import Size from "./Item/size.vue";
-import Line from "../Line.vue";
-import Range from "../Range.vue";
+
+import Line from "../../components/Line.vue";
+import Range from "../../components/Range.vue";
 
 import { templateArr, DefaultCanvasFactoryOptions } from "../../utils/CanvasFactory";
 

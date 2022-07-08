@@ -20,9 +20,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import Line from "../Line.vue";
-import Range from "../Range.vue";
-import Icon from "../Icon.vue";
+import Line from "../../components/Line.vue";
+import Range from "../../components/Range.vue";
+import Icon from "../../components/Icon.vue";
 
 type CanvasImgOption = {
   scale: number;

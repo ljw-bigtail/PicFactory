@@ -17,6 +17,9 @@
       <button class="button large C" @click="handleTopping">
         <Icon type="topping" />
       </button>
+      <button class="button large C" @click="handleImport" v-if="need_decision">
+        <Icon type="import" />
+      </button>
     </div>
     <div class="gallery-view">
       <draggable
@@ -31,7 +34,7 @@
           <PicItem
             :element="element"
             :inselect="inSelect"
-            @select="handelSelect(index)"
+            @select="handleSelect(index)"
             @drag="handelDropPic(element)"
             @del="handleDel(element.id)"
             @mousedown="handlerRight($event, index)"
@@ -43,7 +46,7 @@
           <PicItem
             :element="element"
             :inselect="inSelect"
-            @select="handelSelect(index)"
+            @select="handleSelect(index)"
             @drag="handelDropPic(element)"
             @del="handleDel(element.id)"
             @mousedown="handlerRight($event, index)"
@@ -61,7 +64,9 @@ import draggable from "vuedraggable";
 import { uuid } from "../../utils/utils";
 
 import PicItem from "./pic.vue";
-import Icon from "../Icon.vue";
+import Icon from "../../components/Icon.vue";
+
+import { Img } from "../../type/img";
 
 // TODO 拖拽组件：批量拖拽
 
@@ -78,15 +83,17 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  need_decision: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-type FileOption = { id: string; src: string; file: File; selected: boolean };
-
-const emit = defineEmits(["update:value", "change", "drop", "log"]);
+const emit = defineEmits(["update:value", "change", "drop", "log", "decision"]);
 
 const inDrag = ref(false);
 const inSelect = ref(false);
-const fileList = ref(props.value as FileOption[]);
+const fileList = ref(props.value as Img[]);
 
 const triggerClick = function () {
   const input: HTMLInputElement = document.querySelector(
@@ -95,7 +102,7 @@ const triggerClick = function () {
   input.click();
 };
 
-const handelDropPic = function (item: FileOption) {
+const handelDropPic = function (item: Img) {
   emit("drop", item);
 };
 
@@ -169,6 +176,7 @@ const dragLeave = function (e: DragEvent) {
 const renderPic = function () {
   emit("change", [...fileList.value]);
   emit("update:value", [...fileList.value]);
+  handleImport();
 };
 
 const clearSelect = function (index?: number) {
@@ -182,13 +190,13 @@ const handlerRight = function (event: MouseEvent, index: number) {
   // 右键
   if (event.button == 2) {
     inSelect.value = !inSelect.value;
-    if (inSelect.value) {
+    if (inSelect.value && !props.need_decision) {
       clearSelect(index);
     }
   }
 };
 
-const handelSelect = function (index: number) {
+const handleSelect = function (index: number) {
   // 选中
   fileList.value[index].selected = !fileList.value[index].selected;
 };
@@ -196,8 +204,8 @@ const handelSelect = function (index: number) {
 const handleTopping = function () {
   // 置顶
   if (!inSelect.value) return;
-  const select: FileOption[] = [],
-    other: FileOption[] = [];
+  const select: Img[] = [],
+    other: Img[] = [];
   [...fileList.value].forEach((e) => {
     if (e.selected) {
       select.push(e);
@@ -205,10 +213,19 @@ const handleTopping = function () {
       other.push(e);
     }
   });
-  fileList.value = ([] as FileOption[]).concat(select, other);
+  fileList.value = ([] as Img[]).concat(select, other);
   // 清除状态
-  clearSelect();
   inSelect.value = false;
+  if (!props.need_decision) {
+    clearSelect();
+  }
+};
+
+const handleImport = function () {
+  emit(
+    "decision",
+    [...fileList.value].filter((e) => e.selected)
+  );
 };
 </script>
 

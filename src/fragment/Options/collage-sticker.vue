@@ -1,13 +1,8 @@
 <template>
   <div :class="['img-tool', visible ? 'active' : '']" @click="stopHandler">
     <div>
-      <label>颜色</label>
-      <input type="color" v-model="value.color" @change="formChange" />
-    </div>
-    <Line type="vertical" />
-    <div>
-      <label>字号</label>
-      <Range ref="sizeRange" v-model:value="value.size" @change="formChange" />
+      <label>缩放</label>
+      <Range ref="scaleRange" v-model:value="value.scale" @change="formChange" />
     </div>
     <Line type="vertical" />
     <div>
@@ -18,13 +13,12 @@
 </template>
 
 <script setup lang="ts">
-import Line from "../Line.vue";
-import Range from "../Range.vue";
+import Line from "../../components/Line.vue";
+import Range from "../../components/Range.vue";
 
 type Option = {
+  scale: number;
   rotateZ: number;
-  size: number;
-  color: string;
 };
 
 const props = defineProps<{ value: Option; visible: boolean }>();
@@ -32,14 +26,13 @@ const emit = defineEmits(["update:value", "change"]);
 
 const stopHandler = function (e: Event) {
   e.stopPropagation();
+  e.preventDefault();
 };
 
-const formChange = function (value?: {}) {
-  let _value = props.value;
-  if (value) {
-    _value = Object.assign(_value, value);
-  }
-  emit("update:value", _value);
+const formChange = function () {
+  console.log(props.value);
+
+  emit("update:value", props.value);
   emit("change");
 };
 </script>

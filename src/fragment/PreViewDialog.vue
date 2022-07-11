@@ -1,7 +1,14 @@
 <template>
   <Dialog v-model:show="show" v-model:loading="loading">
     <template v-slot:content>
-      <img :src="preview" class="previewImg" />
+      <video
+        :src="preview"
+        :width="height * ratio"
+        :height="height"
+        class="preview"
+        controls
+        autoplay
+      ></video>
     </template>
     <template v-slot:footer>
       <div class="btn-group center">
@@ -18,12 +25,14 @@ import { ref } from "vue";
 import Dialog from "../components/Dialog.vue";
 
 const props = defineProps({
-  preview: {
-    type: String,
-  },
+  ratio: {
+    type: Number,
+    default: 1
+  }
 });
 
 const preview = ref("");
+const height = window.screen.height * .6;
 const show = ref(false);
 const loading = ref(false);
 
@@ -48,7 +57,7 @@ const handleClick = function (type: "gif" | "mp4") {
 </script>
 
 <style lang="less" scoped>
-.previewImg {
+.preview {
   max-width: 40vw;
   max-height: 80vh;
   background-color: var(--color-white);

@@ -29,14 +29,6 @@
         </div>
       </div>
       <div class="right">
-        <!-- <video
-          :src="previewSrc"
-          class="previewImg"
-          width=""
-          height=""
-          controls
-          autoplay
-        ></video> -->
         <div class="btn-group right">
           <button class="button A" @click="clearFileCache">清理帧</button>
         </div>
@@ -47,7 +39,7 @@
       <Log :logs="logs"></Log>
     </template>
   </BaseLayout>
-  <PreViewDialog ref="previewDialog" @footer-click="makeFile" />
+  <PreViewDialog ref="previewDialog" :ratio="gifForm.width / gifForm.height" @footer-click="makeFile" />
 </template>
 
 <script setup lang="ts">
@@ -114,8 +106,8 @@ const makePreview = async function () {
     .setOpt(gifForm.value)
     .setFrame(frames)
     .toBlob()
-    .then(() => {
-      previewDialog.value.display(paintsFactory.toPreView());
+    .then(async() => {
+      previewDialog.value.display(await paintsFactory.toPreView());
     })
     .catch((e) => {
       console.log(e);

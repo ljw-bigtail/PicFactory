@@ -4,7 +4,6 @@
       <span>Pic GIF</span>
     </template>
     <template v-slot:menu>
-      <button class="button A" @click="clearFileCache">清理数据</button>
       <button class="button C">
         <a href="./collage.html">Pic Collage</a>
       </button>
@@ -13,7 +12,13 @@
       <div class="left">
         <Tab v-model:selected="tabSelect">
           <TabPanel key="library" title="图库">
-            <Gallery ref="galleryLoader" v-model:value="files" @log="addLog"></Gallery>
+            <Gallery
+              ref="galleryLoader"
+              v-model:value="files"
+              @log="addLog"
+              :need_decision="true"
+              @decision="handleDecision"
+            ></Gallery>
           </TabPanel>
           <TabPanel key="setting" title="设置">
             <GIFOption :value="gifForm"></GIFOption>
@@ -21,25 +26,28 @@
         </Tab>
         <div class="btn-group center">
           <button class="button large" @click="makePreview">生成预览</button>
-          <button class="button large C" @click="makeFile('gif')">下载GIF</button>
-          <button class="button large C" @click="makeFile('mp4')">下载MP4</button>
         </div>
       </div>
       <div class="right">
-        <video
+        <!-- <video
           :src="previewSrc"
           class="previewImg"
           width=""
           height=""
           controls
           autoplay
-        ></video>
+        ></video> -->
+        <div class="btn-group right">
+          <button class="button A" @click="clearFileCache">清理帧</button>
+        </div>
+        <FrameEditor ref="frameEditor" :list="listImgs"></FrameEditor>
       </div>
     </template>
     <template v-slot:footer>
       <Log :logs="logs"></Log>
     </template>
   </BaseLayout>
+  <PreViewDialog ref="previewDialog" @footer-click="makeFile" />
 </template>
 
 <script setup lang="ts">
@@ -52,13 +60,18 @@ import BaseLayout from "../../layouts/BaseLayout.vue";
 import Log from "../../components/Log.vue";
 import Tab from "../../components/Tab/Box.vue";
 import TabPanel from "../../components/Tab/Panel.vue";
-import Gallery from "../../components/Gallery/index.vue";
-import GIFOption from "../../components/Options/gif-canvas.vue";
+
+import Gallery from "../../fragment/Gallery/index.vue";
+import GIFOption from "../../fragment/Options/gif-canvas.vue";
+import FrameEditor from "../../fragment/FrameEditor.vue";
+import PreViewDialog from "../../fragment/PreViewDialog.vue";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
 const tabSelect = ref("library");
 const previewSrc = ref("");
 const galleryLoader = ref();
+const previewDialog = ref();
+const frameEditor = ref();
 const gifForm = ref({
   width: 900,
   height: 1600,
@@ -73,9 +86,10 @@ const paintsFactory = new PaintsFactory();
 
 const clearFileCache = () => {
   nextTick(() => {
-    files.value = [];
+    // files.value = [];
+    listImgs.value = [];
     previewSrc.value = "";
-    galleryLoader.value.clearFile();
+    // galleryLoader.value.clearFile();
     addLog("清理成功");
   });
 };
@@ -87,12 +101,21 @@ const addLog = (mes: string) => {
   });
 };
 
-const makePreview = function () {
+// const makePreview = function () {
+//   paintsFactory
+//     .setOpt(gifForm.value)
+//     .toBlob(files.value)
+//     .then(async () => {
+//       previewSrc.value = await paintsFactory.toPreView();
+const makePreview = async function () {
+  previewDialog.value.load();
+  var frames = frameEditor.value.getFrames();
   paintsFactory
     .setOpt(gifForm.value)
-    .toBlob(files.value)
-    .then(async () => {
-      previewSrc.value = await paintsFactory.toPreView();
+    .setFrame(frames)
+    .toBlob()
+    .then(() => {
+      previewDialog.value.display(paintsFactory.toPreView());
     })
     .catch((e) => {
       console.log(e);
@@ -100,15 +123,24 @@ const makePreview = function () {
 };
 
 const makeFile = function (type: "gif" | "mp4") {
+  var frames = frameEditor.value.getFrames();
   paintsFactory
     .setOpt(gifForm.value)
-    .toBlob(files.value)
+    .setFrame(frames)
+    .toBlob()
     .then(() => {
       paintsFactory.toFile(type);
     })
     .catch((e) => {
       console.log(e);
     });
+};
+
+const listImgs = ref([] as FileOption[]);
+type FileOption = { id: string; src: string; file: File; selected: boolean };
+
+const handleDecision = function (list: FileOption[]) {
+  listImgs.value = list;
 };
 </script>
 
@@ -124,19 +156,6 @@ const makeFile = function (type: "gif" | "mp4") {
     max-width: 100%;
   }
 }
-.right {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: var(--space-3);
-  background-color: var(--color-light-gray);
-  .previewImg {
-    max-width: 72%;
-    max-height: 72%;
-    background-color: var(--color-white);
-    box-shadow: var(--shadow-dark);
-  }
-}
 .left {
   position: relative;
   .tab {
@@ -146,6 +165,19 @@ const makeFile = function (type: "gif" | "mp4") {
   .btn-group {
     position: absolute;
     top: calc(100% - 100px);
+  }
+  & + .right {
+    padding-bottom: var(--space-3);
+    background-color: var(--color-light-gray);
+    .previewImg {
+      max-width: 72%;
+      max-height: 72%;
+      background-color: var(--color-white);
+      box-shadow: var(--shadow-dark);
+    }
+    .btn-group {
+      padding: 0 var(--space-1);
+    }
   }
 }
 </style>

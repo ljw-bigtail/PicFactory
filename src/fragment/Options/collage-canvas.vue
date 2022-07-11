@@ -56,8 +56,9 @@
 import { ref } from "vue";
 
 import Size from "./Item/size.vue";
-import Line from "../Line.vue";
-import Range from "../Range.vue";
+
+import Line from "../../components/Line.vue";
+import Range from "../../components/Range.vue";
 
 import { templateArr, DefaultCanvasFactoryOptions } from "../../utils/CanvasFactory";
 
@@ -104,8 +105,14 @@ const sizeChange = function (value: SizeOption) {
 const templateChange = function (index: number) {
   formChange({
     template: index,
-    width: templateArr[index].default?.width || DefaultCanvasFactoryOptions.width,
-    height: templateArr[index].default?.height || DefaultCanvasFactoryOptions.height,
+    width:
+      templateArr[index].default?.width ||
+      sizeValue.value.width ||
+      DefaultCanvasFactoryOptions.width,
+    height:
+      templateArr[index].default?.height ||
+      sizeValue.value.height ||
+      DefaultCanvasFactoryOptions.height,
   });
 };
 </script>

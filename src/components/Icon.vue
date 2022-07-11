@@ -38,5 +38,8 @@ const props = defineProps(["type"]);
   &.topping {
     background-image: url("../assets/icon/topping.svg");
   }
+  &.import {
+    background-image: url("../assets/icon/import.svg");
+  }
 }
 </style>

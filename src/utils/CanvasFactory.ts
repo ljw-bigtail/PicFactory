@@ -160,7 +160,6 @@ export const stickerArr = [
   },
 ]
 
-
 import { saveAs } from "file-saver";
 import html2canvas from "html2canvas";
 

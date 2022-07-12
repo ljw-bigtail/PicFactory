@@ -41,5 +41,11 @@ const props = defineProps(["type"]);
   &.import {
     background-image: url("../assets/icon/import.svg");
   }
+  &.all {
+    background-image: url("../assets/icon/all.svg");
+  }
+  &.reverse {
+    background-image: url("../assets/icon/reverse.svg");
+  }
 }
 </style>

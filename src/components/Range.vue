@@ -1,6 +1,6 @@
 <template>
   <div class="range">
-    <input type="range" v-model="num" @input="handleChange" :style="{ '--to': to }" />
+    <input type="range" v-model="num" :step="1" @input="handleChange" :style="{ '--to': to }" />
     <span>{{ to }}</span>
     <span>%</span>
   </div>

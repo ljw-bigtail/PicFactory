@@ -36,18 +36,21 @@ const height = window.screen.height * .6;
 const show = ref(false);
 const loading = ref(false);
 
-const display = function (src: string) {
-  preview.value = src;
+const open = function (_loading = false) {
   show.value = true;
-  loading.value = false;
+  loading.value = _loading;
 };
 
 const load = function () {
-  show.value = true;
-  loading.value = true;
+  open(true)
 };
 
-defineExpose({ display, load });
+const display = function (src: string) {
+  preview.value = src;
+  open()
+};
+
+defineExpose({ display, load, open });
 
 const emits = defineEmits(["footer-click"]);
 

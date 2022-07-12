@@ -17,6 +17,12 @@
       <button class="button large C" @click="handleTopping">
         <Icon type="topping" />
       </button>
+      <button class="button large C" @click="handleAll">
+        <Icon type="all" />
+      </button>
+      <button class="button large C" @click="handleToggle">
+        <Icon type="reverse" />
+      </button>
       <button class="button large C" @click="handleImport" v-if="need_decision">
         <Icon type="import" />
       </button>
@@ -200,6 +206,22 @@ const handleSelect = function (index: number) {
   // 选中
   fileList.value[index].selected = !fileList.value[index].selected;
 };
+
+// 全选与反选
+const handleToggle = function(){
+  inSelect.value = true;
+  fileList.value = fileList.value.map(e=>{
+    e.selected = !e.selected
+    return e
+  });
+}
+const handleAll = function(){
+  inSelect.value = true;
+  fileList.value = fileList.value.map(e=>{
+    e.selected = true
+    return e
+  });
+}
 
 const handleTopping = function () {
   // 置顶

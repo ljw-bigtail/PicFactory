@@ -1,41 +1,28 @@
 <template>
   <div class="form">
     <div>
-      <label>宽 / 高：</label>
+      <span>宽 / 高：</span>
       <Size :value="sizeValue" @change="sizeChange"></Size>
     </div>
     <div>
-      <label for="rule">截取规则：</label>
+      <span>质量：</span>
       <div>
-        <input
-          type="radio"
-          name="rule"
-          :value="1"
-          v-model="value.rule"
-          @change="formChange"
-        />
-        放大
-        <input
-          type="radio"
-          name="rule"
-          :value="2"
-          v-model="value.rule"
-          @change="formChange"
-        />
-        等比缩小
-        <input
-          type="radio"
-          name="rule"
-          :value="3"
-          v-model="value.rule"
-          @change="formChange"
-        />
-        等比放大
+        <Range ref="scaleRange" v-model:value="value.quality" @change="qualityChange" />
+      </div>
+    </div>
+    <div>
+      <span for="rule">截取规则：</span>
+      <div>
+        <select name="rule" v-model="value.rule" @change="formChange">
+          <option value="1">放大</option>
+          <option value="2">等比缩小</option>
+          <option value="3">等比放大</option>
+        </select>
       </div>
     </div>
     <Line />
     <div>
-      <label for="background">背景色：</label>
+      <span for="background">背景色：</span>
       <div>
         <input
           type="color"
@@ -46,7 +33,7 @@
       </div>
     </div>
     <div>
-      <label for="delay">停留时间：</label>
+      <span for="delay">停留时间：</span>
       <div>
         <input
           type="number"
@@ -59,7 +46,7 @@
       </div>
     </div>
     <div>
-      <label for="repeat">重复次数：</label>
+      <span for="repeat">重复次数：</span>
       <div>
         <input
           type="number"
@@ -78,6 +65,7 @@
 import { ref } from "vue";
 
 import Size from "./Item/size.vue";
+import Range from "../../components/Range.vue";
 import Line from "../../components/Line.vue";
 
 type GIFOption = {
@@ -87,6 +75,7 @@ type GIFOption = {
   delay: number;
   background: string;
   rule: number;
+  quality: number
 };
 
 type SizeOption = {
@@ -114,6 +103,10 @@ const formChange = function (value?: {}) {
 const sizeChange = function (value: SizeOption) {
   formChange(value);
 };
+
+const qualityChange = function(){
+  formChange()
+}
 </script>
 
 <style lang="less" scoped>

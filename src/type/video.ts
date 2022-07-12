@@ -6,7 +6,18 @@ type Frame = Img & {
   rotateZ: number;
 };
 
+type VideoOption = {
+  width: number;
+  height: number;
+  repeat: number;
+  delay: number;
+  background: string;
+  rule: number;
+  quality: number;
+};
+
 export type {
   Img,
-  Frame
+  Frame,
+  VideoOption
 }

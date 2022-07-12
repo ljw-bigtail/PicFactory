@@ -26,6 +26,7 @@
         </Tab>
         <div class="btn-group center">
           <button class="button large" @click="makePreview">生成预览</button>
+          <button class="button large" @click="openPreview">打开预览</button>
         </div>
       </div>
       <div class="right">
@@ -39,7 +40,11 @@
       <Log :logs="logs"></Log>
     </template>
   </BaseLayout>
-  <PreViewDialog ref="previewDialog" :ratio="gifForm.width / gifForm.height" @footer-click="makeFile" />
+  <PreViewDialog
+    ref="previewDialog"
+    :ratio="gifForm.width / gifForm.height"
+    @footer-click="makeFile"
+  />
 </template>
 
 <script setup lang="ts">
@@ -71,6 +76,7 @@ const gifForm = ref({
   delay: 750,
   background: "#FFFFFF",
   rule: 3,
+  quality: 0.5, // ffmpeg的默认值是23，建议的取值范围是17-28。
 });
 const files = ref([]);
 
@@ -93,25 +99,15 @@ const addLog = (mes: string) => {
   });
 };
 
-// const makePreview = function () {
-//   paintsFactory
-//     .setOpt(gifForm.value)
-//     .toBlob(files.value)
-//     .then(async () => {
-//       previewSrc.value = await paintsFactory.toPreView();
+const openPreview = function () {
+  previewDialog.value.open();
+};
+
 const makePreview = async function () {
   previewDialog.value.load();
   var frames = frameEditor.value.getFrames();
-  paintsFactory
-    .setOpt(gifForm.value)
-    .setFrame(frames)
-    .toBlob()
-    .then(async() => {
-      previewDialog.value.display(await paintsFactory.toPreView());
-    })
-    .catch((e) => {
-      console.log(e);
-    });
+  var videoSrc = await paintsFactory.setOpt(gifForm.value).setFrame(frames).toPreView();
+  previewDialog.value.display(videoSrc);
 };
 
 const makeFile = function (type: "gif" | "mp4") {
@@ -119,10 +115,7 @@ const makeFile = function (type: "gif" | "mp4") {
   paintsFactory
     .setOpt(gifForm.value)
     .setFrame(frames)
-    .toBlob()
-    .then(() => {
-      paintsFactory.toFile(type);
-    })
+    .toFile(type)
     .catch((e) => {
       console.log(e);
     });

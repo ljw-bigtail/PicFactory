@@ -104,14 +104,16 @@ const openPreview = function () {
 };
 
 const makePreview = async function () {
-  previewDialog.value.load();
   var frames = frameEditor.value.getFrames();
+  if(!frames || frames.length == 0) return
+  previewDialog.value.load();
   var videoSrc = await paintsFactory.setOpt(gifForm.value).setFrame(frames).toPreView();
   previewDialog.value.display(videoSrc);
 };
 
 const makeFile = function (type: "gif" | "mp4") {
   var frames = frameEditor.value.getFrames();
+  if(!frames || frames.length == 0) return
   paintsFactory
     .setOpt(gifForm.value)
     .setFrame(frames)

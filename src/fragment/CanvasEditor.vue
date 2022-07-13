@@ -157,17 +157,6 @@ type FileOption = {
   rotateZ: number;
 };
 
-type FragmentOption = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  scale: number;
-  rotateX: number;
-  rotateY: number;
-  rotateZ: number;
-};
-
 type fragmentProps = {
   type: "text" | "img";
   value: string;

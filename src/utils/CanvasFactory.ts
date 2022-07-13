@@ -163,16 +163,14 @@ export const stickerArr = [
 import { saveAs } from "file-saver";
 import html2canvas from "html2canvas";
 
-type CanvasOptions = {
-  width: number, 
-  height: number
-}
-
 export class CanvasFactory {
   box: Element | null;
   width: number;
   height: number;
-  constructor(data: { id: string, options: CanvasOptions }) {
+  constructor(data: { id: string, options: {
+    width: number, 
+    height: number
+  } }) {
     this.box = null;
     this.width = data.options.width
     this.height = data.options.height

@@ -16,8 +16,14 @@ type VideoOption = {
   quality: number;
 };
 
+type MusicOption = {
+  start: number;
+  file?: File
+};
+
 export type {
   Img,
   Frame,
-  VideoOption
+  VideoOption,
+  MusicOption,
 }

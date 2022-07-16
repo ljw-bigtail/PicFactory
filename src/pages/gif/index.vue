@@ -23,6 +23,9 @@
           <TabPanel key="setting" title="设置">
             <GIFOption :value="gifForm"></GIFOption>
           </TabPanel>
+          <TabPanel key="music" title="背景音乐">
+            <GIFMusic :value="musicForm"></GIFMusic>
+          </TabPanel>
         </Tab>
         <div class="btn-group center">
           <button class="button large" @click="makePreview">生成预览</button>
@@ -60,11 +63,13 @@ import TabPanel from "../../components/Tab/Panel.vue";
 
 import Gallery from "../../fragment/Gallery/index.vue";
 import GIFOption from "../../fragment/Options/gif-canvas.vue";
+import GIFMusic from "../../fragment/Options/gif-music.vue";
 import FrameEditor from "../../fragment/FrameEditor.vue";
 import PreViewDialog from "../../fragment/PreViewDialog.vue";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
-const tabSelect = ref("library");
+// const tabSelect = ref("library");
+const tabSelect = ref("music");
 const previewSrc = ref("");
 const galleryLoader = ref();
 const previewDialog = ref();
@@ -78,6 +83,9 @@ const gifForm = ref({
   rule: 3,
   quality: 0.5, // ffmpeg的默认值是23，建议的取值范围是17-28。
 });
+const musicForm = ref({
+  start: 0
+})
 const files = ref([]);
 
 const paintsFactory = new PaintsFactory();
@@ -107,7 +115,7 @@ const makePreview = async function () {
   var frames = frameEditor.value.getFrames();
   if(!frames || frames.length == 0) return
   previewDialog.value.load();
-  var videoSrc = await paintsFactory.setOpt(gifForm.value).setFrame(frames).toPreView();
+  var videoSrc = await paintsFactory.setOpt(gifForm.value).setMusic(musicForm.value).setFrame(frames).toPreView();
   previewDialog.value.display(videoSrc);
 };
 
@@ -116,6 +124,7 @@ const makeFile = function (type: "gif" | "mp4") {
   if(!frames || frames.length == 0) return
   paintsFactory
     .setOpt(gifForm.value)
+    .setMusic(musicForm.value)
     .setFrame(frames)
     .toFile(type)
     .catch((e) => {

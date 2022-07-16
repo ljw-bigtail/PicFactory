@@ -3,18 +3,19 @@ import { saveAs } from "file-saver";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import { dateFmt } from "./utils";
 
-import { Frame, VideoOption } from "../type/video";
+import { Frame, VideoOption, MusicOption } from "../type/video";
 
 import { ImageFactory } from "./ImageFactory";
 
 export class PaintsFactory {
+  buffer: ArrayBufferLike | null;
   frames: Frame[];
   options: VideoOption;
-  buffer: ArrayBufferLike | null;
+  music: MusicOption;
   ffmpeg: any;
   constructor() {
-    this.frames = [];
     this.buffer = null;
+    this.frames = [];
     this.options = {
       width: 900,
       height: 1600,
@@ -24,6 +25,9 @@ export class PaintsFactory {
       rule: 3,
       quality: 0.5,
     };
+    this.music = {
+      start: 0
+    }
     this.ffmpeg = createFFmpeg({
       log: true,
       progress: p => console.log(p)
@@ -36,6 +40,10 @@ export class PaintsFactory {
   setFrame(frames: Frame[]) {
     this.frames = frames;
     return this;
+  }
+  setMusic(music: MusicOption){
+    this.music = music
+    return this
   }
   // TODO 优化：进度条
   setProgress({ ratio }: {ratio: number}) {
@@ -66,16 +74,28 @@ export class PaintsFactory {
     }
     this.buffer = null;
   }
+  _toTime(sec: number){
+    const _sec = sec % 60
+    const _min = (sec - _sec) / 60
+    return `00:${_min.toString().padStart(2, '0')}:${_sec.toString().padStart(2, '0')}`
+  }
   async _mixinMusic() {
+    if(this.frames.length == 0){
+      return
+    }
+
     if (!this.ffmpeg.isLoaded()) {
       await this.ffmpeg.load();
     }
 
     const outFile = "out.mp4";
+    const musicFile = "music.mp3";
     const { delay, quality } = this.options;
+    const { file: musicfile, start } = this.music;
     
     const frameRate = 1000 / delay; // delay 帧率 1s钟 X 张图
     const _quality = 17 + Math.round(quality * 10); // quality ffmpeg的默认值是23，建议的取值范围是17-28。
+    const time = delay / 1000 * this.frames.length
 
     // 图像根据属性处理
     const imageFactory = new ImageFactory(this.options)
@@ -86,11 +106,28 @@ export class PaintsFactory {
       this.ffmpeg.FS("writeFile", `${index}.jpg`, await fetchFile(file));
     });
 
-    await this.ffmpeg.run( "-r", `${frameRate}`, "-f", "image2", "-i", "%d.jpg", "-crf", `${_quality}`, outFile);
-    // ffmpeg -i video.mp4 -i audio.wav -c:v copy -c:a aac -strict experimental -map 0:v:0 -map 1:a:0 output.mp4
-    // await ffmpeg.run('-i', 'bj.mp4', '-i', 'music.mp3', '-c:v', 'copy', '-c:a', 'aac', '-strict', 'experimental', '-map', '0:v:0', '-map', '1:a:0', 'output.mp4');
-    // await ffmpeg.run('-i', inFile, outFile);
-
+    if(musicfile){
+      // 处理背景音乐
+      this.ffmpeg.FS("writeFile", musicFile, await fetchFile(musicfile));
+      
+      // 图+声音
+      const startTime = this._toTime(start)
+      await this.ffmpeg.run( 
+        "-r", `${frameRate}`,  //
+        "-f", "image2", "-i", "%d.jpg", // 加载图
+        "-i", musicFile, "-ss", startTime,  "-t", `${time}`, // 加载音乐文件、音乐的截取部分
+        "-crf", `${_quality}`, // 清晰度
+        outFile
+      );
+    }else{
+      // 仅图
+      await this.ffmpeg.run( 
+        "-r", `${frameRate}`, 
+        "-f", "image2", "-i", "%d.jpg", 
+        "-crf", `${_quality}`, 
+        outFile
+      );
+    }
     this.buffer = this.ffmpeg.FS("readFile", outFile).buffer;
   }
 }

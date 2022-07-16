@@ -1,7 +1,3 @@
-import { saveAs } from "file-saver";
-import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
-import { dateFmt } from "./utils";
-
 import { Frame, VideoOption } from "../type/video";
 
 export class ImageFactory {
@@ -113,59 +109,3 @@ export class ImageFactory {
     return canvas
   }
 }
-// // 通过把图片转为canvas 再转乘图片的过程 来裁剪图片
-// toBlob(){
-//   const that = this
-//   const { delay } = this.options;
-//   const gif = new GIF(
-//     Object.assign(
-//       {
-//         workers: 2,
-//         quality: 10,
-//         repeat: 0, // -1 never 0 ever or number
-//         background: "#FFFFFF",
-//         // debug: true,
-//         dither: false, // 抖动方法 // FloydSteinberg FalseFloydSteinberg Stucki Atkinson
-//         workerScript: "static/gif.worker.js",
-//       },
-//       this.options
-//     )
-//   );
-//   return new Promise((res, rej) => {
-//     if (this.frames.length == 0) {
-//       this.blob = null;
-//       rej("数据为空");
-//     }
-//     Promise.all(
-//       this.frames.map((frames) => {
-//         return new Promise((_res) => {
-//           const img = new Image();
-//           img.src = window.URL.createObjectURL(frames.file);
-//           img.onload = function() {
-//             _res({
-//               img,
-//               frames
-//             });
-//           };
-//         });
-//       })
-//     )
-//     .then((imgs) => {
-//       (imgs as ImageOption[]).forEach((imgLoadObjectas) => {
-//         const frame =  that._paintFrame(imgLoadObjectas)
-//         gif.addFrame(frame, {
-//           delay: delay, // 延迟时间
-//           copy: true,
-//         });
-//       });
-//     })
-//     .then(()=>{
-//       gif.render();
-//       gif.on("finished", function (blob) {
-//         that.blob = blob;
-//         res(blob);
-//       });
-//     })
-//     .catch((e) => rej(e));
-//   });
-// }

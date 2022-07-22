@@ -26,11 +26,11 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 
-import { Img, Frame } from "../type/video";
+import { dropFileType, Frame } from "../type/video";
 
 import Icon from "../components/Icon.vue";
 
-const props = defineProps<{ list: Img[] }>();
+const props = defineProps<{ list: dropFileType[] }>();
 
 const imgs = ref([] as Frame[]);
 

@@ -18,13 +18,13 @@
               @log="addLog"
               :need_decision="true"
               @decision="handleDecision"
-            ></Gallery>
+            />
+          </TabPanel>
+          <TabPanel key="music" title="音乐库">
+            <GIFMusic :value="musicForm" />
           </TabPanel>
           <TabPanel key="setting" title="设置">
-            <GIFOption :value="gifForm"></GIFOption>
-          </TabPanel>
-          <TabPanel key="music" title="背景音乐">
-            <GIFMusic :value="musicForm"></GIFMusic>
+            <GIFOption :value="gifForm" />
           </TabPanel>
         </Tab>
         <div class="btn-group center">
@@ -36,11 +36,11 @@
         <div class="btn-group right">
           <button class="button A" @click="clearFileCache">清理帧</button>
         </div>
-        <FrameEditor ref="frameEditor" :list="listImgs"></FrameEditor>
+        <FrameEditor ref="frameEditor" :list="listImgs" />
       </div>
     </template>
     <template v-slot:footer>
-      <Log :logs="logs"></Log>
+      <Log :logs="logs" />
     </template>
   </BaseLayout>
   <PreViewDialog
@@ -68,8 +68,7 @@ import FrameEditor from "../../fragment/FrameEditor.vue";
 import PreViewDialog from "../../fragment/PreViewDialog.vue";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
-// const tabSelect = ref("library");
-const tabSelect = ref("music");
+const tabSelect = ref("library");
 const previewSrc = ref("");
 const galleryLoader = ref();
 const previewDialog = ref();

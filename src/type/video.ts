@@ -1,6 +1,6 @@
-import {Img} from './img'
+import { dropFileType } from './dropFile'
 
-type Frame = Img & {
+type Frame = dropFileType & {
   rotateX: number;
   rotateY: number;
   rotateZ: number;
@@ -22,7 +22,7 @@ type MusicOption = {
 };
 
 export type {
-  Img,
+  dropFileType,
   Frame,
   VideoOption,
   MusicOption,

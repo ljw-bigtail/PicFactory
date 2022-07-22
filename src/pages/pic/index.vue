@@ -18,10 +18,10 @@
               v-model:value="files"
               @log="addLog"
               @drop="handleDrop"
-            ></Gallery>
+            />
           </TabPanel>
           <TabPanel key="setting" title="设置">
-            <CanvasOption v-model:value="canvasForm"></CanvasOption>
+            <CanvasOption v-model:value="canvasForm" />
           </TabPanel>
           <TabPanel key="sticker" title="贴纸">
             <div class="sticker-text">
@@ -59,11 +59,11 @@
         </div>
       </div>
       <div class="right">
-        <CanvasEditor ref="canvasEditor" :options="canvasForm"></CanvasEditor>
+        <CanvasEditor ref="canvasEditor" :options="canvasForm" />
       </div>
     </template>
     <template v-slot:footer>
-      <Log :logs="logs"></Log>
+      <Log :logs="logs" />
     </template>
   </BaseLayout>
 </template>

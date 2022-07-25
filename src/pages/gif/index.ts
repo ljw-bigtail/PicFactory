@@ -1,4 +1,11 @@
 import { createApp } from 'vue'
 import App from './index.vue'
 
-createApp(App).mount('#app')
+import Message from '../../components/Message/Message'
+
+const app = createApp(App)
+
+app
+  .use(Message)
+  .mount('#app')
+  

@@ -26,7 +26,7 @@ const props = defineProps({
   remove: Function,
 });
 
-let timer: number | undefined;
+let timer: any;
 const open = ref(false);
 
 onMounted(() => {

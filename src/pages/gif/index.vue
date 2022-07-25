@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from "vue";
+import { ref, nextTick, inject } from "vue";
 
 import { dateFmt } from "../../utils/utils";
 import { PaintsFactory } from "../../utils/PaintsFactory";
@@ -110,9 +110,15 @@ const openPreview = function () {
   previewDialog.value.open();
 };
 
+const message = inject('_message') as Function
+
 const makePreview = async function () {
   var frames = frameEditor.value.getFrames();
   if(!frames || frames.length == 0) return
+  message({
+    type: 'info',
+    value: '正在加载插件，请等待...'
+  })
   previewDialog.value.load();
   var videoSrc = await paintsFactory.setOpt(gifForm.value).setMusic(musicForm.value).setFrame(frames).toPreView();
   previewDialog.value.display(videoSrc);

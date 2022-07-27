@@ -29,7 +29,7 @@
         </Tab>
         <div class="btn-group center">
           <button class="button large" @click="makePreview">生成预览</button>
-          <button class="button large" @click="openPreview">打开预览</button>
+          <!-- <button class="button large" @click="openPreview">打开预览</button> -->
         </div>
       </div>
       <div class="right">

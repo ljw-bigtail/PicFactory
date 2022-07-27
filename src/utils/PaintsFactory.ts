@@ -1,4 +1,3 @@
-// import GIF from "gif.js";
 import { saveAs } from "file-saver";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import { dateFmt } from "./utils";
@@ -8,13 +7,19 @@ import { Frame, VideoOption, MusicOption } from "../type/video";
 import { ImageFactory } from "./ImageFactory";
 
 export class PaintsFactory {
-  buffer: ArrayBufferLike | null;
+  buffer: {
+    gif: ArrayBufferLike | null,
+    mp4: ArrayBufferLike | null
+  };
   frames: Frame[];
   options: VideoOption;
   music: MusicOption;
   ffmpeg: any;
   constructor() {
-    this.buffer = null;
+    this.buffer = {
+      gif: null,
+      mp4: null
+    }
     this.frames = [];
     this.options = {
       width: 900,
@@ -53,26 +58,24 @@ export class PaintsFactory {
     */
   }
   async toPreView() {
+    this.buffer = {
+      gif: null,
+      mp4: null
+    }
     await this._mixinMusic();
     // 生成预览
-    if (!this.buffer) return "";
-    return URL.createObjectURL(new Blob([this.buffer], { type: "video/mp4" }));
+    if (!this.buffer.mp4) return "";
+    return URL.createObjectURL(new Blob([this.buffer.mp4], { type: "video/mp4" }));
   }
   async toFile(fileType: "gif" | "mp4") {
     const fileName = `${fileType}-${dateFmt()}.${fileType}`;
-    if (!this.buffer) {
-      // 生成mp4
-      await this._mixinMusic();
+    let type = ''
+    switch (fileType) {
+      case "gif": type = "image/gif"; break;
+      case "mp4": type = "video/mp4"; break;
     }
-    if (this.buffer) {
-      let type = ''
-      switch (fileType) {
-        case "gif": type = "image/gif"; break;
-        case "mp4": type = "video/mp4"; break;
-      }
-      saveAs(new Blob([this.buffer], { type }), fileName);
-    }
-    this.buffer = null;
+    if (!this.buffer[fileType]) return "";
+    saveAs(new Blob([this.buffer[fileType] as ArrayBufferLike], { type }), fileName);
   }
   _toTime(sec: number){
     const _sec = sec % 60
@@ -89,6 +92,7 @@ export class PaintsFactory {
     }
 
     const outFile = "out.mp4";
+    const outFileGif = "out.gif"
     const musicFile = "music.mp3";
     const { delay, quality } = this.options;
     const { file: musicfile, start } = this.music;
@@ -106,6 +110,7 @@ export class PaintsFactory {
       this.ffmpeg.FS("writeFile", `${index}.jpg`, await fetchFile(file));
     });
 
+    // mp4 buffer
     if(musicfile){
       // 处理背景音乐
       this.ffmpeg.FS("writeFile", musicFile, await fetchFile(musicfile));
@@ -128,6 +133,16 @@ export class PaintsFactory {
         outFile
       );
     }
-    this.buffer = this.ffmpeg.FS("readFile", outFile).buffer;
+    const buffer_mp4 = this.ffmpeg.FS("readFile", outFile).buffer;
+
+    // gif buffer
+    await this.ffmpeg.run("-i", outFile, outFileGif);
+    const buffer_gif = this.ffmpeg.FS("readFile", outFileGif).buffer;
+
+    // out
+    this.buffer = {
+      gif: buffer_gif,
+      mp4: buffer_mp4
+    }
   }
 }

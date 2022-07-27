@@ -114,7 +114,13 @@ const message = inject('_message') as Function
 
 const makePreview = async function () {
   var frames = frameEditor.value.getFrames();
-  if(!frames || frames.length == 0) return
+  if(!frames || frames.length == 0) {
+    message({
+      type: 'warning',
+      value: '请从图库中选择。'
+    })
+    return
+  }
   message({
     type: 'info',
     value: '正在加载插件，请等待...'

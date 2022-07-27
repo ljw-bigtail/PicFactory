@@ -118,6 +118,7 @@ const handleClose = () => {
     right: 0;
     opacity: 0.5;
     transform: scale(0.8);
+    display: none;
   }
 }
 </style>

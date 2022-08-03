@@ -2,7 +2,7 @@ import { saveAs } from "file-saver";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import { dateFmt } from "./utils";
 
-import { Frame, VideoOption, MusicOption } from "../type/video";
+import { Frame, VideoOption, MusicOption, outType } from "../type/video";
 
 import { ImageFactory } from "./ImageFactory";
 
@@ -15,6 +15,7 @@ export class PaintsFactory {
   options: VideoOption;
   music: MusicOption;
   ffmpeg: any;
+  ratio: number;
   constructor() {
     this.buffer = {
       gif: null,
@@ -22,8 +23,8 @@ export class PaintsFactory {
     }
     this.frames = [];
     this.options = {
-      width: 900,
-      height: 1600,
+      width: 800,
+      height: 1000,
       repeat: 0,
       delay: 750,
       background: "#FFFFFF",
@@ -34,9 +35,9 @@ export class PaintsFactory {
       start: 0
     }
     this.ffmpeg = createFFmpeg({
-      log: true,
-      progress: p => console.log(p)
+      log: !import.meta.env.PROD,
     });
+    this.ratio = 0
   }
   setOpt(opt: {}) {
     this.options = Object.assign(this.options, opt);
@@ -50,12 +51,14 @@ export class PaintsFactory {
     this.music = music
     return this
   }
-  // TODO 优化：进度条
-  setProgress({ ratio }: {ratio: number}) {
-    console.log(ratio, 'ratio');
-    /*
-    * ratio is a float number between 0 to 1.
-    */
+  logProgress(ratio: number, type: outType) {
+    if(ratio < 0) return
+    // 因为有两个生成 所以进度合并下
+    const num = parseFloat((((type === 'gif' ? 1 : 0) + ratio) / 2).toFixed(4))
+    if(num == this.ratio) return
+    this.ratio = num
+    // TODO 优化：进度条
+    console.log(`生成进度：${this.ratio * 100}%`, this.ratio);
   }
   async toPreView() {
     this.buffer = {
@@ -67,7 +70,7 @@ export class PaintsFactory {
     if (!this.buffer.mp4) return "";
     return URL.createObjectURL(new Blob([this.buffer.mp4], { type: "video/mp4" }));
   }
-  async toFile(fileType: "gif" | "mp4") {
+  async toFile(fileType: outType) {
     const fileName = `${fileType}-${dateFmt()}.${fileType}`;
     let type = ''
     switch (fileType) {
@@ -105,11 +108,14 @@ export class PaintsFactory {
     const imageFactory = new ImageFactory(this.options)
     const files = await imageFactory.transforms(this.frames)
 
-    // 逐帧添加图像
+    // 逐帧添加图像，并缓存文件名
+    const clearData: string[] = []
     files.forEach(async (file, index) => {
       this.ffmpeg.FS("writeFile", `${index}.jpg`, await fetchFile(file));
+      clearData.push(`${index}.jpg`)
     });
 
+    this.ffmpeg.setProgress(({ ratio }: { ratio: number }) => this.logProgress(ratio, 'mp4'));
     // mp4 buffer
     if(musicfile){
       // 处理背景音乐
@@ -134,10 +140,14 @@ export class PaintsFactory {
       );
     }
     const buffer_mp4 = this.ffmpeg.FS("readFile", outFile).buffer;
-
+    
+    this.ffmpeg.setProgress(({ ratio }: { ratio: number }) => this.logProgress(ratio, 'gif'));
     // gif buffer
     await this.ffmpeg.run("-i", outFile, outFileGif);
     const buffer_gif = this.ffmpeg.FS("readFile", outFileGif).buffer;
+
+    // 清除已加载的图片
+    clearData.forEach(name => this.ffmpeg.FS('unlink', name))
 
     // out
     this.buffer = {

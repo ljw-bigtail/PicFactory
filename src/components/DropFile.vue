@@ -1,6 +1,13 @@
 <template>
   <div class="drop-file">
-    <input type="file" :id="`drop-file-core_${id}`" :accept="file_type.join(',')" class="drop-file-core" multiple @change="fileAdd" />
+    <input
+      type="file"
+      :id="`drop-file-core_${id}`"
+      :accept="file_type.join(',')"
+      class="drop-file-core"
+      multiple
+      @change="fileAdd"
+    />
     <div
       class="drop-file-box"
       @drop="dropAdd"
@@ -39,7 +46,7 @@ const props = defineProps({
 
 const inDrag = ref(false);
 const fileList = ref(props.value as dropFileType[]);
-const id = uuid()
+const id = uuid();
 
 const emit = defineEmits(["update:value", "change", "log"]);
 
@@ -78,7 +85,7 @@ const dragLeave = function (e: DragEvent) {
 
 const triggerClick = function () {
   const input: HTMLInputElement = document.querySelector(
-    "#drop-file-core_"+id
+    "#drop-file-core_" + id
   ) as HTMLInputElement;
   input.click();
 };
@@ -104,10 +111,18 @@ const addFiles = (file: FileList) => {
       log(`允许上传的文件格式为：jpeg、jpg、png、webp`);
     }
   }
-  
+
   emit("change", [...fileList.value]);
   emit("update:value", [...fileList.value]);
 };
+
+const setVal = function () {
+  fileList.value = arguments[0];
+  emit("change", [...fileList.value]);
+  emit("update:value", [...fileList.value]);
+};
+
+defineExpose({ setVal });
 </script>
 
 <style lang="less" scoped>

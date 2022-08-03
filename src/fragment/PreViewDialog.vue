@@ -27,12 +27,12 @@ import Dialog from "../components/Dialog.vue";
 const props = defineProps({
   ratio: {
     type: Number,
-    default: 1
-  }
+    default: 1,
+  },
 });
 
 const preview = ref("");
-const height = window.screen.height * .6;
+const height = window.screen.height * 0.6;
 const show = ref(false);
 const loading = ref(false);
 
@@ -42,12 +42,12 @@ const open = function (_loading = false) {
 };
 
 const load = function () {
-  open(true)
+  open(true);
 };
 
 const display = function (src: string) {
   preview.value = src;
-  open()
+  open();
 };
 
 defineExpose({ display, load, open });
@@ -61,8 +61,8 @@ const handleClick = function (type: "gif" | "mp4") {
 
 <style lang="less" scoped>
 .preview {
-  max-width: 40vw;
-  max-height: 80vh;
+  // max-width: 40vw;
+  // max-height: 80vh;
   background-color: var(--color-white);
 }
 </style>

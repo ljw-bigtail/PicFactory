@@ -1,10 +1,6 @@
 <template>
   <div class="form">
-    <DropFile
-      v-bind:value="files"
-      :max_size="1024 * 50"
-      :file_type="['audio/mpeg']"
-    />
+    <DropFile v-model:value="files" :max_size="1024 * 50" :file_type="['audio/mpeg']" />
     <div class="music-select">
       <ul>
         <li v-for="item in files" class="line" @click="handleSelect(item)">
@@ -44,20 +40,20 @@ const formChange = function (value?: {}) {
   if (value) {
     _value = Object.assign(_value, value);
   }
-  emit("update:value", _value);1
+  emit("update:value", _value);
   emit("change");
 };
 
-const handleSelect = function(item: dropFileType){
-  if(item.selected) return 
-  files.value = files.value.map(e=>{
-    e.selected = item.id == e.id
-    return e
-  })
+const handleSelect = function (item: dropFileType) {
+  if (item.selected) return;
+  files.value = files.value.map((e) => {
+    e.selected = item.id == e.id;
+    return e;
+  });
   formChange({
-    file: item.file
-  })
-}
+    file: item.file,
+  });
+};
 </script>
 
 <style lang="less" scoped>

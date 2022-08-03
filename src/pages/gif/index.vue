@@ -74,8 +74,8 @@ const galleryLoader = ref();
 const previewDialog = ref();
 const frameEditor = ref();
 const gifForm = ref({
-  width: 900,
-  height: 1600,
+  width: 800,
+  height: 1000,
   repeat: 0,
   delay: 750,
   background: "#FFFFFF",
@@ -83,19 +83,22 @@ const gifForm = ref({
   quality: 0.5, // ffmpeg的默认值是23，建议的取值范围是17-28。
 });
 const musicForm = ref({
-  start: 0
-})
+  start: 0,
+});
 const files = ref([]);
 
 const paintsFactory = new PaintsFactory();
 
+const message = inject("_message") as Function;
+
 const clearFileCache = () => {
   nextTick(() => {
-    // files.value = [];
-    listImgs.value = [];
     previewSrc.value = "";
-    // galleryLoader.value.clearFile();
-    addLog("清理成功");
+    galleryLoader.value.clearSelect();
+    message({
+      type: "success",
+      value: "清理成功...",
+    });
   });
 };
 
@@ -110,37 +113,32 @@ const openPreview = function () {
   previewDialog.value.open();
 };
 
-const message = inject('_message') as Function
-
 const makePreview = async function () {
   var frames = frameEditor.value.getFrames();
-  if(!frames || frames.length == 0) {
+  if (!frames || frames.length == 0) {
     message({
-      type: 'warning',
-      value: '请从图库中选择。'
-    })
-    return
+      type: "warning",
+      value: "请从图库中选择。",
+    });
+    return;
   }
   message({
-    type: 'info',
-    value: '正在加载插件，请等待...'
-  })
+    value: "正在加载插件，请等待...",
+  });
   previewDialog.value.load();
-  var videoSrc = await paintsFactory.setOpt(gifForm.value).setMusic(musicForm.value).setFrame(frames).toPreView();
+  var videoSrc = await paintsFactory
+    .setOpt(gifForm.value)
+    .setMusic(musicForm.value)
+    .setFrame(frames)
+    .toPreView()
+    .catch((e) => console.log(e));
   previewDialog.value.display(videoSrc);
 };
 
 const makeFile = function (type: "gif" | "mp4") {
   var frames = frameEditor.value.getFrames();
-  if(!frames || frames.length == 0) return
-  paintsFactory
-    .setOpt(gifForm.value)
-    .setMusic(musicForm.value)
-    .setFrame(frames)
-    .toFile(type)
-    .catch((e) => {
-      console.log(e);
-    });
+  if (!frames || frames.length == 0) return;
+  paintsFactory.toFile(type).catch((e) => console.log(e));
 };
 
 const listImgs = ref([] as FileOption[]);

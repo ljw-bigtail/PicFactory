@@ -21,9 +21,12 @@ type MusicOption = {
   file?: File
 };
 
+type outType = "gif" | "mp4"
+
 export type {
   dropFileType,
   Frame,
   VideoOption,
   MusicOption,
+  outType
 }

@@ -10,7 +10,7 @@
         <Range ref="scaleRange" v-model:value="value.quality" @change="qualityChange" />
       </div>
     </div>
-    <div>
+    <!-- <div>
       <span for="rule">截取规则：</span>
       <div>
         <select name="rule" v-model="value.rule" @change="formChange">
@@ -19,7 +19,7 @@
           <option value="3">等比放大</option>
         </select>
       </div>
-    </div>
+    </div> -->
     <Line />
     <div>
       <span for="background">背景色：</span>
@@ -75,7 +75,7 @@ type GIFOption = {
   delay: number;
   background: string;
   rule: number;
-  quality: number
+  quality: number;
 };
 
 type SizeOption = {
@@ -104,9 +104,9 @@ const sizeChange = function (value: SizeOption) {
   formChange(value);
 };
 
-const qualityChange = function(){
-  formChange()
-}
+const qualityChange = function () {
+  formChange();
+};
 </script>
 
 <style lang="less" scoped>

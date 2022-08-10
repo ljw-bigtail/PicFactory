@@ -57,16 +57,15 @@ export class ImageFactory {
     const { canvasData, imgData } = (function(){
       const { width: imgwidth, height: imgheight } = img
       const { width: canvaswidth, height: canvasheight } = canvas
-      const heightScale = canvasheight >= imgheight ?  canvasheight / imgheight : 1
-      const widthScale = canvaswidth >= imgwidth ?  canvaswidth / imgwidth : 1
       // 需要放大的最大倍数
-      const endScale = Math.max(heightScale, widthScale);
-      const scaleImgSize = [imgwidth *  endScale, imgheight * endScale]
+      const scale = Math.max(canvaswidth / imgwidth, canvasheight / imgheight, 1)
       // canvas中定位的坐标值, canvas中即将绘制区域
-      const canvasData = [0, 0, imgwidth, imgheight];
+      // 图像在canvas里的起点坐标(默认 0，0 ), 图像在canvas中绘制的大小（默认 图片宽高，宽高比变了图片可以变形）
+      const imgData = [0, 0, imgwidth, imgheight];
       // image所要绘制的起始位置, image所要绘制区域
-      const imgData = [(imgwidth - scaleImgSize[0]) / 2, (imgheight - scaleImgSize[1]) / 2, ...scaleImgSize];
-      return { canvasData, imgData }
+      const scaleImgSize = [imgwidth * scale, imgheight * scale]
+      const canvasData = [ - (canvaswidth - imgwidth) / 2 , (canvasheight - scaleImgSize[1]) / 2, ...scaleImgSize];
+      return { imgData, canvasData }
     })()
     function flipX(ctx:CanvasRenderingContext2D, rotateY: number){
       // Y轴旋转
@@ -81,8 +80,9 @@ export class ImageFactory {
       ctx.translate((canvas.width - img.width * _scale) / 2, 0);
       ctx.scale(_scale * 1, 1);
       // sx,sy,swidth,sheight,x,y,width,height
-      const [ox, oy, owidth, oheight] = canvasData;
-      const [sx, sy, swidth, sheight] = imgData;
+      const [ox, oy, owidth, oheight] = imgData;
+      const [sx, sy, swidth, sheight] = canvasData;
+      // 把 img中其实坐标为 ox, oy 宽 owidth 高 oheight的图像绘制在canvas中，绘制的起始坐标为sx, sy，绘制的宽高为swidth, sheight
       ctx.drawImage(img, ox, oy, owidth, oheight, sx, sy, swidth, sheight);
       // 坐标参考还原
       ctx.setTransform(1, 0, 0, 1, 0, 0);

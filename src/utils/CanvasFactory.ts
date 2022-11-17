@@ -6,6 +6,12 @@ import typeimg5 from "../assets/canvasTypePic/type5.png";
 import typeimg6 from "../assets/canvasTypePic/type6.png";
 import typeimg7 from "../assets/canvasTypePic/type7.png";
 import typeimg8 from "../assets/canvasTypePic/type8.png";
+import typeimg9 from "../assets/canvasTypePic/type9.png";
+import typeimg10 from "../assets/canvasTypePic/type10.png";
+import typeimg11 from "../assets/canvasTypePic/type11.png";
+import typeimg12 from "../assets/canvasTypePic/type12.png";
+import typeimg13 from "../assets/canvasTypePic/type13.png";
+import typeimg14 from "../assets/canvasTypePic/type14.png";
 
 export const templateArr = [
   {
@@ -20,12 +26,6 @@ export const templateArr = [
   },
   {
     src: typeimg2,
-    // qty: [5, 2],
-    // cells: [
-    //   [[0, 0], [3, 2]],
-    //   [[3, 0], [5, 1]],
-    //   [[3, 1], [5, 2]],
-    // ],
     qty: [3, 2],
     cells: [
       [[0, 0], [2, 2]],
@@ -96,6 +96,86 @@ export const templateArr = [
       height: 1080,
       width: 1080,
     }
+  },
+  {
+    src: typeimg9,
+    qty: [4, 4],
+    cells: [
+      [[0, 0], [1, 1]],
+      [[1, 0], [2, 1]],
+      [[2, 0], [3, 1]],
+      [[3, 0], [4, 1]],
+      [[0, 1], [1, 2]],
+      [[3, 1], [4, 2]],
+      [[1, 1], [3, 3]],
+      [[0, 2], [1, 3]],
+      [[3, 2], [4, 3]],
+      [[0, 3], [1, 4]],
+      [[1, 3], [2, 4]],
+      [[2, 3], [3, 4]],
+      [[3, 3], [4, 4]],
+    ],
+  },
+  {
+    src: typeimg10,
+    qty: [3, 3],
+    cells: [
+      [[0, 0], [1, 1]],
+      [[1, 0], [2, 1]],
+      [[2, 0], [3, 1]],
+      [[0, 1], [1, 2]],
+      [[1, 1], [2, 2]],
+      [[2, 1], [3, 2]],
+      [[0, 2], [1, 3]],
+      [[1, 2], [2, 3]],
+      [[2, 2], [3, 3]],
+    ],
+  },
+  {
+    src: typeimg11,
+    qty: [3, 3],
+    cells: [
+      [[0, 0], [2, 2]],
+      [[2, 0], [3, 1]],
+      [[2, 1], [3, 2]],
+      [[0, 2], [1, 3]],
+      [[1, 2], [2, 3]],
+      [[2, 2], [3, 3]],
+    ],
+  },
+  {
+    src: typeimg12,
+    qty: [3, 3],
+    cells: [
+      [[0, 0], [1, 1]],
+      [[1, 0], [2, 1]],
+      [[2, 0], [3, 1]],
+      [[0, 1], [1, 2]],
+      [[0, 2], [1, 3]],
+      [[1, 1], [3, 3]],
+    ],
+  },
+  {
+    src: typeimg13,
+    qty: [3, 3],
+    cells: [
+      [[0, 0], [1, 1]],
+      [[1, 0], [2, 1]],
+      [[2, 0], [3, 1]],
+      [[2, 1], [3, 2]],
+      [[2, 2], [3, 3]],
+      [[0, 1], [2, 3]],
+    ],
+  },
+  {
+    src: typeimg14,
+    qty: [3, 3],
+    cells: [
+      [[0, 0], [2, 3]],
+      [[2, 0], [3, 1]],
+      [[2, 1], [3, 2]],
+      [[2, 2], [3, 3]],
+    ],
   },
 ];
 

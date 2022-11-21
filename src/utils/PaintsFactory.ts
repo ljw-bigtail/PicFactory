@@ -35,7 +35,8 @@ export class PaintsFactory {
       start: 0
     }
     this.ffmpeg = createFFmpeg({
-      log: !import.meta.env.PROD,
+      // log: !import.meta.env.PROD,
+      log: false,
     });
     this.ratio = 0
   }

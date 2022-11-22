@@ -11,6 +11,10 @@ export class PaintsFactory {
     gif: ArrayBufferLike | null,
     mp4: ArrayBufferLike | null
   };
+  file: {
+    gif: Blob | null,
+    mp4: Blob | null
+  };
   frames: Frame[];
   options: VideoOption;
   music: MusicOption;
@@ -18,6 +22,10 @@ export class PaintsFactory {
   ratio: number;
   constructor() {
     this.buffer = {
+      gif: null,
+      mp4: null
+    }
+    this.file = {
       gif: null,
       mp4: null
     }
@@ -66,20 +74,34 @@ export class PaintsFactory {
       gif: null,
       mp4: null
     }
+    this.file = {
+      gif: null,
+      mp4: null
+    }
     await this._mixinMusic();
     // 生成预览
-    if (!this.buffer.mp4) return "";
-    return URL.createObjectURL(new Blob([this.buffer.mp4], { type: "video/mp4" }));
+    if (!this.buffer.mp4 || !this.buffer.gif) return {};
+    const file_mp4 = new Blob([this.buffer.mp4], { type: "video/mp4" })
+    const file_gif = new Blob([this.buffer.gif], { type: "image/gif" })
+    this.file = {
+      mp4: file_mp4,
+      gif: file_gif
+    }
+    return {
+      src: URL.createObjectURL(file_mp4),
+      size_mp4: file_mp4.size,
+      size_gif: file_gif.size,
+    };
   }
   async toFile(fileType: outType) {
     const fileName = `${fileType}-${dateFmt()}.${fileType}`;
-    let type = ''
+    let file = null
     switch (fileType) {
-      case "gif": type = "image/gif"; break;
-      case "mp4": type = "video/mp4"; break;
+      case "gif": file = this.file.gif; break;
+      case "mp4": file = this.file.mp4; break;
     }
-    if (!this.buffer[fileType]) return "";
-    saveAs(new Blob([this.buffer[fileType] as ArrayBufferLike], { type }), fileName);
+    if(!file) return
+    saveAs(file, fileName);
   }
   _toTime(sec: number){
     const _sec = sec % 60
@@ -98,13 +120,17 @@ export class PaintsFactory {
     const outFile = "out.mp4";
     const outFileGif = "out.gif"
     const musicFile = "music.mp3";
-    const { delay, quality } = this.options;
+    const { delay, quality, repeat } = this.options;
     const { file: musicfile, start } = this.music;
     
     const frameRate = 1000 / delay; // delay 帧率 1s钟 X 张图
-    const _quality = 17 + Math.round(quality * 10); // quality ffmpeg的默认值是23，建议的取值范围是17-28。
+    /*
+     * quality 8～28
+     * ffmpeg的默认值是23（0～51），建议的取值范围是18-28
+     */
+    const _quality = 8 + Math.round((1 - quality) * 20);
     const time = delay / 1000 * this.frames.length
-
+    const _repeat = repeat == -1 ? 1 : 0
     // 图像根据属性处理
     const imageFactory = new ImageFactory(this.options)
     const files = await imageFactory.transforms(this.frames)
@@ -125,7 +151,7 @@ export class PaintsFactory {
       // 图+声音
       const startTime = this._toTime(start)
       await this.ffmpeg.run( 
-        "-r", `${frameRate}`,  //
+        "-r", `${frameRate}`,  // 抽帧
         "-f", "image2", "-i", "%d.jpg", // 加载图
         "-i", musicFile, "-ss", startTime,  "-t", `${time}`, // 加载音乐文件、音乐的截取部分
         "-crf", `${_quality}`, // 清晰度
@@ -144,7 +170,12 @@ export class PaintsFactory {
     
     this.ffmpeg.setProgress(({ ratio }: { ratio: number }) => this.logProgress(ratio, 'gif'));
     // gif buffer
-    await this.ffmpeg.run("-i", outFile, outFileGif);
+    await this.ffmpeg.run(
+      "-i", outFile,
+      "-loop", `${_repeat}`, // 0 循环 1 不循环
+      "-vf", "split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse", // 高清 防栅格化
+      outFileGif
+    );
     const buffer_gif = this.ffmpeg.FS("readFile", outFileGif).buffer;
 
     // 清除已加载的图片

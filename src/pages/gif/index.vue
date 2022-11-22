@@ -126,13 +126,19 @@ const makePreview = async function () {
     value: "正在加载插件，请等待...",
   });
   previewDialog.value.load();
-  var videoSrc = await paintsFactory
+  const file = await paintsFactory
     .setOpt(gifForm.value)
     .setMusic(musicForm.value)
     .setFrame(frames)
     .toPreView()
     .catch((e) => console.log(e));
-  previewDialog.value.display(videoSrc);
+  if (!file?.src) return;
+  const { src, size_mp4, size_gif } = file;
+  console.log(`
+    size_mp4: ${Math.round(size_mp4 / 1024)}KB
+    size_gif: ${Math.round(size_gif / 1024)}KB
+  `);
+  previewDialog.value.display(src);
 };
 
 const makeFile = function (type: "gif" | "mp4") {

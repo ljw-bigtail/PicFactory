@@ -177,6 +177,25 @@ export const templateArr = [
       [[2, 2], [3, 3]],
     ],
   },
+  {
+    src: typeimg2,
+    qty: [4, 2],
+    cells: [
+      [[0, 0], [3, 2]],
+      [[3, 0], [4, 1]],
+      [[3, 1], [4, 2]],
+    ],
+  },
+  {
+    src: typeimg14,
+    qty: [4, 3],
+    cells: [
+      [[0, 0], [3, 4]],
+      [[3, 0], [4, 1]],
+      [[3, 1], [4, 2]],
+      [[3, 2], [4, 3]],
+    ],
+  },
 ];
 
 export const DefaultCellOptions = {

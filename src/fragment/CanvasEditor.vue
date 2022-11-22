@@ -278,16 +278,18 @@ const initCells = function () {
   // 初始化cell数据
   cellsList.value = _cellsList;
   // 初始化img占位
-  cellsImg.value = Object.keys(_cellsList).map(function (e, index) {
-    if (
-      cellsImg.value &&
-      cellsImg.value[index] &&
-      Object.keys(cellsImg.value[index]).length > 0
-    ) {
-      return updateImgCache(cellsImg.value[index], index.toString());
-    }
-    return {};
-  });
+  cellsImg.value = Object.keys(_cellsList)
+    .map(function (e, index) {
+      if (
+        cellsImg.value &&
+        cellsImg.value[index] &&
+        Object.keys(cellsImg.value[index]).length > 0
+      ) {
+        return updateImgCache(cellsImg.value[index], index.toString());
+      }
+      return {};
+    })
+    .filter((e) => e);
 };
 
 const updateImgCache = function (json?: FileOption | null, index?: string) {

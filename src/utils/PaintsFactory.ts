@@ -1,5 +1,6 @@
 import { saveAs } from "file-saver";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
+import GIF from "gif.js";
 import { dateFmt } from "./utils";
 
 import { Frame, VideoOption, MusicOption, outType } from "../type/video";
@@ -7,10 +8,6 @@ import { Frame, VideoOption, MusicOption, outType } from "../type/video";
 import { ImageFactory } from "./ImageFactory";
 
 export class PaintsFactory {
-  buffer: {
-    gif: ArrayBufferLike | null,
-    mp4: ArrayBufferLike | null
-  };
   file: {
     gif: Blob | null,
     mp4: Blob | null
@@ -21,10 +18,6 @@ export class PaintsFactory {
   ffmpeg: any;
   ratio: number;
   constructor() {
-    this.buffer = {
-      gif: null,
-      mp4: null
-    }
     this.file = {
       gif: null,
       mp4: null
@@ -70,27 +63,29 @@ export class PaintsFactory {
     console.log(`生成进度：${this.ratio * 100}%`, this.ratio);
   }
   async toPreView() {
-    this.buffer = {
-      gif: null,
-      mp4: null
-    }
     this.file = {
       gif: null,
       mp4: null
     }
-    await this._mixinMusic();
+    // 处理图片
+    if(this.frames.length == 0){
+      return
+    }
+    // 图像根据属性处理
+    const imageFactory = new ImageFactory(this.options)
+    const imgBlob = await imageFactory.transforms(this.frames)
+    // const imgCanvas = await imageFactory.transformsCanvas(this.frames)
+    // 处理对应文件格式
+    if (!this.ffmpeg.isLoaded()) {
+      await this.ffmpeg.load();
+    }
+    await this._makeFile(imgBlob);
     // 生成预览
-    if (!this.buffer.mp4 || !this.buffer.gif) return {};
-    const file_mp4 = new Blob([this.buffer.mp4], { type: "video/mp4" })
-    const file_gif = new Blob([this.buffer.gif], { type: "image/gif" })
-    this.file = {
-      mp4: file_mp4,
-      gif: file_gif
-    }
+    if (!this.file.mp4 || !this.file.gif) return {};
     return {
-      src: URL.createObjectURL(file_mp4),
-      size_mp4: file_mp4.size,
-      size_gif: file_gif.size,
+      src: URL.createObjectURL(this.file.mp4),
+      size_mp4: this.file.mp4.size,
+      size_gif: this.file.gif.size,
     };
   }
   async toFile(fileType: outType) {
@@ -108,19 +103,24 @@ export class PaintsFactory {
     const _min = (sec - _sec) / 60
     return `00:${_min.toString().padStart(2, '0')}:${_sec.toString().padStart(2, '0')}`
   }
-  async _mixinMusic() {
-    if(this.frames.length == 0){
-      return
-    }
+  async _makeFile(files:Blob[]) {
+    // 逐帧添加图像，并缓存文件名
+    const clearData: string[] = []
+    files.forEach(async (file, index) => {
+      this.ffmpeg.FS("writeFile", `${index}.jpg`, await fetchFile(file));
+      clearData.push(`${index}.jpg`)
+    });
 
-    if (!this.ffmpeg.isLoaded()) {
-      await this.ffmpeg.load();
-    }
+    await this._makeMP4();
+    await this._makeGIF();
 
+    // 清除已加载的图片
+    clearData.forEach(name => this.ffmpeg.FS('unlink', name))
+  }
+  async _makeMP4() {
     const outFile = "out.mp4";
-    const outFileGif = "out.gif"
     const musicFile = "music.mp3";
-    const { delay, quality, repeat } = this.options;
+    const { delay, quality } = this.options;
     const { file: musicfile, start } = this.music;
     
     const frameRate = 1000 / delay; // delay 帧率 1s钟 X 张图
@@ -130,17 +130,6 @@ export class PaintsFactory {
      */
     const _quality = 8 + Math.round((1 - quality) * 20);
     const time = delay / 1000 * this.frames.length
-    const _repeat = repeat == -1 ? 1 : 0
-    // 图像根据属性处理
-    const imageFactory = new ImageFactory(this.options)
-    const files = await imageFactory.transforms(this.frames)
-
-    // 逐帧添加图像，并缓存文件名
-    const clearData: string[] = []
-    files.forEach(async (file, index) => {
-      this.ffmpeg.FS("writeFile", `${index}.jpg`, await fetchFile(file));
-      clearData.push(`${index}.jpg`)
-    });
 
     this.ffmpeg.setProgress(({ ratio }: { ratio: number }) => this.logProgress(ratio, 'mp4'));
     // mp4 buffer
@@ -167,7 +156,17 @@ export class PaintsFactory {
       );
     }
     const buffer_mp4 = this.ffmpeg.FS("readFile", outFile).buffer;
-    
+
+    // out
+    this.file.mp4 = new Blob([buffer_mp4], { type: "video/mp4" })
+  }
+  async _makeGIF() {
+    const outFile = "out.mp4";
+    const outFileGif = "out.gif"
+    const { repeat } = this.options;
+
+    const _repeat = repeat == -1 ? 1 : 0
+
     this.ffmpeg.setProgress(({ ratio }: { ratio: number }) => this.logProgress(ratio, 'gif'));
     // gif buffer
     await this.ffmpeg.run(
@@ -178,13 +177,7 @@ export class PaintsFactory {
     );
     const buffer_gif = this.ffmpeg.FS("readFile", outFileGif).buffer;
 
-    // 清除已加载的图片
-    clearData.forEach(name => this.ffmpeg.FS('unlink', name))
-
     // out
-    this.buffer = {
-      gif: buffer_gif,
-      mp4: buffer_mp4
-    }
-  }
+    this.file.gif = new Blob([buffer_gif], { type: "image/gif" })
+  } 
 }

@@ -6,12 +6,17 @@ export class ImageFactory {
     this.options = options; 
   }
   async transforms(frames: Frame[]): Promise<Blob[]>{
-    return Promise.all(frames.map(async frame => await this.transform(frame)))
+    return Promise.all(frames.map(async (frame) => {
+      const img = await this._loadImg(frame.file)
+      const canvas = this._paintFrame({img, frame})
+      return await this._canvasToBlob(canvas)
+    }))
   }
-  async transform(frame: Frame): Promise<Blob>{
-    const img = await this._loadImg(frame.file)
-    const canvas = this._paintFrame({img, frame})
-    return await this._canvasToBlob(canvas)
+  async transformsCanvas(frames: Frame[]): Promise<HTMLCanvasElement[]>{
+    return Promise.all(frames.map(async (frame) => {
+      const img = await this._loadImg(frame.file)
+      return this._paintFrame({img, frame})
+    }))
   }
   async _canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
     return new Promise(function(res, rej){

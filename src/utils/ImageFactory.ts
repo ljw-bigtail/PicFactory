@@ -63,7 +63,7 @@ export class ImageFactory {
       const { width: imgwidth, height: imgheight } = img
       const { width: canvaswidth, height: canvasheight } = canvas
       // 需要放大的最大倍数
-      const scale = Math.max(canvaswidth / imgwidth, canvasheight / imgheight, 1)
+      const scale = Math.max(canvaswidth / imgwidth, canvasheight / imgheight)
       // canvas中定位的坐标值, canvas中即将绘制区域
       // 图像在canvas里的起点坐标(默认 0，0 ), 图像在canvas中绘制的大小（默认 图片宽高，宽高比变了图片可以变形）
       // image所要绘制的起始位置, image所要绘制区域

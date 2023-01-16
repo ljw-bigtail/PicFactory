@@ -1,7 +1,8 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-const { resolve } = require('path')
-import addHeadersPlugin from './src/plugins/addHeaders.js'
+import { defineConfig } from "vite";
+import path from "path";
+import vue from "@vitejs/plugin-vue";
+
+import addHeadersPlugin from "./src/plugins/addHeaders.js";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,10 +10,19 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        gif: resolve(__dirname, 'gif.html'),
-        collage: resolve(__dirname, 'collage.html'),
-      }
-    }
+        main: path.resolve(__dirname, "index.html"),
+        gif: path.resolve(__dirname, "gif.html"),
+        collage: path.resolve(__dirname, "collage.html"),
+      },
+    },
   },
-})
+  resolve: {
+    // 配置路径别名
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  server: {
+    host: "0.0.0.0",
+  },
+});

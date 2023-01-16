@@ -14,7 +14,6 @@
           <TabPanel key="library" title="图库">
             <Gallery
               ref="galleryLoader"
-              v-model:value="files"
               @log="addLog"
               :need_decision="true"
               @decision="handleDecision"
@@ -53,19 +52,19 @@
 <script setup lang="ts">
 import { ref, nextTick, inject } from "vue";
 
-import { dateFmt } from "../../utils/utils";
-import { PaintsFactory } from "../../utils/PaintsFactory";
+import { dateFmt } from "@/utils/utils";
+import { PaintsFactory } from "@/utils/PaintsFactory";
 
-import BaseLayout from "../../layouts/BaseLayout.vue";
-import Log from "../../components/Log.vue";
-import Tab from "../../components/Tab/Box.vue";
-import TabPanel from "../../components/Tab/Panel.vue";
+import BaseLayout from "@/layouts/BaseLayout.vue";
+import Log from "@/components/Log.vue";
+import Tab from "@/components/Tab/Box.vue";
+import TabPanel from "@/components/Tab/Panel.vue";
 
-import Gallery from "../../fragment/Gallery/index.vue";
-import GIFOption from "../../fragment/Options/gif-canvas.vue";
-import GIFMusic from "../../fragment/Options/gif-music.vue";
-import FrameEditor from "../../fragment/FrameEditor.vue";
-import PreViewDialog from "../../fragment/PreViewDialog.vue";
+import Gallery from "@/fragment/Gallery/index.vue";
+import GIFOption from "@/fragment/Options/gif-canvas.vue";
+import GIFMusic from "@/fragment/Options/gif-music.vue";
+import FrameEditor from "@/fragment/FrameEditor.vue";
+import PreViewDialog from "@/fragment/PreViewDialog.vue";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
 const tabSelect = ref("library");
@@ -85,7 +84,6 @@ const gifForm = ref({
 const musicForm = ref({
   start: 0,
 });
-const files = ref([]);
 
 const paintsFactory = new PaintsFactory();
 

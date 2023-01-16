@@ -10,9 +10,9 @@
       <button class="button large C" @click="handleTopping">
         <Icon type="topping" />
       </button>
-      <button class="button large C" @click="handleAll">
+      <!-- <button class="button large C" @click="handleAll">
         <Icon type="all" />
-      </button>
+      </button> -->
       <button class="button large C" @click="handleToggle">
         <Icon type="reverse" />
       </button>
@@ -53,24 +53,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, Ref } from "vue";
 import draggable from "vuedraggable";
+import { Cache } from "@/utils/utils";
 
 import PicItem from "./pic.vue";
-import Icon from "../../components/Icon.vue";
-import DropFile from "../../components/DropFile.vue";
+import Icon from "@/components/Icon.vue";
+import DropFile from "@/components/DropFile.vue";
 
-import { dropFileType } from "../../type/dropFile";
+import { dropFileType } from "@/type/dropFile";
 
 // TODO 拖拽组件：批量拖拽
 const props = defineProps({
   max_size: {
     type: Number,
     default: 1024 * 10, // KB
-  },
-  value: {
-    type: Array,
-    default: [],
   },
   drop: {
     type: Boolean,
@@ -84,7 +81,18 @@ const props = defineProps({
 
 const emit = defineEmits(["update:value", "change", "drop", "log", "decision"]);
 
-const files = ref(props.value as dropFileType[]);
+// const GalleryFiles = {
+//   key: "PicFactoryGallery",
+//   get: function () {
+//     const json = Cache.get(this.key);
+//     return json.files ? json.files : [];
+//   },
+//   set: function (data: dropFileType[]) {
+//     Cache.set(this.key, data);
+//   },
+// };
+
+const files: Ref<dropFileType[]> = ref([]);
 const dropFile = ref();
 
 const handelDropPic = function (item: dropFileType) {

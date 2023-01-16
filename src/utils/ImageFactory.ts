@@ -1,4 +1,4 @@
-import { Frame, VideoOption } from "../type/video";
+import { Frame, VideoOption } from "@/type/video";
 
 export class ImageFactory {
   options: VideoOption;

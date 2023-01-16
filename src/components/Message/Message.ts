@@ -1,7 +1,7 @@
 import { createApp, App } from "vue";
 import MessageConstructor from "./Message.vue";
 
-import { uuid } from "../../utils/utils";
+import { uuid } from "@/utils/utils";
 
 let $inst;
 

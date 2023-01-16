@@ -47,5 +47,11 @@ const props = defineProps(["type"]);
   &.reverse {
     background-image: url("../assets/icon/reverse.svg");
   }
+  &.clear {
+    background-image: url("../assets/icon/delete.svg");
+  }
+  &.save {
+    background-image: url("../assets/icon/save.svg");
+  }
 }
 </style>

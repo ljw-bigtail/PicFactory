@@ -1,17 +1,17 @@
-import typeimg1 from "../assets/canvasTypePic/type1.png";
-import typeimg2 from "../assets/canvasTypePic/type2.png";
-import typeimg3 from "../assets/canvasTypePic/type3.png";
-// import typeimg4 from "../assets/canvasTypePic/type4.png";
-import typeimg5 from "../assets/canvasTypePic/type5.png";
-import typeimg6 from "../assets/canvasTypePic/type6.png";
-import typeimg7 from "../assets/canvasTypePic/type7.png";
-import typeimg8 from "../assets/canvasTypePic/type8.png";
-import typeimg9 from "../assets/canvasTypePic/type9.png";
-import typeimg10 from "../assets/canvasTypePic/type10.png";
-import typeimg11 from "../assets/canvasTypePic/type11.png";
-import typeimg12 from "../assets/canvasTypePic/type12.png";
-import typeimg13 from "../assets/canvasTypePic/type13.png";
-import typeimg14 from "../assets/canvasTypePic/type14.png";
+import typeimg1 from "@/assets/canvasTypePic/type1.png";
+import typeimg2 from "@/assets/canvasTypePic/type2.png";
+import typeimg3 from "@/assets/canvasTypePic/type3.png";
+// import typeimg4 from "@/assets/canvasTypePic/type4.png";
+import typeimg5 from "@/assets/canvasTypePic/type5.png";
+import typeimg6 from "@/assets/canvasTypePic/type6.png";
+import typeimg7 from "@/assets/canvasTypePic/type7.png";
+import typeimg8 from "@/assets/canvasTypePic/type8.png";
+import typeimg9 from "@/assets/canvasTypePic/type9.png";
+import typeimg10 from "@/assets/canvasTypePic/type10.png";
+import typeimg11 from "@/assets/canvasTypePic/type11.png";
+import typeimg12 from "@/assets/canvasTypePic/type12.png";
+import typeimg13 from "@/assets/canvasTypePic/type13.png";
+import typeimg14 from "@/assets/canvasTypePic/type14.png";
 
 export const templateArr = [
   {
@@ -228,23 +228,23 @@ export const DefaultCanvasTextOptions = {
   color: "#000000",
 };
 
-import sticker_1_1 from "../assets/sticker/pixel/1.svg";
-import sticker_1_2 from "../assets/sticker/pixel/2.svg";
-import sticker_1_3 from "../assets/sticker/pixel/3.svg";
-import sticker_1_4 from "../assets/sticker/pixel/4.svg";
-import sticker_1_5 from "../assets/sticker/pixel/5.svg";
-import sticker_1_6 from "../assets/sticker/pixel/6.svg";
-import sticker_1_7 from "../assets/sticker/pixel/7.svg";
+import sticker_1_1 from "@/assets/sticker/pixel/1.svg";
+import sticker_1_2 from "@/assets/sticker/pixel/2.svg";
+import sticker_1_3 from "@/assets/sticker/pixel/3.svg";
+import sticker_1_4 from "@/assets/sticker/pixel/4.svg";
+import sticker_1_5 from "@/assets/sticker/pixel/5.svg";
+import sticker_1_6 from "@/assets/sticker/pixel/6.svg";
+import sticker_1_7 from "@/assets/sticker/pixel/7.svg";
 
-import sticker_2_1 from "../assets/sticker/clothes/1.svg";
-import sticker_2_2 from "../assets/sticker/clothes/2.svg";
-import sticker_2_3 from "../assets/sticker/clothes/3.svg";
-import sticker_2_4 from "../assets/sticker/clothes/4.svg";
-import sticker_2_5 from "../assets/sticker/clothes/5.svg";
-import sticker_2_6 from "../assets/sticker/clothes/6.svg";
-import sticker_2_7 from "../assets/sticker/clothes/7.svg";
-import sticker_2_8 from "../assets/sticker/clothes/8.svg";
-import sticker_2_9 from "../assets/sticker/clothes/9.svg";
+import sticker_2_1 from "@/assets/sticker/clothes/1.svg";
+import sticker_2_2 from "@/assets/sticker/clothes/2.svg";
+import sticker_2_3 from "@/assets/sticker/clothes/3.svg";
+import sticker_2_4 from "@/assets/sticker/clothes/4.svg";
+import sticker_2_5 from "@/assets/sticker/clothes/5.svg";
+import sticker_2_6 from "@/assets/sticker/clothes/6.svg";
+import sticker_2_7 from "@/assets/sticker/clothes/7.svg";
+import sticker_2_8 from "@/assets/sticker/clothes/8.svg";
+import sticker_2_9 from "@/assets/sticker/clothes/9.svg";
 
 export const stickerArr = [
   {

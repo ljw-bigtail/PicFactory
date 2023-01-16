@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { Cache } from "../utils/utils";
+import { Cache } from "@/utils/utils";
 
 const prop = defineProps({
   needLog: {

@@ -13,8 +13,8 @@
 </template>
 
 <script setup lang="ts">
-import Line from "../../components/Line.vue";
-import Range from "../../components/Range.vue";
+import Line from "@/components/Line.vue";
+import Range from "@/components/Range.vue";
 
 type Option = {
   scale: number;

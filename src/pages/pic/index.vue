@@ -13,12 +13,7 @@
       <div class="left">
         <Tab v-model:selected="tabSelect">
           <TabPanel key="library" title="图库">
-            <Gallery
-              ref="galleryLoader"
-              v-model:value="files"
-              @log="addLog"
-              @drop="handleDrop"
-            />
+            <Gallery ref="galleryLoader" @log="addLog" @drop="handleDrop" />
           </TabPanel>
           <TabPanel key="setting" title="设置">
             <CanvasOption v-model:value="canvasForm" />
@@ -71,24 +66,20 @@
 <script setup lang="ts">
 import { ref, nextTick } from "vue";
 
-import { dateFmt, uuid } from "../../utils/utils";
-import {
-  CanvasFactory,
-  DefaultCanvasFactoryOptions,
-  stickerArr,
-} from "../../utils/CanvasFactory";
+import { dateFmt, uuid } from "@/utils/utils";
+import { CanvasFactory, DefaultCanvasFactoryOptions, stickerArr } from "@/utils/CanvasFactory";
 
-import BaseLayout from "../../layouts/BaseLayout.vue";
-import Log from "../../components/Log.vue";
-import Tab from "../../components/Tab/Box.vue";
-import TabPanel from "../../components/Tab/Panel.vue";
-import Accordion from "../../components/Accordion/Box.vue";
-import AccordionPanel from "../../components/Accordion/Panel.vue";
-import Line from "../../components/Line.vue";
+import BaseLayout from "@/layouts/BaseLayout.vue";
+import Log from "@/components/Log.vue";
+import Tab from "@/components/Tab/Box.vue";
+import TabPanel from "@/components/Tab/Panel.vue";
+import Accordion from "@/components/Accordion/Box.vue";
+import AccordionPanel from "@/components/Accordion/Panel.vue";
+import Line from "@/components/Line.vue";
 
-import Gallery from "../../fragment/Gallery/index.vue";
-import CanvasOption from "../../fragment/Options/collage-canvas.vue";
-import CanvasEditor from "../../fragment/CanvasEditor.vue";
+import Gallery from "@/fragment/Gallery/index.vue";
+import CanvasOption from "@/fragment/Options/collage-canvas.vue";
+import CanvasEditor from "@/fragment/CanvasEditor.vue";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
 // const previewSrc = ref("");
@@ -96,7 +87,6 @@ const galleryLoader = ref();
 const canvasEditor = ref();
 const tabSelect = ref("setting");
 const canvasForm = ref({ ...DefaultCanvasFactoryOptions });
-const files = ref();
 const stickerTabSelect = ref(stickerArr[0].key); // 默认打开第一套贴纸
 const textSticker = ref();
 
@@ -117,15 +107,6 @@ const handleDrop = function (data: FileOption) {
 const stopHandler = function (e: Event) {
   e.stopPropagation();
   e.preventDefault();
-};
-
-const clearFileCache = () => {
-  nextTick(() => {
-    files.value = [];
-    // previewSrc.value = "";
-    galleryLoader.value.clearFile();
-    addLog("清理成功");
-  });
 };
 
 const addLog = (mes: string) => {

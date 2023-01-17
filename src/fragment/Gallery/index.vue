@@ -16,7 +16,7 @@
       <button class="button large C" @click="handleToggle">
         <Icon type="reverse" />
       </button>
-      <!-- <button class="button large C" @click="handleUpdate" v-if="need_decision">
+      <!-- <button class="button large C" @click="handleUpdate">
         <Icon type="import" />
       </button> -->
     </div>
@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import { ref, Ref } from "vue";
 import draggable from "vuedraggable";
-import { Cache } from "@/utils/utils";
+// import { Cache } from "@/utils/utils";
 
 import PicItem from "./pic.vue";
 import Icon from "@/components/Icon.vue";
@@ -63,7 +63,6 @@ import DropFile from "@/components/DropFile.vue";
 
 import { dropFileType } from "@/type/dropFile";
 
-// TODO 拖拽组件：批量拖拽
 const props = defineProps({
   max_size: {
     type: Number,
@@ -73,7 +72,8 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  need_decision: {
+  multiDrop: {
+    // 批量拖拽
     type: Boolean,
     default: false,
   },
@@ -96,7 +96,17 @@ const files: Ref<dropFileType[]> = ref([]);
 const dropFile = ref();
 
 const handelDropPic = function (item: dropFileType) {
-  emit("drop", item);
+  if (props.multiDrop) {
+    const imgs = [...files.value].filter((e) => e.selected);
+    if (imgs.length == 0) {
+      emit("drop", [item]);
+    } else {
+      emit("drop", imgs);
+      clearSelect();
+    }
+  } else {
+    emit("drop", item);
+  }
 };
 
 const clearFile = function () {
@@ -168,13 +178,7 @@ const handleTopping = function () {
     }
   });
   dropFile.value.setVal([...select, ...other]);
-  if (!props.need_decision) {
-    // 清除选择
-    setSelect(false);
-  } else {
-    // 清除状态
-    handleUpdate();
-  }
+  setSelect(false);
 };
 
 const handleUpdate = function () {

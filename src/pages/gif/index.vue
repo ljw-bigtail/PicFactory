@@ -12,12 +12,7 @@
       <div class="left">
         <Tab v-model:selected="tabSelect">
           <TabPanel key="library" title="图库">
-            <Gallery
-              ref="galleryLoader"
-              @log="addLog"
-              :need_decision="true"
-              @decision="handleDecision"
-            />
+            <Gallery ref="galleryLoader" @log="addLog" @drop="handleDrop" :multiDrop="true" />
           </TabPanel>
           <TabPanel key="music" title="音乐库">
             <GIFMusic :value="musicForm" />
@@ -35,7 +30,7 @@
         <div class="btn-group right">
           <button class="button A" @click="clearFileCache">清理帧</button>
         </div>
-        <FrameEditor ref="frameEditor" :list="listImgs" />
+        <FrameEditor ref="frameEditor" />
       </div>
     </template>
     <template v-slot:footer>
@@ -63,7 +58,7 @@ import TabPanel from "@/components/Tab/Panel.vue";
 import Gallery from "@/fragment/Gallery/index.vue";
 import GIFOption from "@/fragment/Options/gif-canvas.vue";
 import GIFMusic from "@/fragment/Options/gif-music.vue";
-import FrameEditor from "@/fragment/FrameEditor.vue";
+import FrameEditor from "@/fragment/Frame/Editor.vue";
 import PreViewDialog from "@/fragment/PreViewDialog.vue";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
@@ -145,11 +140,10 @@ const makeFile = function (type: "gif" | "mp4") {
   paintsFactory.toFile(type).catch((e) => console.log(e));
 };
 
-const listImgs = ref([] as FileOption[]);
 type FileOption = { id: string; src: string; file: File; selected: boolean };
 
-const handleDecision = function (list: FileOption[]) {
-  listImgs.value = list;
+const handleDrop = function (data: FileOption[]) {
+  frameEditor.value.setDropCache([...data]);
 };
 </script>
 
@@ -178,6 +172,8 @@ const handleDecision = function (list: FileOption[]) {
   & + .right {
     padding-bottom: var(--space-3);
     background-color: var(--color-light-gray);
+    display: flex;
+    flex-direction: column;
     .previewImg {
       max-width: 72%;
       max-height: 72%;

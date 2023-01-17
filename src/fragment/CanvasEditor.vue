@@ -109,9 +109,7 @@
     />
     <CollageTextOption
       v-model:value="collageTextForm"
-      :visible="
-        selectStickerIndex > -1 && fragmentList[selectStickerIndex].type == 'text'
-      "
+      :visible="selectStickerIndex > -1 && fragmentList[selectStickerIndex].type == 'text'"
       @change="textChangeHandler"
     />
   </div>
@@ -225,15 +223,11 @@ const resize = function () {
   const { width: size_width, height: size_height } = props.options;
   const { scale_width, scale_height } = {
     scale_width: Math.max(
-      parseFloat(
-        (size_width / (dom.clientWidth - config.min_box_padding * 2)).toFixed(2)
-      ),
+      parseFloat((size_width / (dom.clientWidth - config.min_box_padding * 2)).toFixed(2)),
       1
     ),
     scale_height: Math.max(
-      parseFloat(
-        (size_height / (dom.clientHeight - config.min_box_padding * 2)).toFixed(2)
-      ),
+      parseFloat((size_height / (dom.clientHeight - config.min_box_padding * 2)).toFixed(2)),
       1
     ),
   };
@@ -574,10 +568,8 @@ const collageStickerForm = ref({
   rotateZ: 0,
 });
 const stickerChangeHandler = function () {
-  if (selectStickerIndex.value == -1 || !fragmentList.value[selectStickerIndex.value])
-    return;
-  fragmentList.value[selectStickerIndex.value].rotateZ =
-    collageStickerForm.value.rotateZ * 360;
+  if (selectStickerIndex.value == -1 || !fragmentList.value[selectStickerIndex.value]) return;
+  fragmentList.value[selectStickerIndex.value].rotateZ = collageStickerForm.value.rotateZ * 360;
   fragmentList.value[selectStickerIndex.value].scale = collageStickerForm.value.scale;
 };
 
@@ -587,10 +579,8 @@ const collageTextForm = ref({
   rotateZ: 0,
 });
 const textChangeHandler = function () {
-  if (selectStickerIndex.value == -1 || !fragmentList.value[selectStickerIndex.value])
-    return;
-  fragmentList.value[selectStickerIndex.value].rotateZ =
-    collageTextForm.value.rotateZ * 360;
+  if (selectStickerIndex.value == -1 || !fragmentList.value[selectStickerIndex.value]) return;
+  fragmentList.value[selectStickerIndex.value].rotateZ = collageTextForm.value.rotateZ * 360;
   fragmentList.value[selectStickerIndex.value].size = collageTextForm.value.size;
   fragmentList.value[selectStickerIndex.value].color = collageTextForm.value.color;
 };

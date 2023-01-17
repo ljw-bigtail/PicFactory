@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from "vue";
+import { ref } from "vue";
 
 import { dateFmt, uuid } from "@/utils/utils";
 import { CanvasFactory, DefaultCanvasFactoryOptions, stickerArr } from "@/utils/CanvasFactory";
@@ -104,6 +104,7 @@ const handleDrop = function (data: FileOption) {
     canvasEditor.value.setDropCache({ ...data, width: img.width, height: img.height });
   };
 };
+
 const stopHandler = function (e: Event) {
   e.stopPropagation();
   e.preventDefault();

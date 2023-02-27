@@ -103,11 +103,13 @@
       @turn="turnHandler"
     />
     <CollageStickerOption
+      ref="collageStickerOption"
       v-model:value="collageStickerForm"
       :visible="selectStickerIndex > -1 && fragmentList[selectStickerIndex].type == 'img'"
       @change="stickerChangeHandler"
     />
     <CollageTextOption
+      ref="collageTextOption"
       v-model:value="collageTextForm"
       :visible="selectStickerIndex > -1 && fragmentList[selectStickerIndex].type == 'text'"
       @change="textChangeHandler"
@@ -329,6 +331,8 @@ const handleDel = function (index: number) {
 const handleFragmentDel = function (index: number) {
   // 清除贴纸
   fragmentList.value.splice(index, 1);
+  // console.log([...fragmentList.value], index);
+  selectStickerIndex.value = -1;
 };
 
 const stopHandler = function (e: Event) {
@@ -404,24 +408,22 @@ const dragEnter = function (e: DragEvent, index: number) {
 
 // 添加贴纸 start
 const addFragment = function (data: fragmentProps) {
-  fragmentList.value.push(
-    Object.assign({
-      // 文字用
-      size: DefaultCanvasTextOptions.size,
-      color: DefaultCanvasTextOptions.color,
-      // 图片用
-      width: DefaultCanvasStickerOptions.width,
-      height: DefaultCanvasStickerOptions.height,
-      scale: DefaultCanvasStickerOptions.scale, // 缩放 50% ～ 150%
-      // public
-      x: 0, // 定位 x
-      y: 0, // 定位 y
-      rotateZ: 0, // 中心旋转
-      value: data.value,
-      id: data.id,
-      type: data.type,
-    })
-  );
+  fragmentList.value.push({
+    // 文字用
+    size: DefaultCanvasTextOptions.size,
+    color: DefaultCanvasTextOptions.color,
+    // 图片用
+    width: DefaultCanvasStickerOptions.width,
+    height: DefaultCanvasStickerOptions.height,
+    scale: DefaultCanvasStickerOptions.scale, // 缩放 50% ～ 150%
+    // public
+    x: 0, // 定位 x
+    y: 0, // 定位 y
+    rotateZ: 0, // 中心旋转
+    value: data.value,
+    id: data.id,
+    type: data.type,
+  });
 };
 // 添加贴纸 end
 defineExpose({ setDropCache, addFragment });
@@ -487,6 +489,8 @@ const imgMove = function (e: MouseEvent, index: number) {
 // 图片内部挪动 end
 
 // 碎片挪动 start
+const collageStickerOption = ref();
+const collageTextOption = ref();
 const fragmentMoveStart = function (e: MouseEvent, index: number) {
   stopHandler(e);
   // 初始化移动起点
@@ -498,6 +502,23 @@ const fragmentMoveStart = function (e: MouseEvent, index: number) {
     index,
     type: "fragment",
   };
+  // 更新浮窗工具
+  const fragment_data = { ...fragmentList.value[index] };
+  switch (fragment_data.type) {
+    case "img":
+      collageStickerOption.value.setVal({
+        rotateZ: fragment_data.rotateZ,
+        scale: fragment_data.scale,
+      });
+      break;
+    case "text":
+      collageTextOption.value.setVal({
+        rotateZ: fragment_data.rotateZ,
+        size: fragment_data.size,
+        color: fragment_data.color,
+      });
+      break;
+  }
 };
 const fragmentMove = function (e: MouseEvent) {
   // 贴纸拖拽

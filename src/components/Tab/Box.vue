@@ -1,5 +1,5 @@
 <template>
-  <div class="tab content-scroll">
+  <div :class="['tab', direction === 'row' ? 'row' : 'column']">
     <div class="tab__header">
       <div class="tab__header__wrapper">
         <div
@@ -8,7 +8,10 @@
           :key="index + t.key"
           :class="['tab__header__wrapper__item', t.key === selected ? 'selected' : '']"
         >
-          {{ t.title }}
+          <img :src="t.icon" v-if="t.icon && t.icon != ''" />
+          <span>
+            {{ t.title }}
+          </span>
         </div>
       </div>
     </div>
@@ -24,10 +27,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, getCurrentInstance } from "vue";
-import TabPanel from "./panel.vue";
+import { ref, onMounted, getCurrentInstance, VNode } from "vue";
+import { Panel } from "./index";
 
-const props = defineProps({ selected: String });
+defineProps({
+  selected: {
+    type: String,
+    // default: "",
+  },
+  direction: {
+    type: String,
+    default: "column",
+  },
+});
+
 const emit = defineEmits(["update:selected"]);
 const defaults = ref();
 const titles = ref();
@@ -37,15 +50,15 @@ const context = getCurrentInstance();
 onMounted(function () {
   const slots = context?.slots;
   if (!slots || !slots.default) return;
-  let child: any = slots.default();
+  let child: any[] = slots.default();
   if (child.length == 0) return;
   if (child.length == 1) {
     // fix: 循环 tabpanel 的情况
     child = child[0].children;
   }
-  const _child = child.filter((tag: { props: string }) => {
-    // if (tag.type !== TabPanel) {
-    //   throw new Error("Tab 子标签名必须是 TabPanel");
+  const _child = child.filter((tag: { props: object; type: VNode }) => {
+    // if (tag.type !== Panel) {
+    //   throw new Error("Tab 子标签名必须是 Tab.Panel");
     // }
     if (!tag.props) {
       return false;
@@ -53,15 +66,18 @@ onMounted(function () {
     const keys = Object.keys(tag.props);
     return keys.includes("key") && keys.includes("title");
   });
-  // if (child.length != _child.length) {
-  //   console.error("TabPanel 参数不全 ");
-  // }
-  const childTitles = _child.map((tag: { props: { title: string; key: string } }) => {
-    return {
-      title: tag.props?.title,
-      key: tag.props?.key,
-    };
-  });
+  if (child.length != _child.length) {
+    throw new Error("Tab.Panel 参数不全");
+  }
+  const childTitles = _child.map(
+    (tag: { props: { title: string; icon?: string; key: string } }) => {
+      return {
+        title: tag.props.title,
+        icon: tag.props?.icon,
+        key: tag.props.key,
+      };
+    }
+  );
   defaults.value = _child;
   titles.value = childTitles;
 });
@@ -73,53 +89,94 @@ const select = (key: string) => {
 
 <style lang="less" scoped>
 .tab {
-  &__header {
-    &__wrapper {
-      display: flex;
-      flex-wrap: nowrap;
-      align-items: flex-end;
-      width: max-content;
-      &__item {
-        margin: 0 var(--space-1);
-        padding: var(--space-1) var(--space-2);
-        cursor: pointer;
-        position: relative;
-        &::after {
-          content: "";
-          display: block;
-          height: 3px;
-          width: 70%;
-          border-radius: 1px;
-          position: absolute;
-          bottom: 0;
-          left: 50%;
-          transform: translateX(-50%);
-        }
-        &:hover,
-        &.selected {
+  display: flex;
+  height: 100%;
+  &.column {
+    flex-direction: column;
+    .tab__header {
+      &__wrapper {
+        flex-wrap: nowrap;
+        align-items: flex-end;
+        &__item {
+          padding: 1rem 2rem;
+          margin: 0 1rem;
           &::after {
-            background-color: var(--main-color);
+            content: "";
+            display: block;
+            height: 0.3rem;
+            width: 70%;
+            border-radius: var(--radius);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
           }
-        }
-        &:hover {
-          &::after {
-            opacity: 0.3;
+          &:hover,
+          &.selected {
+            &::after {
+              background-color: var(--color-border);
+              // background-color: var(--color-brand);
+            }
+          }
+          &:hover {
+            &::after {
+              opacity: 0.3;
+            }
           }
         }
       }
     }
   }
-  &.content-scroll {
+  &.row {
+    flex-direction: row;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    .tab__body {
-      overflow-y: auto;
-      overflow-x: hidden;
-      box-sizing: border-box;
-      padding: 0 var(--space-1) var(--space-2);
-      margin-top: var(--space-1);
+    .tab__header {
+      &__wrapper {
+        flex-direction: column;
+        &__item {
+          padding: 1rem 2rem;
+          background-color: var(--color-bg);
+          color: var(--color-text);
+          &:hover,
+          &.selected {
+            background-color: var(--color-blue);
+            color: var(--color-text-re);
+          }
+          &:hover {
+            filter: brightness(1.1);
+          }
+        }
+      }
     }
+    .tab__body {
+      flex: 1;
+      height: 100%;
+      overflow-y: auto;
+    }
+  }
+  &__header {
+    background-color: var(--color-bg);
+    &__wrapper {
+      display: flex;
+      width: max-content;
+      &__item {
+        cursor: pointer;
+        position: relative;
+        text-align: center;
+        img {
+          margin: 0 auto;
+          width: 2rem;
+          height: 2rem;
+        }
+      }
+    }
+  }
+  &__body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    padding: 0 var(--space-1);
+    flex: 1;
   }
 }
 </style>

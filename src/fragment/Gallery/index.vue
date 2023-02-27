@@ -58,8 +58,7 @@ import draggable from "vuedraggable";
 // import { Cache } from "@/utils/utils";
 
 import PicItem from "./pic.vue";
-import Icon from "@/components/Icon.vue";
-import DropFile from "@/components/DropFile.vue";
+import { Icon, DropFile } from "@/components/index";
 
 import { dropFileType } from "@/type/dropFile";
 

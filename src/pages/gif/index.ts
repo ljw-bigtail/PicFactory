@@ -1,11 +1,11 @@
 import { createApp } from 'vue'
-import App from './index.vue'
+// import 'modern-css-reset'
 
-import Message from '@/components/Message/Message'
+import App from './index.vue'
+import {Message} from '@/components'
 
 const app = createApp(App)
 
-app
-  .use(Message)
-  .mount('#app')
-  
+app.use(Message)
+
+app.mount('#app')

@@ -7,19 +7,19 @@
     <Line type="vertical" />
     <div>
       <label>字号</label>
-      <Range ref="sizeRange" v-model:value="value.size" @change="formChange" />
+      <Range ref="sizeRange" v-model="value.size" @change="formChange" />
     </div>
     <Line type="vertical" />
     <div>
       <label>旋转</label>
-      <Range ref="rotateRange" v-model:value="value.rotateZ" @change="formChange" />
+      <Range ref="rotateRange" v-model="value.rotateZ" @change="formChange" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import Line from "@/components/Line.vue";
-import Range from "@/components/Range.vue";
+import { ref } from "vue";
+import { Line, Range } from "@/components/index";
 
 type Option = {
   rotateZ: number;
@@ -42,6 +42,19 @@ const formChange = function (value?: {}) {
   emit("update:value", _value);
   emit("change");
 };
+
+const color = ref();
+const sizeRange = ref();
+const rotateRange = ref();
+const setVal = function () {
+  var value = arguments[0];
+  color.value.setVal(value.color);
+  sizeRange.value.setVal(value.size);
+  rotateRange.value.setVal(value.rotateZ / 360);
+  emit("update:value", value);
+};
+
+defineExpose({ setVal });
 </script>
 
 <style lang="less" scoped>

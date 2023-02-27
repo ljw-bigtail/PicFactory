@@ -5,7 +5,7 @@
       :id="`drop-file-core_${id}`"
       :accept="file_type.join(',')"
       class="drop-file-core"
-      multiple
+      :multiple="multiple"
       @change="fileAdd"
     />
     <div
@@ -25,9 +25,8 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-
-import { uuid } from "../utils/utils";
-import { dropFileType } from "../type/dropFile";
+import { uuid } from "./utils";
+import { dropFileType } from "@/type/dropFile";
 
 const props = defineProps({
   max_size: {
@@ -37,6 +36,10 @@ const props = defineProps({
   value: {
     type: Array,
     default: [],
+  },
+  multiple: {
+    type: Boolean,
+    default: true,
   },
   file_type: {
     type: Array,
@@ -51,7 +54,6 @@ const id = uuid();
 const emit = defineEmits(["update:value", "change", "log"]);
 
 const log = function (mes: string) {
-  // TODO log
   console.warn(mes);
   emit("log", mes);
 };

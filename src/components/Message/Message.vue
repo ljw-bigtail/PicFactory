@@ -80,7 +80,7 @@ const handleClose = () => {
       display: block;
       width: 12px;
       height: 12px;
-      border-radius: 2px;
+      border-radius: var(--radius);
     }
     &::before {
       top: 0;

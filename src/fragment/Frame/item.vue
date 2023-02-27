@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import Icon from "@/components/Icon.vue";
+import { Icon } from "@/components/index";
 
 const props = defineProps(["element", "index"]);
 const emit = defineEmits(["itemTools", "clear"]);

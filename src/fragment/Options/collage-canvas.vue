@@ -7,34 +7,22 @@
     <Line />
     <div>
       <span>间距：</span>
-      <Range v-model:value="value.margin" @change="rangeChange" />
+      <Range v-model="value.margin" @change="rangeChange" />
     </div>
     <div>
       <span>边框：</span>
-      <Range v-model:value="value.padding" @change="rangeChange" />
+      <Range v-model="value.padding" @change="rangeChange" />
     </div>
     <div>
       <span>圆角：</span>
-      <Range v-model:value="value.radius" @change="rangeChange" />
+      <Range v-model="value.radius" @change="rangeChange" />
     </div>
     <Line />
     <div>
       <span>移图方式：</span>
-      <input
-        type="radio"
-        name="rule"
-        :value="1"
-        v-model="value.rule"
-        @change="formChange"
-      />
+      <input type="radio" name="rule" :value="1" v-model="value.rule" @change="formChange" />
       清理
-      <input
-        type="radio"
-        name="rule"
-        :value="2"
-        v-model="value.rule"
-        @change="formChange"
-      />
+      <input type="radio" name="rule" :value="2" v-model="value.rule" @change="formChange" />
       交换
     </div>
     <Line />
@@ -57,8 +45,7 @@ import { ref } from "vue";
 
 import Size from "./Item/size.vue";
 
-import Line from "@/components/Line.vue";
-import Range from "@/components/Range.vue";
+import { Line, Range } from "@/components/index";
 
 import { templateArr, DefaultCanvasFactoryOptions } from "@/utils/CanvasFactory";
 

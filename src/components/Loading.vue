@@ -1,5 +1,5 @@
 <template>
-  <div class="dialog-loading global-loading">
+  <div class="global-loading">
     <div class="global-loading-dot"></div>
     <div class="global-loading-dot"></div>
     <div class="global-loading-dot"></div>

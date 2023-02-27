@@ -2,7 +2,7 @@
   <div :class="['img-tool', visible ? 'active' : '']" @click="stopHandler">
     <div>
       <label>缩放</label>
-      <Range ref="scaleRange" v-model:value="value.scale" @change="rangeChange" />
+      <Range ref="scaleRange" v-model="value.scale" @change="rangeChange" />
     </div>
     <Line type="vertical" />
     <div class="icon-group">
@@ -20,23 +20,14 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import Line from "@/components/Line.vue";
-import Range from "@/components/Range.vue";
-import Icon from "@/components/Icon.vue";
+import { Line, Range, Icon } from "@/components/index";
 
 type CanvasImgOption = {
   scale: number;
 };
 
 const props = defineProps<{ value: CanvasImgOption; visible: boolean }>();
-const emit = defineEmits([
-  "update:value",
-  "change",
-  "flipX",
-  "flipY",
-  "turnAnti",
-  "turn",
-]);
+const emit = defineEmits(["update:value", "change", "flipX", "flipY", "turnAnti", "turn"]);
 
 const stopHandler = function (e: Event) {
   e.stopPropagation();

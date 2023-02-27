@@ -7,7 +7,7 @@
     <div>
       <span>质量：</span>
       <div>
-        <Range ref="scaleRange" v-model:value="value.quality" @change="qualityChange" />
+        <Range ref="scaleRange" v-model="value.quality" @change="qualityChange" />
       </div>
     </div>
     <!-- <div>
@@ -60,8 +60,7 @@
 import { ref } from "vue";
 
 import Size from "./Item/size.vue";
-import Range from "@/components/Range.vue";
-import Line from "@/components/Line.vue";
+import { Line, Range } from "@/components/index";
 
 type GIFOption = {
   width: number;

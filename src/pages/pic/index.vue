@@ -11,14 +11,14 @@
     </template>
     <template v-slot:main>
       <div class="left">
-        <Tab v-model:selected="tabSelect">
-          <TabPanel key="library" title="图库">
+        <Tab.Box v-model:selected="tabSelect">
+          <Tab.Panel key="library" title="图库">
             <Gallery ref="galleryLoader" @log="addLog" @drop="handleDrop" />
-          </TabPanel>
-          <TabPanel key="setting" title="设置">
+          </Tab.Panel>
+          <Tab.Panel key="setting" title="设置">
             <CanvasOption v-model:value="canvasForm" />
-          </TabPanel>
-          <TabPanel key="sticker" title="贴纸">
+          </Tab.Panel>
+          <Tab.Panel key="sticker" title="贴纸">
             <div class="sticker-text">
               <textarea v-model="textSticker" placeholder="请输入需要插入的文字" />
               <button class="button button-icon B" @click="textAdd">
@@ -27,9 +27,18 @@
               </button>
             </div>
             <Line />
+            <div class="sticker-file">
+              <DropFile
+                v-model:value="files"
+                :max_size="1024 * 10"
+                @change="handleFileChange"
+                ref="dropFile"
+              />
+            </div>
+            <Line />
             <div class="sticker-img">
-              <Accordion v-model:selected="stickerTabSelect">
-                <AccordionPanel
+              <Accordion.Box v-model:selected="stickerTabSelect">
+                <Accordion.Panel
                   v-for="stickerItem in stickerArr"
                   :key="stickerItem.key"
                   :title="stickerItem.seriesName"
@@ -43,11 +52,12 @@
                       <img :src="item" alt="" srcset="" @mousedown="stopHandler" />
                     </li>
                   </ul>
-                </AccordionPanel>
-              </Accordion>
+                </Accordion.Panel>
+              </Accordion.Box>
             </div>
-          </TabPanel>
-        </Tab>
+            <Line />
+          </Tab.Panel>
+        </Tab.Box>
         <div class="btn-group center">
           <button class="button large C" @click="makeFile('jpg')">下载jpeg</button>
           <button class="button large C" @click="makeFile('png')">下载png</button>
@@ -64,31 +74,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, Ref } from "vue";
 
 import { dateFmt, uuid } from "@/utils/utils";
 import { CanvasFactory, DefaultCanvasFactoryOptions, stickerArr } from "@/utils/CanvasFactory";
-
 import BaseLayout from "@/layouts/BaseLayout.vue";
-import Log from "@/components/Log.vue";
-import Tab from "@/components/Tab/Box.vue";
-import TabPanel from "@/components/Tab/Panel.vue";
-import Accordion from "@/components/Accordion/Box.vue";
-import AccordionPanel from "@/components/Accordion/Panel.vue";
-import Line from "@/components/Line.vue";
-
+import { Tab, Accordion, Line, DropFile } from "@/components/index";
+import Log from "@/fragment/Log.vue";
 import Gallery from "@/fragment/Gallery/index.vue";
 import CanvasOption from "@/fragment/Options/collage-canvas.vue";
 import CanvasEditor from "@/fragment/CanvasEditor.vue";
+import { dropFileType } from "@/type/dropFile";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
-// const previewSrc = ref("");
 const galleryLoader = ref();
 const canvasEditor = ref();
 const tabSelect = ref("setting");
 const canvasForm = ref({ ...DefaultCanvasFactoryOptions });
 const stickerTabSelect = ref(stickerArr[0].key); // 默认打开第一套贴纸
 const textSticker = ref();
+const files: Ref<dropFileType[]> = ref([]);
 
 type fragmentOpt = {
   type: "text" | "img";
@@ -150,6 +155,13 @@ const textAdd = function () {
     value: textSticker.value,
   });
   textSticker.value = "";
+};
+
+const handleFileChange = function () {
+  addFragment({
+    type: "img",
+    value: [...arguments[0]][0].src,
+  });
 };
 </script>
 

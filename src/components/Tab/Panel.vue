@@ -11,7 +11,6 @@
   &__body {
     &__item {
       display: none;
-      // margin-top: var(--space-1);
       &.selected {
         display: block;
       }

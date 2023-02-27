@@ -24,8 +24,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import Line from "@/components/Line.vue";
-import DropFile from "@/components/DropFile.vue";
+import { Line, DropFile } from "@/components/index";
 
 import { dropFileType } from "@/type/dropFile";
 import { MusicOption } from "@/type/video";

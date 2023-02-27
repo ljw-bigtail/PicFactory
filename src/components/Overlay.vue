@@ -1,12 +1,19 @@
 <template>
-  <div :class="['overlay', show ? 'overlay-show' : '']" />
+  <div
+    :class="['overlay', show ? 'overlay-show' : '']"
+    :style="{ background: `rgba(0, 0, 0, ${opacity})` }"
+  />
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
+defineProps({
   show: {
     type: Boolean,
     default: false,
+  },
+  opacity: {
+    type: Number,
+    default: 0.2,
   },
 });
 </script>
@@ -19,7 +26,6 @@ const props = defineProps({
   bottom: -5000px;
   left: -5000px;
   z-index: 2000;
-  background: rgba(0, 0, 0, 0.2);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   visibility: hidden;

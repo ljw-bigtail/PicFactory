@@ -10,17 +10,17 @@
     </template>
     <template v-slot:main>
       <div class="left">
-        <Tab v-model:selected="tabSelect">
-          <TabPanel key="library" title="图库">
+        <Tab.Box v-model:selected="tabSelect">
+          <Tab.Panel key="library" title="图库">
             <Gallery ref="galleryLoader" @log="addLog" @drop="handleDrop" :multiDrop="true" />
-          </TabPanel>
-          <TabPanel key="music" title="音乐库">
+          </Tab.Panel>
+          <Tab.Panel key="music" title="音乐库">
             <GIFMusic :value="musicForm" />
-          </TabPanel>
-          <TabPanel key="setting" title="设置">
+          </Tab.Panel>
+          <Tab.Panel key="setting" title="设置">
             <GIFOption :value="gifForm" />
-          </TabPanel>
-        </Tab>
+          </Tab.Panel>
+        </Tab.Box>
         <div class="btn-group center">
           <button class="button large" @click="makePreview">生成预览</button>
           <!-- <button class="button large" @click="openPreview">打开预览</button> -->
@@ -51,10 +51,9 @@ import { dateFmt } from "@/utils/utils";
 import { PaintsFactory } from "@/utils/PaintsFactory";
 
 import BaseLayout from "@/layouts/BaseLayout.vue";
-import Log from "@/components/Log.vue";
-import Tab from "@/components/Tab/Box.vue";
-import TabPanel from "@/components/Tab/Panel.vue";
+import { Tab } from "@/components/index";
 
+import Log from "@/fragment/Log.vue";
 import Gallery from "@/fragment/Gallery/index.vue";
 import GIFOption from "@/fragment/Options/gif-canvas.vue";
 import GIFMusic from "@/fragment/Options/gif-music.vue";

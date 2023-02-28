@@ -35,11 +35,11 @@ export class ImageFactory {
     return image;
   }
   async _loadImg(file: File): Promise<HTMLImageElement>{
-    return new Promise(function(rej){
+    return new Promise(function(res){
       const img = new Image();
       img.src = window.URL.createObjectURL(file);
       img.onload = function() {
-        rej(img)
+        res(img)
       };
     })
   }

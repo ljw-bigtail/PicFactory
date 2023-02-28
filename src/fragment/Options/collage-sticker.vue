@@ -40,7 +40,6 @@ const setVal = function () {
   var value = arguments[0];
   scaleRange.value.setVal(value.scale);
   rotateRange.value.setVal(value.rotateZ / 360);
-  console.log(value);
   emit("update:value", value);
 };
 

@@ -75,7 +75,6 @@
 
 <script setup lang="ts">
 import { ref, Ref } from "vue";
-
 import { dateFmt, uuid } from "@/utils/utils";
 import { CanvasFactory, DefaultCanvasFactoryOptions, stickerArr } from "@/utils/CanvasFactory";
 import BaseLayout from "@/layouts/BaseLayout.vue";
@@ -137,6 +136,17 @@ const addFragment = function (opt: {}) {
   } as fragmentOpt);
 };
 
+const addFragments = function (opt: {}[]) {
+  canvasEditor.value.addFragments(
+    opt.map((item) => {
+      return {
+        id: uuid(),
+        ...item,
+      };
+    })
+  );
+};
+
 const stickerAdd = function (e: Event, src: string) {
   // 添加贴纸
   stopHandler(e);
@@ -157,11 +167,47 @@ const textAdd = function () {
   textSticker.value = "";
 };
 
-const handleFileChange = function () {
-  addFragment({
-    type: "img",
-    value: [...arguments[0]][0].src,
+const loadImg = (
+  src: string
+): Promise<{
+  width: number;
+  height: number;
+  src: string;
+}> => {
+  return new Promise(function (res) {
+    const img = new Image();
+    img.src = src;
+    img.onload = function () {
+      res({
+        height: img.height,
+        width: img.width,
+        src,
+      });
+    };
   });
+};
+
+const handleFileChange = async function () {
+  const imgs = await Promise.all(
+    [...arguments[0]].map(async (item) => {
+      return await loadImg(item.src);
+    })
+  );
+  const maxSize = canvasForm.value.width;
+  addFragments(
+    imgs.map((item) => {
+      const { src, width, height } = item;
+      const maxWidth = Math.min(maxSize, width);
+      const maxHeight = (height / width) * maxWidth;
+      return {
+        type: "img",
+        value: src,
+        width: maxWidth,
+        height: maxHeight,
+      };
+    })
+  );
+  files.value = [];
 };
 </script>
 

@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<switchOpt>(), {
   modelValue: 0,
 });
 
-const num = ref((props.modelValue * 100).toFixed(2));
+const num = ref(props.modelValue * 100);
 const to = ref(num.value);
 
 const emit = defineEmits(["update:modelValue"]);
@@ -25,13 +25,11 @@ const handleChange = function () {
   // 刷新背景
   to.value = num.value;
   // 刷新结果
-  emit("update:modelValue", (parseInt(num.value) / 100).toFixed(2));
+  emit("update:modelValue", parseFloat((num.value / 100).toFixed(2)));
 };
 
-handleChange();
-
 const setVal = function () {
-  num.value = (arguments[0] * 100).toFixed(2);
+  num.value = parseFloat((arguments[0] * 100).toFixed(2));
   handleChange();
 };
 

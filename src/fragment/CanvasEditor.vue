@@ -161,6 +161,8 @@ type fragmentProps = {
   type: "text" | "img";
   value: string;
   id: string;
+  width: number;
+  height: number;
 };
 
 type TypeObject = {
@@ -425,8 +427,29 @@ const addFragment = function (data: fragmentProps) {
     type: data.type,
   });
 };
+const addFragments = function (datas: fragmentProps[]) {
+  const position = 20;
+  datas.forEach((data, index) => {
+    fragmentList.value.push({
+      // 文字用
+      size: DefaultCanvasTextOptions.size,
+      color: DefaultCanvasTextOptions.color,
+      // 图片用
+      width: data.width ?? DefaultCanvasStickerOptions.width,
+      height: data.height ?? DefaultCanvasStickerOptions.height,
+      scale: DefaultCanvasStickerOptions.scale, // 缩放 50% ～ 150%
+      // public
+      x: position * index, // 定位 x
+      y: position * index, // 定位 y
+      rotateZ: 0, // 中心旋转
+      value: data.value,
+      id: data.id,
+      type: data.type,
+    });
+  });
+};
 // 添加贴纸 end
-defineExpose({ setDropCache, addFragment });
+defineExpose({ setDropCache, addFragment, addFragments });
 
 // 图片内部挪动 start
 const imgMoveStart = function (e: MouseEvent, index: number) {

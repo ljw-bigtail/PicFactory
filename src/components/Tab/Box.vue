@@ -107,15 +107,14 @@ const select = (key: string) => {
             width: 70%;
             border-radius: var(--radius);
             position: absolute;
-            bottom: 0;
+            bottom: 4px;
             left: 50%;
             transform: translateX(-50%);
           }
           &:hover,
           &.selected {
             &::after {
-              background-color: var(--color-border);
-              // background-color: var(--color-brand);
+              background-color: var(--color-B);
             }
           }
           &:hover {
@@ -139,7 +138,7 @@ const select = (key: string) => {
           color: var(--color-text);
           &:hover,
           &.selected {
-            background-color: var(--color-blue);
+            background-color: var(--color-B);
             color: var(--color-text-re);
           }
           &:hover {

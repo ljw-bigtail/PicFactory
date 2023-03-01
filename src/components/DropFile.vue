@@ -54,7 +54,6 @@ const id = uuid();
 const emit = defineEmits(["update:value", "change", "log"]);
 
 const log = function (mes: string) {
-  console.warn(mes);
   emit("log", mes);
 };
 

@@ -28,14 +28,14 @@
             </div>
             <Line />
             <div class="sticker-file">
-              <DropFile
-                v-model:value="files"
-                :max_size="1024 * 10"
-                @change="handleFileChange"
-                ref="dropFile"
+              <Gallery
+                ref="stickerLoader"
+                @log="addLog"
+                @drop="handleStickerDrop"
+                :multiDrop="true"
               />
             </div>
-            <Line />
+            <!-- <Line />
             <div class="sticker-img">
               <Accordion.Box v-model:selected="stickerTabSelect">
                 <Accordion.Panel
@@ -55,7 +55,7 @@
                 </Accordion.Panel>
               </Accordion.Box>
             </div>
-            <Line />
+            <Line /> -->
           </Tab.Panel>
         </Tab.Box>
         <div class="btn-group center">
@@ -87,6 +87,7 @@ import { dropFileType } from "@/type/dropFile";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
 const galleryLoader = ref();
+const stickerLoader = ref();
 const canvasEditor = ref();
 const tabSelect = ref("setting");
 const canvasForm = ref({ ...DefaultCanvasFactoryOptions });
@@ -129,16 +130,10 @@ const makeFile = function (type: "png" | "jpg") {
   canvasFactory.toFile(type);
 };
 
-const addFragment = function (opt: {}) {
-  canvasEditor.value.addFragment({
-    id: uuid(),
-    ...opt,
-  } as fragmentOpt);
-};
-
-const addFragments = function (opt: {}[]) {
-  canvasEditor.value.addFragments(
-    opt.map((item) => {
+const addFragment = function (opt: {} | {}[]) {
+  const datas = Array.isArray(opt) ? opt : [opt];
+  canvasEditor.value.addFragment(
+    datas.map((item) => {
       return {
         id: uuid(),
         ...item,
@@ -187,14 +182,15 @@ const loadImg = (
   });
 };
 
-const handleFileChange = async function () {
+const handleStickerDrop = async function () {
+  canvasEditor.value.setDropCache({});
   const imgs = await Promise.all(
     [...arguments[0]].map(async (item) => {
       return await loadImg(item.src);
     })
   );
   const maxSize = canvasForm.value.width;
-  addFragments(
+  addFragment(
     imgs.map((item) => {
       const { src, width, height } = item;
       const maxWidth = Math.min(maxSize, width);

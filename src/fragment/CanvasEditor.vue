@@ -14,7 +14,7 @@
         class="canvas-editor__element__cell"
         v-for="(element, index) in cellsImg"
         :key="`${element.id}_${index}}`"
-        :class="[inDrag != '' && inDrag === index.toString() ? 'drop-in' : '']"
+        :class="[dropStatus && inDrag != '' && inDrag === index.toString() ? 'drop-in' : '']"
         :style="{
           height: cellsList[index].height + 'px',
           width: cellsList[index].width + 'px',
@@ -95,7 +95,7 @@
     <CollageImgOption
       ref="collageImgOption"
       v-model:value="collageImgForm"
-      :visible="selectImgIndex > -1"
+      :visible="!!(selectStickerIndex == -1 && selectImgIndex > -1)"
       @change="scaleHandler"
       @flipX="flipXHandler"
       @flipY="flipYHandler"
@@ -105,13 +105,13 @@
     <CollageStickerOption
       ref="collageStickerOption"
       v-model:value="collageStickerForm"
-      :visible="selectStickerIndex > -1 && fragmentList[selectStickerIndex].type == 'img'"
+      :visible="!!(selectStickerIndex > -1 && fragmentList[selectStickerIndex] && fragmentList[selectStickerIndex].type == 'img')"
       @change="stickerChangeHandler"
     />
     <CollageTextOption
       ref="collageTextOption"
       v-model:value="collageTextForm"
-      :visible="selectStickerIndex > -1 && fragmentList[selectStickerIndex].type == 'text'"
+      :visible="!!(selectStickerIndex > -1 && fragmentList[selectStickerIndex] && fragmentList[selectStickerIndex].type == 'text')"
       @change="textChangeHandler"
     />
   </div>
@@ -333,7 +333,6 @@ const handleDel = function (index: number) {
 const handleFragmentDel = function (index: number) {
   // 清除贴纸
   fragmentList.value.splice(index, 1);
-  // console.log([...fragmentList.value], index);
   selectStickerIndex.value = -1;
 };
 
@@ -348,11 +347,13 @@ const moveStop = function () {
 };
 
 // 图库挪入 start
+const dropStatus = ref(false); // 是否开启drop
 const setDropCache = function (data: FileOption) {
   // 外部调用： 缓存挪入的图片数据
-  if (!data || !data.id || !data.file || !data.src) {
-    throw new Error("拖入文件数据异常");
-  }
+  // if (!data || !data.id || !data.file || !data.src) {
+  //   throw new Error("拖入文件数据异常");
+  // }
+  dropStatus.value = !!(data && data.id && data.file && data.src);
   // 拖入的图片 设置缓存
   updateImgCache({ ...data });
   clearIndexForImg = "";
@@ -409,50 +410,54 @@ const dragEnter = function (e: DragEvent, index: number) {
 // 图库挪入 end
 
 // 添加贴纸 start
-const addFragment = function (data: fragmentProps) {
-  fragmentList.value.push({
-    // 文字用
-    size: DefaultCanvasTextOptions.size,
-    color: DefaultCanvasTextOptions.color,
-    // 图片用
-    width: DefaultCanvasStickerOptions.width,
-    height: DefaultCanvasStickerOptions.height,
-    scale: DefaultCanvasStickerOptions.scale, // 缩放 50% ～ 150%
-    // public
-    x: 0, // 定位 x
-    y: 0, // 定位 y
-    rotateZ: 0, // 中心旋转
-    value: data.value,
-    id: data.id,
-    type: data.type,
-  });
-};
-const addFragments = function (datas: fragmentProps[]) {
+const addFragment = function (_data: fragmentProps | fragmentProps[]) {
+  const datas: fragmentProps[] = Array.isArray(_data) ? _data : [_data];
   const position = 20;
-  datas.forEach((data, index) => {
-    fragmentList.value.push({
-      // 文字用
-      size: DefaultCanvasTextOptions.size,
-      color: DefaultCanvasTextOptions.color,
-      // 图片用
-      width: data.width ?? DefaultCanvasStickerOptions.width,
-      height: data.height ?? DefaultCanvasStickerOptions.height,
-      scale: DefaultCanvasStickerOptions.scale, // 缩放 50% ～ 150%
-      // public
-      x: position * index, // 定位 x
-      y: position * index, // 定位 y
-      rotateZ: 0, // 中心旋转
-      value: data.value,
-      id: data.id,
-      type: data.type,
-    });
-  });
+  // datas.forEach((data, index) => {
+  //   fragmentList.value.push({
+  //     // 文字用
+  //     size: DefaultCanvasTextOptions.size,
+  //     color: DefaultCanvasTextOptions.color,
+  //     // 图片用
+  //     width: data.width ?? DefaultCanvasStickerOptions.width,
+  //     height: data.height ?? DefaultCanvasStickerOptions.height,
+  //     scale: DefaultCanvasStickerOptions.scale, // 缩放 50% ～ 150%
+  //     // public
+  //     x: position * index, // 定位 x
+  //     y: position * index, // 定位 y
+  //     rotateZ: 0, // 中心旋转
+  //     value: data.value,
+  //     id: data.id,
+  //     type: data.type,
+  //   });
+  // });
+  fragmentList.value = fragmentList.value.concat(
+    datas.map((data, index) => {
+      return {
+        // 文字用
+        size: DefaultCanvasTextOptions.size,
+        color: DefaultCanvasTextOptions.color,
+        // 图片用
+        width: data.width ?? DefaultCanvasStickerOptions.width,
+        height: data.height ?? DefaultCanvasStickerOptions.height,
+        scale: DefaultCanvasStickerOptions.scale, // 缩放 50% ～ 150%
+        // public
+        x: position * index, // 定位 x
+        y: position * index, // 定位 y
+        rotateZ: 0, // 中心旋转
+        value: data.value,
+        id: data.id,
+        type: data.type,
+      };
+    })
+  );
 };
 // 添加贴纸 end
-defineExpose({ setDropCache, addFragment, addFragments });
+defineExpose({ setDropCache, addFragment });
 
 // 图片内部挪动 start
 const imgMoveStart = function (e: MouseEvent, index: number) {
+  selectStickerIndex.value = -1;
   dragStart(index);
   // 缓存：记录当前的position 拖拽进其他cell
   // 移动起点

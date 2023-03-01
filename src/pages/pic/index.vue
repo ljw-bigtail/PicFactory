@@ -27,7 +27,9 @@
               </button>
             </div>
             <Line />
-            <div class="sticker-file">
+            <div class="sticker-file" :style="{
+              background: '#eee'
+            }">
               <Gallery
                 ref="stickerLoader"
                 @log="addLog"

@@ -219,7 +219,7 @@ export const DefaultCanvasImgOptions = {
   scale: 0,
 };
 export const DefaultCanvasStickerOptions = {
-  scale: 0.5,
+  scale: 1,
   width: 120,
   height: 120,
 };

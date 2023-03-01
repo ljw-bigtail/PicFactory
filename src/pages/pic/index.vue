@@ -27,9 +27,12 @@
               </button>
             </div>
             <Line />
-            <div class="sticker-file" :style="{
-              background: '#eee'
-            }">
+            <div
+              class="sticker-file"
+              :style="{
+                background: '#eee',
+              }"
+            >
               <Gallery
                 ref="stickerLoader"
                 @log="addLog"
@@ -191,17 +194,24 @@ const handleStickerDrop = async function () {
       return await loadImg(item.src);
     })
   );
-  const maxSize = canvasForm.value.width;
+  const maxSize = 300;
   addFragment(
     imgs.map((item) => {
       const { src, width, height } = item;
-      const maxWidth = Math.min(maxSize, width);
-      const maxHeight = (height / width) * maxWidth;
+      let max_height = 0,
+        max_width = 0;
+      if (height > width) {
+        max_height = maxSize;
+        max_width = (width / height) * max_height;
+      } else {
+        max_width = maxSize;
+        max_height = (height / width) * max_width;
+      }
       return {
         type: "img",
         value: src,
-        width: maxWidth,
-        height: maxHeight,
+        width: max_width,
+        height: max_height,
       };
     })
   );

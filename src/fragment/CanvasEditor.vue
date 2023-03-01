@@ -413,24 +413,6 @@ const dragEnter = function (e: DragEvent, index: number) {
 const addFragment = function (_data: fragmentProps | fragmentProps[]) {
   const datas: fragmentProps[] = Array.isArray(_data) ? _data : [_data];
   const position = 20;
-  // datas.forEach((data, index) => {
-  //   fragmentList.value.push({
-  //     // 文字用
-  //     size: DefaultCanvasTextOptions.size,
-  //     color: DefaultCanvasTextOptions.color,
-  //     // 图片用
-  //     width: data.width ?? DefaultCanvasStickerOptions.width,
-  //     height: data.height ?? DefaultCanvasStickerOptions.height,
-  //     scale: DefaultCanvasStickerOptions.scale, // 缩放 50% ～ 150%
-  //     // public
-  //     x: position * index, // 定位 x
-  //     y: position * index, // 定位 y
-  //     rotateZ: 0, // 中心旋转
-  //     value: data.value,
-  //     id: data.id,
-  //     type: data.type,
-  //   });
-  // });
   fragmentList.value = fragmentList.value.concat(
     datas.map((data, index) => {
       return {
@@ -440,7 +422,7 @@ const addFragment = function (_data: fragmentProps | fragmentProps[]) {
         // 图片用
         width: data.width ?? DefaultCanvasStickerOptions.width,
         height: data.height ?? DefaultCanvasStickerOptions.height,
-        scale: DefaultCanvasStickerOptions.scale, // 缩放 50% ～ 150%
+        scale: DefaultCanvasStickerOptions.scale, // 缩放 0% ～ 100%
         // public
         x: position * index, // 定位 x
         y: position * index, // 定位 y

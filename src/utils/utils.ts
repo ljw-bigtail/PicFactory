@@ -70,6 +70,26 @@ export const Cache = {
   }
 }
 
+/**
+ * 节流
+ * 函数在一定时间内只能执行一次
+ */
+
+// 回调函数的类型
+type ReFn = (...args:any) => void
+// 节流函数的类型
+type ThFn = (fn: ReFn, timer?: number) => ReFn
+export const throttle: ThFn = (fn, timer:undefined | number = 50) => {
+  let time: any = null
+  const _throttle = (...args:any) => {
+    if (time) clearTimeout(time)
+    time = setTimeout(() => {
+        fn.apply(this,args)
+    }, timer);
+  }
+  return _throttle
+}
+
 type FileOption = {
   id: string;
   src: string;
@@ -87,4 +107,5 @@ export default {
   dateFmt,
   uuid,
   Cache,
+  throttle,
 }

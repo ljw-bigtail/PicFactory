@@ -208,6 +208,7 @@ select {
       transform-origin: 0;
     }
   }
+  &.resize,
   &.left,
   &.right,
   &.top,
@@ -234,6 +235,10 @@ select {
   }
   &.bottom {
     transform: rotateZ(-45deg) scale(.6);
+  }
+  &.resize{
+    transform: rotateZ(270deg) scale(.6);
+    cursor: nwse-resize;
   }
 }
 

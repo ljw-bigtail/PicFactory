@@ -29,6 +29,9 @@ const props = defineProps(["type"]);
   &.rotate-90 {
     background-image: url("../assets/icon/rotate.svg");
   }
+  &.rotate-left {
+    background-image: url("../assets/icon/rotate-left.svg");
+  }
   &.rotate {
     transform: translateY(-1px) translateX(1px);
   }

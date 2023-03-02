@@ -48,6 +48,7 @@
         </div>
       </div>
       <div class="canvas-editor__element__fragment">
+        <!-- 贴纸 -->
         <div
           class="canvas-editor__element__fragment__box"
           v-for="(element, index) in fragmentList"
@@ -58,22 +59,25 @@
           }"
           @click="selectFragmentHandler($event, index)"
           @mousedown="fragmentMoveStart($event, index)"
-          @mouseup="moveStop"
+          @mousemove="fragmentBtnMove(index, $event)"
+          @mouseup="mouseEventStop(index, $event)"
+          @mouseleave="mouseEventStop(index, $event)"
         >
           <div
             v-if="element.type == 'img'"
             :style="{
               height: element.height * element.scale + 'px',
               width: element.width * element.scale + 'px',
+              position: 'relative',
+              transform: `rotateZ(${element.rotateZ}deg)`,
             }"
           >
-            <img
-              :src="element.value"
-              :style="{
-                transform: `rotateZ(${element.rotateZ}deg)`,
-              }"
-            />
+            <span class="css-icon rotate" @mousedown.prevent="rotateStart(index, $event)">
+              <Icon class="rotate-icon" type="rotate-left"></Icon>
+            </span>
+            <span class="css-icon resize" @mousedown.prevent="resizeStart(index, $event)"></span>
             <span class="css-icon delete bold" @click="handleFragmentDel(index)"></span>
+            <img :src="element.value" :ref="'fragment_img_' + index" />
           </div>
           <div
             class="canvas-editor__element__fragment__box__text"
@@ -102,16 +106,16 @@
       @turnAnti="turnAntiHandler"
       @turn="turnHandler"
     />
-    <CollageStickerOption
-      ref="collageStickerOption"
-      v-model:value="collageStickerForm"
-      :visible="!!(selectStickerIndex > -1 && fragmentList[selectStickerIndex] && fragmentList[selectStickerIndex].type == 'img')"
-      @change="stickerChangeHandler"
-    />
     <CollageTextOption
       ref="collageTextOption"
       v-model:value="collageTextForm"
-      :visible="!!(selectStickerIndex > -1 && fragmentList[selectStickerIndex] && fragmentList[selectStickerIndex].type == 'text')"
+      :visible="
+        !!(
+          selectStickerIndex > -1 &&
+          fragmentList[selectStickerIndex] &&
+          fragmentList[selectStickerIndex].type == 'text'
+        )
+      "
       @change="textChangeHandler"
     />
   </div>
@@ -119,9 +123,9 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, watch } from "vue";
+import { Icon } from "@/components/index";
 
 import CollageImgOption from "./Options/collage-img.vue";
-import CollageStickerOption from "./Options/collage-sticker.vue";
 import CollageTextOption from "./Options/collage-text.vue";
 
 import {
@@ -330,12 +334,6 @@ const handleDel = function (index: number) {
   }
 };
 
-const handleFragmentDel = function (index: number) {
-  // 清除贴纸
-  fragmentList.value.splice(index, 1);
-  selectStickerIndex.value = -1;
-};
-
 const stopHandler = function (e: Event) {
   e.stopPropagation();
   e.preventDefault();
@@ -498,12 +496,14 @@ const imgMove = function (e: MouseEvent, index: number) {
 };
 // 图片内部挪动 end
 
+let mouseEventType = -1; // move 0 resize 1 rotate 2
 // 碎片挪动 start
-const collageStickerOption = ref();
 const collageTextOption = ref();
 const fragmentMoveStart = function (e: MouseEvent, index: number) {
   stopHandler(e);
+  if (mouseEventType > 0) return;
   // 初始化移动起点
+  mouseEventType = 0;
   dragCache = {
     position: {
       x: e.clientX,
@@ -515,12 +515,6 @@ const fragmentMoveStart = function (e: MouseEvent, index: number) {
   // 更新浮窗工具
   const fragment_data = { ...fragmentList.value[index] };
   switch (fragment_data.type) {
-    case "img":
-      collageStickerOption.value.setVal({
-        rotateZ: fragment_data.rotateZ,
-        scale: fragment_data.scale,
-      });
-      break;
     case "text":
       collageTextOption.value.setVal({
         rotateZ: fragment_data.rotateZ,
@@ -530,18 +524,71 @@ const fragmentMoveStart = function (e: MouseEvent, index: number) {
       break;
   }
 };
+
+const getRegion = function (num: number, range: [number, number]) {
+  // 超出区域取区域边界
+  let _num: number;
+  if (num <= range[0]) {
+    _num = range[0];
+  } else if (num >= range[1]) {
+    _num = range[1];
+  } else {
+    _num = num;
+  }
+  return _num;
+};
+
 const fragmentMove = function (e: MouseEvent) {
   // 贴纸拖拽
   if (dragCache.type != "fragment" || dragCache.index == -1) return;
   stopHandler(e);
   // 刷新位置
-  fragmentList.value[dragCache.index].x += e.clientX - dragCache.position.x;
-  fragmentList.value[dragCache.index].y += e.clientY - dragCache.position.y;
+  const [x, y] = [
+    fragmentList.value[dragCache.index].x + e.clientX - dragCache.position.x,
+    fragmentList.value[dragCache.index].y + e.clientY - dragCache.position.y,
+  ];
+  fragmentList.value[dragCache.index].x = getRegion(x, [
+    0,
+    parseInt(width.value) - fragmentList.value[dragCache.index].width,
+  ]);
+  fragmentList.value[dragCache.index].y = getRegion(y, [
+    0,
+    parseInt(height.value) - fragmentList.value[dragCache.index].height,
+  ]);
   // 缓存
   dragCache.position = {
     x: e.clientX,
     y: e.clientY,
   };
+};
+
+const mouseEventStop = (index: number, event: MouseEvent) => {
+  switch (mouseEventType) {
+    case 0:
+      moveStop();
+      break;
+    case 1:
+    case 2:
+      stickerPositionCache = {
+        clientX: 0,
+        clientY: 0,
+      };
+      break;
+  }
+  mouseEventType = -1;
+};
+
+const fragmentBtnMove = function (index: number, event: MouseEvent) {
+  switch (mouseEventType) {
+    // case 0:
+    //   break;
+    case 1:
+      resizeMove(index, event);
+      break;
+    case 2:
+      rotateMove(index, event);
+      break;
+  }
 };
 // 碎片挪动 end
 
@@ -586,6 +633,12 @@ const turnHandler = function () {
 };
 // 图片编辑end
 
+// 清除贴纸
+const handleFragmentDel = function (index: number) {
+  fragmentList.value.splice(index, 1);
+  selectStickerIndex.value = -1;
+};
+
 // 碎片编辑 start
 const selectStickerIndex = ref(-1);
 const selectFragmentHandler = function (e: Event, index: number) {
@@ -593,16 +646,92 @@ const selectFragmentHandler = function (e: Event, index: number) {
   selectStickerIndex.value = index;
 };
 
-// 碎片-图片
-const collageStickerForm = ref({
-  ...DefaultCanvasStickerOptions,
-  rotateZ: 0,
-});
-const stickerChangeHandler = function () {
-  if (selectStickerIndex.value == -1 || !fragmentList.value[selectStickerIndex.value]) return;
-  fragmentList.value[selectStickerIndex.value].rotateZ = collageStickerForm.value.rotateZ * 360;
-  fragmentList.value[selectStickerIndex.value].scale = collageStickerForm.value.scale;
+// 贴纸图片 拖拽大小 start
+let stickerPositionCache = {
+  clientX: 0,
+  clientY: 0,
 };
+const resizeStart = function (index: number, event: MouseEvent) {
+  mouseEventType = 1;
+  const { clientX, clientY } = event;
+  stickerPositionCache = {
+    clientX,
+    clientY,
+  };
+};
+const resizeMove = function (index: number, event: MouseEvent) {
+  if (stickerPositionCache.clientX == 0 || stickerPositionCache.clientY == 0) {
+    return;
+  }
+  const size_range: [number, number] = [20, 300];
+  const { clientX, clientY } = event;
+  let base = clientX - stickerPositionCache.clientX;
+  const check_width = getRegion(fragmentList.value[index].width + base, size_range);
+  // const check_height = fragmentList.value[index].height + base;
+  const aspectRatio = fragmentList.value[index].height / fragmentList.value[index].width;
+  if (fragmentList.value[index].width == check_width) {
+    return;
+  }
+  fragmentList.value[index].width = check_width;
+  fragmentList.value[index].height = check_width * aspectRatio;
+  stickerPositionCache = {
+    clientX,
+    clientY,
+  };
+};
+// 贴纸图片 拖拽大小 end
+
+// 贴纸图片 拖拽旋转 start
+type Point = {
+  x: number;
+  y: number;
+};
+const rotateStart = function (index: number, event: MouseEvent) {
+  mouseEventType = 2;
+  const { clientX, clientY } = event;
+  stickerPositionCache = {
+    clientX,
+    clientY,
+  };
+};
+const rotateMove = function (index: number, event: MouseEvent) {
+  if (stickerPositionCache.clientX == 0 || stickerPositionCache.clientY == 0) {
+    return;
+  }
+  const { clientX, clientY } = event;
+  const angle = (start: Point, end: Point) => {
+    // 根据两点坐标 求夹角度数
+    var diff_x = end.x - start.x,
+      diff_y = end.y - start.y;
+    if (diff_x == 0) return 0;
+    return (360 * Math.atan(diff_y / diff_x)) / (2 * Math.PI);
+  };
+  // 获取原点 => 图片中心对于屏幕位置
+  const img_rect_data = (document.querySelector(
+    `#canvas-editor__canvas > div.canvas-editor__element__fragment > div:nth-child(${
+      index + 1
+    }) > div > img`
+  ) as HTMLElement).getBoundingClientRect();
+  const zero_point = {
+    x: img_rect_data.x + img_rect_data.width / 2,
+    y: img_rect_data.y + img_rect_data.height / 2,
+  };
+  const deg =
+    angle(zero_point, {
+      x: stickerPositionCache.clientX,
+      y: stickerPositionCache.clientY,
+    }) -
+    angle(zero_point, {
+      x: clientX,
+      y: clientY,
+    });
+  fragmentList.value[index].rotateZ -= deg;
+  stickerPositionCache = {
+    clientX,
+    clientY,
+  };
+};
+// 贴纸图片 拖拽旋转 end
 
 // 碎片-文本
 const collageTextForm = ref({
@@ -689,16 +818,47 @@ const textChangeHandler = function () {
         img {
           width: 100%;
           height: 100%;
+          position: relative;
+          z-index: 1;
+        }
+        &:hover span {
+          opacity: 1;
+          display: block;
+        }
+        span {
+          opacity: 0;
+          display: none;
         }
         .delete {
           position: absolute;
           right: 0;
           top: 0;
-          opacity: 0;
           transform: rotateZ(45deg) translate(0, -60%);
+          z-index: 2;
         }
-        &:hover .delete {
-          opacity: 1;
+        .resize {
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          transform: rotateZ(270deg) translate(-40%, 66%);
+        }
+        .rotate {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          width: 150%;
+          height: 150%;
+          .rotate-icon {
+            width: 26px;
+            height: 26px;
+            cursor: grabbing;
+            position: absolute;
+            z-index: 10;
+            left: 100%;
+            top: 50%;
+            transform: translate(-100%, -50%);
+          }
         }
       }
     }

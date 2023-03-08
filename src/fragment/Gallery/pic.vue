@@ -10,18 +10,27 @@
     <img :src="element.src" alt="" srcset="" />
     <span class="icon-btn delete round" @click="handleDel"></span>
     <span class="css-icon select round"></span>
+    <div class="btn-group">
+      <button class="" @click="handleReverse">
+        <Icon type="reverse-color" />
+      </button>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { Icon } from "@/components/index";
 const props = defineProps(["element", "inselect"]);
-const emit = defineEmits(["drag", "del", "select"]);
+const emit = defineEmits(["drag", "del", "select", "reverse"]);
 
 const handelDropPic = () => {
   emit("drag");
 };
 const handleDel = () => {
   emit("del");
+};
+const handleReverse = () => {
+  emit("reverse");
 };
 const handleClick = () => {
   if (props.inselect) {
@@ -78,6 +87,9 @@ const handleClick = () => {
         opacity: 1;
       }
     }
+  }
+  .btn-group {
+    padding: var(--space-1) 0;
   }
 }
 </style>

@@ -32,6 +32,9 @@ const props = defineProps(["type"]);
   &.rotate-left {
     background-image: url("../assets/icon/rotate-left.svg");
   }
+  &.enlarge {
+    background-image: url("../assets/icon/enlarge.svg");
+  }
   &.rotate {
     transform: translateY(-1px) translateX(1px);
   }
@@ -55,6 +58,9 @@ const props = defineProps(["type"]);
   }
   &.save {
     background-image: url("../assets/icon/save.svg");
+  }
+  &.reverse-color {
+    background-image: url("../assets/icon/reverse-color.svg");
   }
 }
 </style>

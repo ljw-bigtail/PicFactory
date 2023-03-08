@@ -35,6 +35,7 @@
             @select="handleSelect(index)"
             @drag="handelDropPic(element)"
             @del="handleDel(element.id)"
+            @reverse="handleReverse(index)"
           />
         </template>
       </draggable>
@@ -45,6 +46,7 @@
             @select="handleSelect(index)"
             @drag="handelDropPic(element)"
             @del="handleDel(element.id)"
+            @reverse="handleReverse(index)"
           />
         </div>
       </div>
@@ -187,6 +189,49 @@ const handleUpdate = function () {
   );
 };
 
+const colorReverse = function (src: string) {
+  return new Promise(function (res, rej) {
+    const oCanvas = document.createElement("canvas");
+    const oGc = oCanvas.getContext("2d");
+    if (!oGc) {
+      rej("colorReverse error.");
+      return;
+    }
+    const oImg = new Image();
+    oImg.src = src;
+    oImg.onload = function () {
+      oCanvas.width = oImg.width;
+      oCanvas.height = oImg.height;
+      oGc.drawImage(oImg, 0, 0);
+      const imgData = oGc.getImageData(0, 0, oCanvas.width, oCanvas.height);
+      const data = imgData.data; //读取图片数据
+      for (var i = 0; i < data.length; i += 4) {
+        data[i] = 255 - data[i];
+        data[i + 1] = 255 - data[i + 1];
+        data[i + 2] = 255 - data[i + 2];
+      }
+      //处理完之后，再次输出
+      oGc.putImageData(imgData, 0, 0);
+      res(oCanvas.toDataURL());
+    };
+  });
+};
+
+const handleReverse = async function (index: number) {
+  const src = { ...[...files.value][index] }.src;
+  const new_src = await colorReverse(src);
+  dropFile.value.setVal(
+    files.value.map((e, i) => {
+      return {
+        ...e,
+        src: i == index ? new_src : src,
+      };
+    })
+  );
+  handleFileChange();
+  return false;
+};
+
 defineExpose({ clearFile, clearSelect });
 </script>
 
@@ -219,6 +264,7 @@ defineExpose({ clearFile, clearSelect });
   .gallery-view {
     flex: 1;
     overflow: hidden;
+    min-height: 200px;
     #gallery-img-box {
       height: max-content;
       display: flex;

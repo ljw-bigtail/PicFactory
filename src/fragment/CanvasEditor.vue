@@ -72,10 +72,12 @@
               transform: `rotateZ(${element.rotateZ}deg)`,
             }"
           >
-            <span class="css-icon rotate" @mousedown.prevent="rotateStart(index, $event)">
-              <Icon class="rotate-icon" type="rotate-left"></Icon>
+            <span class="rotate icon-size" @mousedown.prevent="rotateStart(index, $event)">
+              <Icon class="icon-size-img" type="rotate-left"></Icon>
             </span>
-            <span class="css-icon resize" @mousedown.prevent="resizeStart(index, $event)"></span>
+            <span class="resize icon-size" @mousedown.prevent="resizeStart(index, $event)">
+              <Icon class="icon-size-img" type="enlarge"></Icon>
+            </span>
             <span class="css-icon delete bold" @click="handleFragmentDel(index)"></span>
             <img :src="element.value" :ref="'fragment_img_' + index" />
           </div>
@@ -849,15 +851,21 @@ const textChangeHandler = function () {
           transform: translate(-50%, -50%);
           width: 150%;
           height: 150%;
-          .rotate-icon {
-            width: 26px;
-            height: 26px;
-            cursor: grabbing;
+          .icon-size-img {
             position: absolute;
+            transform: translate(-150%, -50%) rotate(45deg);
+            top: 50%;
+            cursor: grabbing;
             z-index: 10;
             left: 100%;
-            top: 50%;
-            transform: translate(-100%, -50%);
+          }
+        }
+        .icon-size {
+          .icon-size-img {
+            width: 26px;
+            height: 26px;
+            overflow: hidden;
+            filter: drop-shadow(0px 0px 2px #aaa);
           }
         }
       }

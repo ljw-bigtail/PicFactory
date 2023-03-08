@@ -27,12 +27,7 @@
               </button>
             </div>
             <Line />
-            <div
-              class="sticker-file"
-              :style="{
-                background: '#eee',
-              }"
-            >
+            <div class="sticker-file">
               <Gallery
                 ref="stickerLoader"
                 @log="addLog"
@@ -83,7 +78,7 @@ import { ref, Ref } from "vue";
 import { dateFmt, uuid } from "@/utils/utils";
 import { CanvasFactory, DefaultCanvasFactoryOptions, stickerArr } from "@/utils/CanvasFactory";
 import BaseLayout from "@/layouts/BaseLayout.vue";
-import { Tab, Accordion, Line, DropFile } from "@/components/index";
+import { Tab, Line } from "@/components/index";
 import Log from "@/fragment/Log.vue";
 import Gallery from "@/fragment/Gallery/index.vue";
 import CanvasOption from "@/fragment/Options/collage-canvas.vue";
@@ -248,6 +243,11 @@ const handleStickerDrop = async function () {
       outline: none;
     }
   }
+}
+.sticker-file {
+  box-shadow: var(--shadow);
+  padding: var(--space-1);
+  margin: var(--space-1) 0;
 }
 .sticker-img {
   .sticker-list {

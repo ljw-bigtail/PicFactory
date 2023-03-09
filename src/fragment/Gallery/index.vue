@@ -189,7 +189,7 @@ const handleUpdate = function () {
   );
 };
 
-const colorReverse = function (src: string) {
+const colorReverse = function (src: string): Promise<string> {
   return new Promise(function (res, rej) {
     const oCanvas = document.createElement("canvas");
     const oGc = oCanvas.getContext("2d");
@@ -218,16 +218,9 @@ const colorReverse = function (src: string) {
 };
 
 const handleReverse = async function (index: number) {
-  const src = { ...[...files.value][index] }.src;
-  const new_src = await colorReverse(src);
-  dropFile.value.setVal(
-    files.value.map((e, i) => {
-      return {
-        ...e,
-        src: i == index ? new_src : src,
-      };
-    })
-  );
+  const _files = [...files.value];
+  _files[index].src = await colorReverse(_files[index].src);
+  dropFile.value.setVal(_files);
   handleFileChange();
   return false;
 };

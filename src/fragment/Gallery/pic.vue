@@ -1,15 +1,17 @@
 <template>
-  <div
-    :class="[
-      'gallery-img-item',
-      props.inselect ? (element.selected ? 'selected' : 'not-selected') : '',
-    ]"
-    @dragstart="handelDropPic"
-    @click="handleClick"
-  >
-    <img :src="element.src" alt="" srcset="" />
-    <span class="icon-btn delete round" @click="handleDel"></span>
-    <span class="css-icon select round"></span>
+  <div :class="['gallery-img']">
+    <div
+      :class="[
+        'gallery-img-item',
+        props.inselect ? (element.selected ? 'selected' : 'not-selected') : '',
+      ]"
+      @dragstart="handelDropPic"
+      @click="handleClick"
+    >
+      <img :src="element.src" alt="" srcset="" />
+      <span class="icon-btn delete round" @click="handleDel"></span>
+      <span class="css-icon select round"></span>
+    </div>
     <div class="btn-group">
       <button class="" @click="handleReverse">
         <Icon type="reverse-color" />
@@ -40,51 +42,54 @@ const handleClick = () => {
 </script>
 
 <style lang="less" scoped>
-.gallery-img-item {
+.gallery-img {
+  position: relative;
   width: 23%;
   margin-right: 2%;
   margin-bottom: var(--space-1);
-  position: relative;
-  &:nth-child(4n) {
-    margin-right: 0;
-  }
-  img {
-    display: block;
-    width: 100%;
-  }
-  .icon-btn.delete {
-    display: none;
-  }
-  &:hover {
+  .gallery-img-item {
+    position: relative;
+    &:nth-child(4n) {
+      margin-right: 0;
+    }
+    img {
+      display: block;
+      width: 100%;
+    }
     .icon-btn.delete {
-      display: block;
+      display: none;
     }
-  }
-  .css-icon.select {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 30px;
-    display: none;
-    &::before,
-    &::after {
-      opacity: 0;
-      border-color: var(--color-white) !important;
+    &:hover {
+      .icon-btn.delete {
+        display: block;
+      }
     }
-  }
-  &.selected,
-  &.not-selected {
     .css-icon.select {
-      display: block;
-    }
-  }
-  &.selected {
-    .css-icon.select {
-      background-color: rgba(0, 0, 0, 0.3);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 30px;
+      display: none;
       &::before,
       &::after {
-        opacity: 1;
+        opacity: 0;
+        border-color: var(--color-white) !important;
+      }
+    }
+    &.selected,
+    &.not-selected {
+      .css-icon.select {
+        display: block;
+      }
+    }
+    &.selected {
+      .css-icon.select {
+        background-color: rgba(0, 0, 0, 0.3);
+        &::before,
+        &::after {
+          opacity: 1;
+        }
       }
     }
   }

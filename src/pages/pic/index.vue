@@ -248,6 +248,7 @@ const handleStickerDrop = async function () {
   box-shadow: var(--shadow);
   padding: var(--space-1);
   margin: var(--space-1) 0;
+  background: #eee;
 }
 .sticker-img {
   .sticker-list {

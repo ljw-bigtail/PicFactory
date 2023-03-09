@@ -1,11 +1,10 @@
 <template>
-  <div :class="['gallery-img']">
+  <div class="gallery-img" @dragstart="handelDropPic">
     <div
       :class="[
         'gallery-img-item',
         props.inselect ? (element.selected ? 'selected' : 'not-selected') : '',
       ]"
-      @dragstart="handelDropPic"
       @click="handleClick"
     >
       <img :src="element.src" alt="" srcset="" />

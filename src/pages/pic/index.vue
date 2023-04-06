@@ -35,8 +35,8 @@
                 :multiDrop="true"
               />
             </div>
-            <!-- <Line />
-            <div class="sticker-img">
+            <Line />
+            <!-- <div class="sticker-img">
               <Accordion.Box v-model:selected="stickerTabSelect">
                 <Accordion.Panel
                   v-for="stickerItem in stickerArr"
@@ -54,8 +54,7 @@
                   </ul>
                 </Accordion.Panel>
               </Accordion.Box>
-            </div>
-            <Line /> -->
+            </div> -->
           </Tab.Panel>
         </Tab.Box>
         <div class="btn-group center">
@@ -78,7 +77,7 @@ import { ref, Ref } from "vue";
 import { dateFmt, uuid } from "@/utils/utils";
 import { CanvasFactory, DefaultCanvasFactoryOptions, stickerArr } from "@/utils/CanvasFactory";
 import BaseLayout from "@/layouts/BaseLayout.vue";
-import { Tab, Line } from "@/components/index";
+import { Tab, Line, Accordion } from "@/components/index";
 import Log from "@/fragment/Log.vue";
 import Gallery from "@/fragment/Gallery/index.vue";
 import CanvasOption from "@/fragment/Options/collage-canvas.vue";
@@ -223,7 +222,7 @@ const handleStickerDrop = async function () {
   }
   .btn-group {
     position: absolute;
-    top: calc(100% - 100px);
+    top: calc(100% - 100px + 20px);
   }
 }
 .sticker-text {

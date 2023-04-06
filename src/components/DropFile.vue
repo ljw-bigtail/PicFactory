@@ -228,10 +228,10 @@ defineExpose({ setVal });
     padding: 50px 0;
     display: flex;
     flex-direction: column;
-    border: 1px dashed const(--color-light-gray);
-    border-radius: const(--radius);
+    border: 1px dashed var(--color-dark-gray);
+    border-radius: var(--radius);
     &:hover {
-      border-color: const(--color-dark-gray);
+      border-color: var(--color-black);
     }
     &.drop-in {
       background-color: #ccc;

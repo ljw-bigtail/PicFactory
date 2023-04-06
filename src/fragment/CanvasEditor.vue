@@ -7,6 +7,7 @@
         width,
         height,
         padding,
+        background: paddingColor,
       }"
       @mousemove="fragmentMove"
     >
@@ -22,6 +23,8 @@
           left: cellsList[index].x + 'px',
           borderRadius: cellsList[index].radius + 'px',
           borderWidth: element.src && element.src != '' ? '0px' : '2px',
+          borderColor: `${dashedColor}33`,
+          background,
         }"
         @drop="dropAdd($event, index)"
         @dragover="dragEnter($event, index)"
@@ -147,6 +150,9 @@ type CanvasOption = {
   radius: number;
   template: number;
   rule: number;
+  background: string;
+  paddingColor: string;
+  dashedColor: string;
 };
 
 type FileOption = {
@@ -190,6 +196,9 @@ const props = withDefaults(defineProps<Props>(), {
 const width = ref("");
 const height = ref("");
 const padding = ref("");
+const background = ref("");
+const paddingColor = ref("");
+const dashedColor = ref("");
 const template = ref(0);
 
 const cellsList = ref();
@@ -230,7 +239,13 @@ const resize = function () {
   if (!dom) {
     throw new Error("canvas-editor dom error");
   }
-  const { width: size_width, height: size_height } = props.options;
+  const {
+    width: size_width,
+    height: size_height,
+    background: _background,
+    paddingColor: _paddingColor,
+    dashedColor: _dashedColor,
+  } = props.options;
   const { scale_width, scale_height } = {
     scale_width: Math.max(
       parseFloat((size_width / (dom.clientWidth - config.min_box_padding * 2)).toFixed(2)),
@@ -244,6 +259,9 @@ const resize = function () {
   const scale = Math.max(scale_width, scale_height);
   width.value = (size_width / scale).toFixed(0) + "px";
   height.value = (size_height / scale).toFixed(0) + "px";
+  background.value = _background;
+  paddingColor.value = _paddingColor;
+  dashedColor.value = _dashedColor;
 };
 
 const initCells = function () {
@@ -369,6 +387,7 @@ const dropAdd = function (e: DragEvent, index: number) {
   if (dragCache.type != "") return;
   const _index = index.toString();
   if (_index == "" || clearIndexForImg == _index) return;
+  if (!imgCache?.src) return;
   // 缓存移出img数据数据
   const _old_target_img = { ...cellsImg.value[_index] };
   // 放置在当前位置
@@ -665,7 +684,7 @@ const resizeMove = function (index: number, event: MouseEvent) {
   if (stickerPositionCache.clientX == 0 || stickerPositionCache.clientY == 0) {
     return;
   }
-  const size_range: [number, number] = [20, 300];
+  const size_range: [number, number] = [20, parseInt(width.value) * 0.8];
   const { clientX, clientY } = event;
   let base = clientX - stickerPositionCache.clientX;
   const check_width = getRegion(fragmentList.value[index].width + base, size_range);
@@ -823,13 +842,14 @@ const textChangeHandler = function () {
           position: relative;
           z-index: 1;
         }
-        &:hover span {
-          opacity: 1;
-          display: block;
-        }
         span {
           opacity: 0;
-          display: none;
+          visibility: hidden;
+          transition: 0.5s all;
+        }
+        &:hover span {
+          opacity: 1;
+          visibility: visible;
         }
         .delete {
           position: absolute;
@@ -842,22 +862,23 @@ const textChangeHandler = function () {
           position: absolute;
           right: 0;
           bottom: 0;
-          transform: rotateZ(270deg) translate(-40%, 66%);
+          transform: rotateZ(270deg) translate(-60%, 60%);
+          z-index: 2;
         }
         .rotate {
           position: absolute;
           left: 50%;
           top: 50%;
           transform: translate(-50%, -50%);
-          width: 150%;
-          height: 150%;
+          width: 300%;
+          height: 300%;
           .icon-size-img {
             position: absolute;
-            transform: translate(-150%, -50%) rotate(45deg);
+            transform: translate(0, -50%) rotate(45deg);
             top: 50%;
             cursor: grabbing;
             z-index: 10;
-            left: 100%;
+            left: 68%;
           }
         }
         .icon-size {

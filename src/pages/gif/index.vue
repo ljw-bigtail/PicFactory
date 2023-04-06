@@ -166,7 +166,7 @@ const handleDrop = function (data: FileOption[]) {
   }
   .btn-group {
     position: absolute;
-    top: calc(100% - 100px);
+    top: calc(100% - 100px + 20px);
   }
   & + .right {
     padding-bottom: var(--space-3);

@@ -6,6 +6,20 @@
     </div>
     <Line />
     <div>
+      <span>背景色：</span>
+      <input type="color" v-model="value.background" @change="formChange" />
+    </div>
+    <div>
+      <span>间距色：</span>
+      <input type="color" v-model="value.paddingColor" @change="formChange" />
+    </div>
+    <div>
+      <span>虚线色：</span>
+      <input type="color" v-model="value.dashedColor" @change="formChange" />
+      <i>透明度20%</i>
+    </div>
+    <Line />
+    <div>
       <span>间距：</span>
       <Range v-model="value.margin" @change="rangeChange" />
     </div>
@@ -42,9 +56,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-
 import Size from "./Item/size.vue";
-
 import { Line, Range } from "@/components/index";
 
 import { templateArr, DefaultCanvasFactoryOptions } from "@/utils/CanvasFactory";
@@ -62,6 +74,9 @@ type CanvasOption = {
   radius: number;
   template: number;
   rule: number;
+  background: string;
+  paddingColor: string;
+  dashedColor: string;
 };
 
 const props = defineProps<{ value: CanvasOption }>();

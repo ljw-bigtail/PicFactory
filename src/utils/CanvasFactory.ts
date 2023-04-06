@@ -225,6 +225,9 @@ export const DefaultCanvasFactoryOptions = {
   radius: 0,
   template: 0,
   rule: 2,
+  background: "#EEEEEE",
+  paddingColor: "#FFFFFF",
+  dashedColor: "#51B2F9"
 };
 
 export const DefaultCanvasImgOptions = {

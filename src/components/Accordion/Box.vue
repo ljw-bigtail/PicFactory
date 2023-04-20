@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, getCurrentInstance } from "vue";
-import accordionPanel from "./panel.vue";
+// import accordionPanel from "./panel.vue";
 
 const props = defineProps({ selected: String });
 const emit = defineEmits(["update:selected"]);

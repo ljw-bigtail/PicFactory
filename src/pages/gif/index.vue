@@ -87,6 +87,7 @@ const clearFileCache = () => {
   nextTick(() => {
     previewSrc.value = "";
     galleryLoader.value.clearSelect();
+    frameEditor.value.handleClear();
     message({
       type: "success",
       value: "清理成功...",

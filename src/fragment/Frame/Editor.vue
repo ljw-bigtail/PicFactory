@@ -63,13 +63,14 @@ const dropAdd = (e: DragEvent) => {
 };
 // 图库挪入 end
 
-defineExpose({ getFrames, setDropCache });
-
 const handleFileChange = () => {
   console.log("修改顺序");
 };
 const handleDel = (id: string) => {
   imgs.value = imgs.value.filter((e) => e.id !== id);
+};
+const handleClear = () => {
+  imgs.value = [];
 };
 const handleBtnClick = (index: number, type: "flipX" | "flipY" | "turnAnti" | "turn") => {
   switch (type) {
@@ -103,6 +104,8 @@ const turnAntiHandler = function (index: number) {
 const turnHandler = function (index: number) {
   imgs.value[index].rotateZ += 90;
 };
+
+defineExpose({ getFrames, setDropCache, handleClear });
 </script>
 
 <style lang="less" scoped>

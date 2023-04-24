@@ -1,19 +1,16 @@
 <template>
-  <BaseLayout :needLog="true">
+  <BaseLayout>
     <template v-slot:header>
       <span>Pic Collage</span>
     </template>
     <template v-slot:menu>
       <!-- <button class="button A" @click="clearFileCache">清理数据</button> -->
-      <button class="button C">
-        <a href="./gif.html">Pic GIF</a>
-      </button>
     </template>
     <template v-slot:main>
       <div class="left">
         <Tab.Box v-model:selected="tabSelect">
           <Tab.Panel key="library" title="图库">
-            <Gallery ref="galleryLoader" @log="addLog" @drop="handleDrop" />
+            <Gallery ref="galleryLoader" @drop="handleDrop" />
           </Tab.Panel>
           <Tab.Panel key="setting" title="设置">
             <CanvasOption v-model:value="canvasForm" />

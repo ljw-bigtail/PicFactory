@@ -169,6 +169,7 @@ onMounted(() => {
     z-index: 8000;
     background-position: center center;
     background-repeat: no-repeat;
+    background-color: #fff;
     .dialog-content {
       flex: 1;
       overflow-y: auto;

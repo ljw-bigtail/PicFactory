@@ -1,18 +1,14 @@
 <template>
-  <BaseLayout :needLog="true">
+  <BaseLayout>
     <template v-slot:header>
       <span>Pic GIF</span>
     </template>
-    <template v-slot:menu>
-      <button class="button C">
-        <a href="./collage.html">Pic Collage</a>
-      </button>
-    </template>
+    <!-- <template v-slot:menu> </template> -->
     <template v-slot:main>
       <div class="left">
         <Tab.Box v-model:selected="tabSelect">
           <Tab.Panel key="library" title="图库">
-            <Gallery ref="galleryLoader" @log="addLog" @drop="handleDrop" :multiDrop="true" />
+            <Gallery ref="galleryLoader" @drop="handleDrop" :multiDrop="true" />
           </Tab.Panel>
           <Tab.Panel key="music" title="音乐库">
             <GIFMusic :value="musicForm" />

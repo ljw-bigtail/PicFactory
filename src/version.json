@@ -1,0 +1,82 @@
+{
+  "version": [
+    {
+      "number": "v0.1.0",
+      "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;项目初始化、GIF工具初始化;</p><p>&nbsp; &nbsp;使用gif.worker.js实现生成gif功能；</p><p> &nbsp; &nbsp;添加Upload、Log组件；</p>"
+    },
+    {
+      "number": "v0.2.0",
+      "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;主页</p><p>&nbsp; &nbsp;优化组件、样式</p><p><b>修复：</b></p><p>&nbsp; &nbsp;GithubPage 找不到 gif.worker<br></p>"
+    },
+    {
+      "number": "v0.3.0",
+      "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;添加拼图工具</p><p>&nbsp; &nbsp;添加Tab、Line、Range组件</p><p>&nbsp; &nbsp;添加拼图拼接规则配置</p><p>&nbsp; &nbsp;添加拖拽放入拼图</p><p><b>优化：</b></p><p><b>&nbsp; </b>&nbsp;默认限制小于上传10MB文件</p><p>&nbsp; &nbsp;组件优化</p><p><b>修复：</b></p><p><b>&nbsp; &nbsp;</b>配置修改后 生成预览没有更新</p><p>&nbsp; &nbsp;表单被遮挡</p><p>&nbsp; &nbsp;修改模版 图片保存报错<br></p>"
+    },
+    {
+      "number": "v0.3.1",
+      "content": "<p><b>优化：</b><br></p><p><b>&nbsp; </b>&nbsp;支持原尺寸输出</p><p>&nbsp; &nbsp;更新拼图类型2规则</p><p>&nbsp; &nbsp;添加拼图元素移动模式<br></p><p><b>修复：</b></p><p><b>&nbsp; &nbsp;</b>tab被遮挡</p><p>&nbsp; &nbsp;log 错误的弹出</p>"
+    },
+    {
+      "number": "v0.3.2",
+      "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;拼图子图片 缩放功能</p>"
+    },
+    {
+      "number": "v0.3.3",
+      "content": "<p><b>优化：</b><br></p><p><b>&nbsp; </b>&nbsp;切换模版时自动缩放图片</p><p><b>修复：</b></p><p><b>&nbsp; &nbsp;</b>导出的图片有一大半是透明的</p><p>&nbsp; &nbsp;模版数据错误</p><p>&nbsp; &nbsp;</p>"
+    },
+    {
+      "number": "v0.3.4",
+      "content": "<p><b>优化：</b><br></p><p><b>&nbsp; </b>&nbsp;拼图类型2修改为 =&gt; 3*2</p><p>&nbsp; &nbsp;拼图图库开启拖拽&nbsp; &nbsp;</p>"
+    },
+    {
+      "number": "v0.3.5",
+      "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;图库添加置顶</p>"
+    },
+    {
+      "number": "v0.4.0",
+      "content": "..."
+    },
+    {
+      "number": "v0.4.1",
+      "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;添加拼图类型2</p><p>&nbsp; &nbsp;拼图添加贴纸功能</p>"
+    },
+    {
+      "number": "v0.4.2",
+      "content": "<p><b>修复：</b></p><p>&nbsp; &nbsp;点击第一个类型不刷新</p>"
+    },
+    {
+      "number": "v0.4.3",
+      "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;GIF帧左右翻转</p><p>&nbsp; &nbsp;添加Dialog、Loading、Overlay组件</p><p><b>优化：</b></p><p>&nbsp; &nbsp;GIF工具弹窗预览后再下载</p><p>&nbsp; &nbsp;TS类型优化</p>"
+    },
+    {
+      "number": "v0.5.0",
+      "content": "..."
+    },
+    {
+      "number": "v0.5.1",
+      "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;添加GIF导出MP4功能</p><p>&nbsp; &nbsp;添加声音+图片合成视频</p><p>&nbsp; &nbsp;添加Message API组件</p><p><b>修复：</b></p><p>&nbsp; &nbsp;SharedArrayBuffer报错</p>"
+    },
+    {
+      "number": "v0.5.2",
+      "content": "<p><b>优化：</b></p><p>&nbsp; &nbsp;GIF工具添加提示</p><p><b>修复：</b></p><p>&nbsp; &nbsp;GIF工具修复导出gif文件时与mp4的buffer不兼容</p>"
+    },
+    {
+      "number": "v0.5.3",
+      "content": "<p><b>优化：</b></p><p>&nbsp; &nbsp;GIF工具截取规则修改为自动放大</p><p><b>修复：</b></p><p>&nbsp; &nbsp;GIF工具操作后再次上传不成功</p><p>&nbsp; &nbsp;多次生成出现历史勾选的图片也被渲染</p>"
+    },
+    {
+      "number": "v0.5.4",
+      "content": "<p><b>修复：</b></p><p>&nbsp; &nbsp;图片异常白边</p>"
+    },
+    {
+      "number": "v0.5.5",
+      "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;拼图类型更新</p><p><b>优化：</b></p><p>&nbsp; &nbsp;GITF工具质量逻辑</p><p>&nbsp; &nbsp;代码优化</p><p><b>修复：</b></p><p>&nbsp; &nbsp;GITF工具镜像逻辑bug</p><p>&nbsp; &nbsp;修复 gif 栅格化 循环</p>"
+    },
+    {
+      "number": "v0.6.0",
+      "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;图库支持批量拖拽出去</p><p>&nbsp; &nbsp;添加icon</p><p>&nbsp; &nbsp;贴纸增加 批量上传、拖拽旋转、缩放、反色 功能</p><p>&nbsp; &nbsp;删除默认贴纸</p><p>&nbsp; &nbsp;图标改色</p><p>&nbsp; &nbsp;添加拼图类型</p><p>&nbsp; &nbsp;背景色/间距色/虚线色 自定义</p><p><b>优化：</b></p><p>&nbsp; &nbsp;规范文件路径</p><p>&nbsp; &nbsp;GIF点击图片改为拖拽</p><p>&nbsp; &nbsp;GIF排序、删除功能与图库分离</p><p>&nbsp; &nbsp;贴纸尺寸限制为300</p><p>&nbsp; &nbsp;贴纸尺寸/交互 优化</p><p><b>修复：</b></p><p>&nbsp; &nbsp;删除贴纸bug</p><p>&nbsp; &nbsp;贴纸挪入覆盖拼图bug</p><p>&nbsp; &nbsp;gif 清理成功 实际未清理</p>"
+    }
+  ],
+  "versionTemplate": "<p><b>新增：</b></p><p>&nbsp; &nbsp;aaa</p><p><b>优化：</b></p><p><b>&nbsp; </b>&nbsp;bbb</p><p><b>修复：</b></p><p><b>&nbsp; &nbsp;</b>ccc</p>",
+  "richText":"https://summernote.org/"
+}

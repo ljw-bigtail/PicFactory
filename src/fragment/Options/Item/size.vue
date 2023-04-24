@@ -1,20 +1,8 @@
 <template>
   <div class="size">
     <div class="size-input">
-      <input
-        type="number"
-        name="width"
-        min="0"
-        v-model="value.width"
-        @change="inputHandler()"
-      />
-      <input
-        type="number"
-        name="height"
-        min="0"
-        v-model="value.height"
-        @change="inputHandler()"
-      />
+      <input type="number" name="width" min="0" v-model="value.width" @change="inputHandler()" />
+      <input type="number" name="height" min="0" v-model="value.height" @change="inputHandler()" />
       <span>px</span>
     </div>
     <div class="size-select">
@@ -62,9 +50,7 @@ const selectOption = [
 const selectVal = ref(
   (function () {
     const initVal = `${props.value.width}&${props.value.height}`;
-    return selectOption.map((e) => `${e.width}&${e.height}`).includes(initVal)
-      ? initVal
-      : "-1&-1";
+    return selectOption.map((e) => `${e.width}&${e.height}`).includes(initVal) ? initVal : "-1&-1";
   })()
 );
 

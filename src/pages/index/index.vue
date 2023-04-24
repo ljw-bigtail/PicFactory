@@ -3,17 +3,7 @@
     <template v-slot:header>
       <span>鹿酒的院子</span>
     </template>
-    <template v-slot:menu>
-      <button class="button C">
-        <a href="./gif.html">Pic GIF</a>
-      </button>
-      <button class="button C">
-        <a href="./collage.html">Pic Collage</a>
-      </button>
-      <button class="button B">
-        <a href="/blog/">鹿酒的博客</a>
-      </button>
-    </template>
+    <template v-slot:menu> </template>
     <template v-slot:main>
       <div class="slogin">
         <span>终</span>

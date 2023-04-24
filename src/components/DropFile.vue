@@ -54,6 +54,7 @@ const id = uuid();
 const emit = defineEmits(["update:value", "change", "log"]);
 
 const log = function (mes: string) {
+  console.log(mes);
   emit("log", mes);
 };
 
@@ -182,22 +183,21 @@ const addFiles = async (file: FileList) => {
   if (!file) return;
   for (let i = 0; i < file.length; i++) {
     const item = file[i];
-    if (props.file_type.includes(item.type)) {
-      if (item.size < props.max_size * 1000) {
-        // 队列添加完毕 获得文件 blob
-        fileList.value.push({
-          id: uuid(),
-          src: await fileToSrc(item),
-          file: item,
-          selected: false,
-        });
-        log(`${item.name} 已上传，共${item.size / 1000}KB。`);
-      } else {
-        log(`允许上传的最大文件大小为：${props.max_size / 1000}MB`);
-      }
-    } else {
-      log(`允许上传的文件格式为：jpeg、jpg、png、webp`);
+    if (!props.file_type.includes(item.type)) {
+      log(`允许上传的文件格式为：${props.file_type}`);
+      return;
     }
+    if (item.size > props.max_size * 1000) {
+      log(`允许上传的最大文件大小为：${props.max_size / 1000}MB`);
+      return;
+    } // 队列添加完毕 获得文件 blob
+    fileList.value.push({
+      id: uuid(),
+      src: await fileToSrc(item),
+      file: item,
+      selected: false,
+    });
+    log(`${item.name} 已上传，共${item.size / 1000}KB。`);
   }
 
   emit("change", [...fileList.value]);

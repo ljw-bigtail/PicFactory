@@ -75,8 +75,12 @@
     {
       "number": "v0.6.0",
       "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;图库支持批量拖拽出去</p><p>&nbsp; &nbsp;添加icon</p><p>&nbsp; &nbsp;贴纸增加 批量上传、拖拽旋转、缩放、反色 功能</p><p>&nbsp; &nbsp;删除默认贴纸</p><p>&nbsp; &nbsp;图标改色</p><p>&nbsp; &nbsp;添加拼图类型</p><p>&nbsp; &nbsp;背景色/间距色/虚线色 自定义</p><p><b>优化：</b></p><p>&nbsp; &nbsp;规范文件路径</p><p>&nbsp; &nbsp;GIF点击图片改为拖拽</p><p>&nbsp; &nbsp;GIF排序、删除功能与图库分离</p><p>&nbsp; &nbsp;贴纸尺寸限制为300</p><p>&nbsp; &nbsp;贴纸尺寸/交互 优化</p><p><b>修复：</b></p><p>&nbsp; &nbsp;删除贴纸bug</p><p>&nbsp; &nbsp;贴纸挪入覆盖拼图bug</p><p>&nbsp; &nbsp;gif 清理成功 实际未清理</p>"
+    },
+    {
+      "number": "v0.6.1",
+      "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;新增历史版本查看</p><p>&nbsp; &nbsp;新增百度统计</p><p>&nbsp; &nbsp;新增文件格式转换</p><p><b>优化：</b></p><p>&nbsp; &nbsp;顶部导航、删除原日志入口</p>"
     }
   ],
-  "versionTemplate": "<p><b>新增：</b></p><p>&nbsp; &nbsp;aaa</p><p><b>优化：</b></p><p><b>&nbsp; </b>&nbsp;bbb</p><p><b>修复：</b></p><p><b>&nbsp; &nbsp;</b>ccc</p>",
+  "versionTemplate": "<p><b>新增：</b></p><p>&nbsp; &nbsp;aaa</p><p><b>优化：</b></p><p>&nbsp; &nbsp;bbb</p><p><b>修复：</b></p><p>&nbsp; &nbsp;ccc</p>",
   "richText":"https://summernote.org/"
 }

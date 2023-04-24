@@ -13,6 +13,7 @@ export default defineConfig({
         main: path.resolve(__dirname, "index.html"),
         gif: path.resolve(__dirname, "gif.html"),
         collage: path.resolve(__dirname, "collage.html"),
+        conversion: path.resolve(__dirname, "conversion.html"),
       },
     },
   },

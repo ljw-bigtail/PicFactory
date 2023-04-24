@@ -70,7 +70,7 @@ const stopHandler = function (e: Event) {
 
 const dropAdd = async function (e: DragEvent) {
   stopHandler(e);
-  const file = (e.dataTransfer as DataTransfer).files;
+  let file = (e.dataTransfer as DataTransfer).files;
   await addFiles(file);
   inDrag.value = false;
 };
@@ -181,11 +181,19 @@ const fileToSrc = async (file: File) => {
 
 const addFiles = async (file: FileList) => {
   if (!file) return;
-  for (let i = 0; i < file.length; i++) {
+  let maxLen = file.length;
+  if (!props.multiple) {
+    fileList.value = [];
+    maxLen = 1;
+  }
+  for (let i = 0; i < maxLen; i++) {
     const item = file[i];
-    if (!props.file_type.includes(item.type)) {
-      log(`允许上传的文件格式为：${props.file_type}`);
-      return;
+    if (props.file_type.includes("*")) {
+    } else {
+      if (!props.file_type.includes(item.type)) {
+        log(`允许上传的文件格式为：${props.file_type}，该文件的格式是${item.type}`);
+        return;
+      }
     }
     if (item.size > props.max_size * 1000) {
       log(`允许上传的最大文件大小为：${props.max_size / 1000}MB`);
@@ -224,6 +232,7 @@ defineExpose({ setVal });
   .drop-file-box {
     cursor: pointer;
     width: 100%;
+    box-sizing: border-box;
     text-align: center;
     padding: 50px 0;
     display: flex;

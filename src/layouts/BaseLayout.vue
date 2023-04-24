@@ -151,6 +151,7 @@ const versionDialog = ref(false);
     height: calc(100vh - var(--header-height) - var(--space-2));
     background-color: #fff;
     box-sizing: border-box;
+    justify-content: center;
   }
   & > .footer {
     box-shadow: var(--shadow);

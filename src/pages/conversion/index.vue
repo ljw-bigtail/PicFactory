@@ -5,29 +5,52 @@
     </template>
     <!-- <template v-slot:menu> </template> -->
     <template v-slot:main>
-      <!-- <DropFile
-        v-model:value="files"
-        :max_size="1024 * 10"
-        @change="handleFileChange"
-        ref="dropFile"
-        :multiple="false"
-        :file_type="['*']"
-      />
-      <div class="size-select">
-        <select @change="selectHandler" v-model="targetType">
-          <option
-            :key="opt.name"
-            :value="opt.value"
-            v-for="(opt, index) in selectOption"
-            v-show="index != 1"
-          >
-            {{ opt.name }}
-          </option>
-        </select>
+      <div class="center">
+        <header>
+          <h3>图片格式转换</h3>
+          <p>
+            现已支持：
+            {{ selectOption.map((e) => e.name.toLocaleUpperCase()).join("、") }}
+            格式
+          </p>
+        </header>
+        <div>
+          <DropFile
+            v-model:value="files"
+            :max_size="1024 * 10"
+            @change="handleFileChange"
+            ref="dropFile"
+            :multiple="false"
+            :file_type="selectOption.map((e) => e.fileType)"
+          />
+        </div>
+        <div class="form">
+          <div class="form-item">
+            <span>请选择想获取的文件格式：</span>
+            <select @change="selectHandler" v-model="targetType">
+              <option
+                :key="opt.value"
+                :value="opt.value"
+                v-for="opt in selectOption"
+                :disabled="fileType === opt.fileType"
+              >
+                {{ opt.name.toLocaleUpperCase() }}
+              </option>
+            </select>
+          </div>
+          <ul class="filsList">
+            <li v-for="file in files">
+              <span>{{ file.file.name }}</span>
+              <span>{{ (file.file.size / 1000).toFixed(0) }}KB</span>
+            </li>
+          </ul>
+        </div>
+        <div class="btn-group center">
+          <button class="button D large" @click="handleConversion">
+            下载{{ targetType.toLocaleUpperCase() }}
+          </button>
+        </div>
       </div>
-      <button class="button large" @click="">生成文件</button>
-      <button class="button large" @click="">下载文件</button> -->
-      Comming Soon...
     </template>
     <template v-slot:footer>
       <Log :logs="logs" />
@@ -36,7 +59,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref } from "vue";
+import { ref, Ref, inject } from "vue";
+import { saveAs } from "file-saver";
 import { dateFmt } from "@/utils/utils";
 import BaseLayout from "@/layouts/BaseLayout.vue";
 import { DropFile } from "@/components/index";
@@ -44,99 +68,127 @@ import Log from "@/fragment/Log.vue";
 import { dropFileType } from "@/type/dropFile";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
+const message = inject("_message") as Function;
 
-const selectOption = ref([{ name: "请选择", value: "" }]);
-const targetType = ref();
+const selectOption = ref([
+  { name: "jpg/jpeg", value: "jpg", fileType: "image/jpeg" },
+  // { name: "jpeg", value: "jpeg", fileType: "image/jpeg" },
+  { name: "png", value: "png", fileType: "image/png" },
+  { name: "bmp", value: "bmp", fileType: "image/bmp" },
+  { name: "webp", value: "webp", fileType: "image/webp" },
+]);
+const targetType = ref(selectOption.value[0].value);
 const selectHandler = () => {};
 
 const files: Ref<dropFileType[]> = ref([]);
-const handleFileChange = () => {
-  console.log([...files.value]);
+const fileType = ref("");
+const handleFileChange = (_files: dropFileType[]) => {
+  fileType.value = { ...[..._files][0] }.file.type;
+  targetType.value = selectOption.value.filter((item) => {
+    return item.fileType !== fileType.value;
+  })[0].value;
 };
-// const tabSelect = ref("library");
-// const previewSrc = ref("");
-// const galleryLoader = ref();
-// const previewDialog = ref();
-// const frameEditor = ref();
-// const gifForm = ref({
-//   width: 800,
-//   height: 1000,
-//   repeat: 0,
-//   delay: 750,
-//   background: "#FFFFFF",
-//   rule: 3,
-//   quality: 0.5, // ffmpeg的默认值是23，建议的取值范围是17-28。
-// });
-// const musicForm = ref({
-//   start: 0,
-// });
 
-// const paintsFactory = new PaintsFactory();
+const readfile = async (file: File): Promise<string> => {
+  return new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      if (typeof reader.result == "string") {
+        res(reader.result);
+      } else {
+        rej("File Error!");
+      }
+    };
+  });
+};
 
-// const message = inject("_message") as Function;
+const canvasToBlob = async (
+  canvas: HTMLCanvasElement,
+  type: string,
+  quality: number
+): Promise<Blob> => {
+  return new Promise(function (res, rej) {
+    canvas.toBlob(
+      function (blob) {
+        if (blob) {
+          res(blob);
+        } else {
+          rej("数据异常");
+        }
+      },
+      type,
+      quality
+    );
+  });
+};
 
-// const clearFileCache = () => {
-//   nextTick(() => {
-//     previewSrc.value = "";
-//     galleryLoader.value.clearSelect();
-//     frameEditor.value.handleClear();
-//     message({
-//       type: "success",
-//       value: "清理成功...",
-//     });
-//   });
-// };
+const canvasLoadImg = async (src: string, fileType: string): Promise<Blob> => {
+  return new Promise((res, rej) => {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    if (!context) return;
+    const image = new Image();
+    image.src = src;
+    image.onload = async function () {
+      canvas.width = image.width;
+      canvas.height = image.height;
+      context.drawImage(image, 0, 0);
+      const blob = await canvasToBlob(canvas, fileType, 1);
+      res(blob);
+    };
+  });
+};
 
-// const addLog = (mes: string) => {
-//   logs.value.push({
-//     value: mes,
-//     timestamp: dateFmt(),
-//   });
-// };
-
-// const openPreview = function () {
-//   previewDialog.value.open();
-// };
-
-// const makePreview = async function () {
-//   var frames = frameEditor.value.getFrames();
-//   if (!frames || frames.length == 0) {
-//     message({
-//       type: "warning",
-//       value: "请从图库中选择。",
-//     });
-//     return;
-//   }
-//   message({
-//     value: "正在加载插件，请等待...",
-//   });
-//   previewDialog.value.load();
-//   const file = await paintsFactory
-//     .setOpt(gifForm.value)
-//     .setMusic(musicForm.value)
-//     .setFrame(frames)
-//     .toPreView()
-//     .catch((e) => console.log(e));
-//   if (!file?.src) return;
-//   const { src, size_mp4, size_gif } = file;
-//   console.log(`
-//     size_mp4: ${Math.round(size_mp4 / 1024)}KB
-//     size_gif: ${Math.round(size_gif / 1024)}KB
-//   `);
-//   previewDialog.value.display(src);
-// };
-
-// const makeFile = function (type: "gif" | "mp4") {
-//   var frames = frameEditor.value.getFrames();
-//   if (!frames || frames.length == 0) return;
-//   paintsFactory.toFile(type).catch((e) => console.log(e));
-// };
-
-// type FileOption = { id: string; src: string; file: File; selected: boolean };
-
-// const handleDrop = function (data: FileOption[]) {
-//   frameEditor.value.setDropCache([...data]);
-// };
+const handleConversion = async () => {
+  const { file } = { ...[...files.value][0] };
+  const src = await readfile(file);
+  const fileType = selectOption.value.find((item) => {
+    return item.value == targetType.value;
+  });
+  if (!fileType) return;
+  const blob = await canvasLoadImg(src, fileType.fileType);
+  await saveAs(blob, `${file.name}-${dateFmt()}.${fileType.value}`);
+  message({
+    type: "success",
+    value: "下载成功...",
+  });
+};
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.center {
+  width: 750px;
+  header {
+    padding: 2rem 0;
+    h3 {
+      padding: 1rem 0;
+    }
+    p {
+      color: var(--color-dark-gray);
+    }
+  }
+  .form {
+    padding: 1rem 0;
+    select {
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius);
+    }
+  }
+  .filsList {
+    margin: 1rem 0;
+    li {
+      display: flex;
+      line-height: 1.4;
+      justify-content: space-between;
+      padding: 0.6rem 0;
+      span:first-child {
+        text-align: left;
+        width: 70%;
+        display: block;
+        overflow: hidden;
+      }
+    }
+  }
+}
+</style>

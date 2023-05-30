@@ -18,7 +18,7 @@
     },
     {
       "number": "v0.3.2",
-      "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;拼图子图片 缩放功能</p>"
+      "content": "<p><b>新增：</b></p><p> &nbsp; &nbsp;拼图子图片 缩放功能</p>"
     },
     {
       "number": "v0.3.3",
@@ -79,6 +79,10 @@
     {
       "number": "v0.6.1",
       "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;新增历史版本查看</p><p>&nbsp; &nbsp;新增百度统计</p><p>&nbsp; &nbsp;新增文件格式转换</p><p><b>优化：</b></p><p>&nbsp; &nbsp;顶部导航、删除原日志入口</p>"
+    },
+    {
+      "number": "v0.6.2",
+      "content": "<p><b>优化：</b></p><p>&nbsp; &nbsp;拼图工具导出性能提升</p>"
     }
   ],
   "versionTemplate": "<p><b>新增：</b></p><p>&nbsp; &nbsp;aaa</p><p><b>优化：</b></p><p>&nbsp; &nbsp;bbb</p><p><b>修复：</b></p><p>&nbsp; &nbsp;ccc</p>",

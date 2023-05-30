@@ -311,7 +311,7 @@ export class CanvasFactory {
     document.body.appendChild(canvas)
     return canvas
   }
-  toFile(fileType: "png" | "jpg") {
+  toFile(fileType: "png" | "jpg", callback: Function) {
     // Error loading image : 由于image存在没有src属性的情况
     const canvas = this._copyCanvas()
     if (!canvas) return;
@@ -329,6 +329,7 @@ export class CanvasFactory {
           },
           fileType == "png" ? "image/png" : "image/jpeg"
         );
+        callback()
       });
     document.body.removeChild(canvas)
   }

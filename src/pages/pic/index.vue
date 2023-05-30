@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref } from "vue";
+import { ref, Ref, inject } from "vue";
 import { dateFmt, uuid } from "@/utils/utils";
 import { CanvasFactory, DefaultCanvasFactoryOptions, stickerArr } from "@/utils/CanvasFactory";
 import BaseLayout from "@/layouts/BaseLayout.vue";
@@ -90,6 +90,7 @@ const canvasForm = ref({ ...DefaultCanvasFactoryOptions });
 const stickerTabSelect = ref(stickerArr[0].key); // 默认打开第一套贴纸
 const textSticker = ref();
 const files: Ref<dropFileType[]> = ref([]);
+const message = inject("_message") as Function;
 
 type fragmentOpt = {
   type: "text" | "img";
@@ -118,12 +119,21 @@ const addLog = (mes: string) => {
   });
 };
 
-const makeFile = function (type: "png" | "jpg") {
+const makeFile = async function (type: "png" | "jpg") {
   const canvasFactory = new CanvasFactory({
     id: "canvas-editor__canvas",
     options: { ...canvasForm.value },
   });
-  canvasFactory.toFile(type);
+  const cache = await galleryLoader.value.clearFile();
+  let start = new Date().getTime();
+  canvasFactory.toFile(type, function () {
+    galleryLoader.value.handleSet(cache);
+    let end = new Date().getTime();
+    message({
+      type: "success",
+      value: `${type.toLocaleUpperCase()}下载完成，用时${(end - start) / 1000}s。`,
+    });
+  });
 };
 
 const addFragment = function (opt: {} | {}[]) {

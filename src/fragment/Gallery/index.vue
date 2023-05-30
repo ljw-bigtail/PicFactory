@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref } from "vue";
+import { ref, Ref, nextTick } from "vue";
 import draggable from "vuedraggable";
 // import { Cache } from "@/utils/utils";
 
@@ -110,13 +110,23 @@ const handelDropPic = function (item: dropFileType) {
   }
 };
 
+const handleSet = function (arr: dropFileType[]) {
+  files.value = arr;
+};
+
 const clearFile = function () {
-  dropFile.value.setVal([]);
-  handleFileChange();
+  const cache = [...files.value];
+  return new Promise((res) => {
+    files.value = [];
+    // return cache;
+    nextTick(function () {
+      res(cache);
+    });
+  });
 };
 
 const handleDel = function (id: string) {
-  dropFile.value.setVal(files.value.filter((e) => e.id != id));
+  files.value = files.value.filter((e) => e.id != id);
   handleFileChange();
 };
 
@@ -133,24 +143,16 @@ const handleFileChange = function () {
 
 const setSelect = function (state?: boolean) {
   // 清理选中状态
-  dropFile.value.setVal(
-    files.value.map((e) => {
-      if (state != undefined) {
-        e.selected = state;
-      } else {
-        e.selected = !e.selected;
-      }
-      return e;
-    })
-  );
+  files.value.map((e) => {
+    e.selected = state != undefined ? state : !e.selected;
+    return e;
+  });
   handleUpdate();
 };
 
 const handleSelect = function (index: number) {
   // 选中
-  const data = [...files.value];
-  data[index].selected = !data[index].selected;
-  dropFile.value.setVal(data);
+  files.value[index].selected = !files.value[index].selected;
   handleUpdate();
 };
 
@@ -178,7 +180,7 @@ const handleTopping = function () {
       other.push(e);
     }
   });
-  dropFile.value.setVal([...select, ...other]);
+  files.value = [...select, ...other];
   setSelect(false);
 };
 
@@ -220,12 +222,12 @@ const colorReverse = function (src: string): Promise<string> {
 const handleReverse = async function (index: number) {
   const _files = [...files.value];
   _files[index].src = await colorReverse(_files[index].src);
-  dropFile.value.setVal(_files);
+  files.value = _files;
   handleFileChange();
   return false;
 };
 
-defineExpose({ clearFile, clearSelect });
+defineExpose({ clearFile, clearSelect, handleSet });
 </script>
 
 <style scoped lang="less">

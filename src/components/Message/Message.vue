@@ -21,7 +21,7 @@ const props = defineProps({
   },
   timeout: {
     type: Number,
-    default: 3000,
+    default: 5000,
   },
   remove: Function,
 });
@@ -30,16 +30,18 @@ let timer: any;
 const open = ref(false);
 
 onMounted(() => {
-  open.value = true;
   const animateTimeOut = 300;
   timer = setTimeout(function () {
-    open.value = false;
+    open.value = true;
     setTimeout(function () {
-      if (typeof props.remove == "function") {
-        props.remove();
-      }
-    }, animateTimeOut); // 动画时间
-  }, props.timeout - animateTimeOut);
+      open.value = false;
+      setTimeout(function () {
+        if (typeof props.remove == "function") {
+          props.remove();
+        }
+      }, animateTimeOut); // 动画时间
+    }, props.timeout - animateTimeOut);
+  }, 300);
 });
 
 const handleClose = () => {
@@ -80,19 +82,20 @@ const handleClose = () => {
       display: block;
       width: 12px;
       height: 12px;
-      border-radius: var(--radius);
     }
     &::before {
       top: 0;
       left: 0;
       border-top: 4px solid #000;
       border-left: 4px solid #000;
+      border-top-left-radius: var(--radius);
     }
     &::after {
       bottom: 0;
       right: 0;
       border-bottom: 4px solid #000;
       border-right: 4px solid #000;
+      border-bottom-right-radius: var(--radius);
     }
     &.info::before,
     &.info::after {

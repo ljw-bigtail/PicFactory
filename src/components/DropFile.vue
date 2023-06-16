@@ -17,39 +17,48 @@
       @click="triggerClick"
       :class="[inDrag ? 'drop-in' : '']"
     >
-      <button class="button large">点击上传</button>
-      <span>或将文件拖拽到此区域</span>
+      <div class="">
+        <button class="button large" v-show="!uploading">点击上传</button>
+        <span v-show="!uploading">或将文件拖拽到此区域</span>
+        <p v-show="uploading">
+          完成进度：{{ ((uploadingNow / uploadingProgress) * 100).toFixed(1) }}%
+        </p>
+        <i>{{ uploadingNow.toFixed(1) }}MB / {{ uploadingProgress.toFixed(1) }}MB</i>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, inject, withDefaults } from "vue";
 import { uuid } from "./utils";
 import { dropFileType } from "@/type/dropFile";
 
-const props = defineProps({
-  max_size: {
-    type: Number,
-    default: 1024 * 10, // KB
-  },
-  value: {
-    type: Array,
-    default: [],
-  },
-  multiple: {
-    type: Boolean,
-    default: true,
-  },
-  file_type: {
-    type: Array,
-    default: ["image/jpeg", "image/png", "image/webp"],
-  },
-});
+const props = withDefaults(
+  defineProps<{
+    value: dropFileType[];
+    max_size?: number;
+    multiple?: boolean;
+    file_type?: string[];
+  }>(),
+  {
+    max_size: 1024 * 10, // KB
+    value: () => [],
+    multiple: true,
+    file_type: () => ["image/jpeg", "image/png", "image/webp"],
+  }
+);
+
+const message = inject("_message") as Function;
 
 const inDrag = ref(false);
-const fileList = ref(props.value as dropFileType[]);
+let fileList = [] as dropFileType[];
+// const fileList = ref(props.value as dropFileType[]);
 const id = uuid();
+
+const uploading = ref(false);
+const uploadingProgress = ref(0);
+const uploadingNow = ref(0);
 
 const emit = defineEmits(["update:value", "change", "log"]);
 
@@ -183,42 +192,54 @@ const addFiles = async (file: FileList) => {
   if (!file) return;
   let maxLen = file.length;
   if (!props.multiple) {
-    fileList.value = [];
     maxLen = 1;
   }
+  fileList = props.value;
+  const fileListLenCatch = fileList.length;
+  uploading.value = true;
+  // 队列添加
+  let passArr = [];
   for (let i = 0; i < maxLen; i++) {
     const item = file[i];
     if (props.file_type.includes("*")) {
     } else {
       if (!props.file_type.includes(item.type)) {
-        log(`允许上传的文件格式为：${props.file_type}，该文件的格式是${item.type}`);
+        message({
+          type: "warning",
+          value: `允许上传的文件格式为：${props.file_type}，该文件的格式是${item.type}`,
+        });
         return;
       }
     }
     if (item.size > props.max_size * 1000) {
-      log(`允许上传的最大文件大小为：${props.max_size / 1000}MB`);
+      message({
+        type: "warning",
+        value: `允许上传的最大文件大小为：${props.max_size / 1000}MB`,
+      });
       return;
-    } // 队列添加完毕 获得文件 blob
-    fileList.value.push({
-      id: uuid(),
-      src: await fileToSrc(item),
-      file: item,
-      selected: false,
-    });
-    log(`${item.name} 已上传，共${item.size / 1000}KB。`);
+    }
+    passArr.push(i);
+    uploadingProgress.value += item.size / 1000 / 1000;
   }
-
-  emit("change", [...fileList.value]);
-  emit("update:value", [...fileList.value]);
+  // 获得文件 blob
+  for (let i = 0; i < passArr.length; i++) {
+    (async function (item) {
+      fileList.push({
+        id: uuid(),
+        src: await fileToSrc(item),
+        file: item,
+        selected: false,
+      });
+      uploadingNow.value += item.size / 1000 / 1000;
+      emit("change", [...fileList]);
+      emit("update:value", [...fileList]);
+      if (fileList.length == fileListLenCatch + passArr.length) {
+        uploading.value = false;
+      }
+    })(file[passArr[i]]);
+    // log(`${item.name} 已上传，共${item.size / 1000}KB。`);
+  }
 };
-
-const setVal = function () {
-  fileList.value = arguments[0];
-  emit("change", [...fileList.value]);
-  emit("update:value", [...fileList.value]);
-};
-
-defineExpose({ setVal });
 </script>
 
 <style lang="less" scoped>
@@ -231,12 +252,11 @@ defineExpose({ setVal });
   }
   .drop-file-box {
     cursor: pointer;
+    height: 200px;
     width: 100%;
     box-sizing: border-box;
     text-align: center;
-    padding: 50px 0;
-    display: flex;
-    flex-direction: column;
+    margin-top: 10px;
     border: 1px dashed var(--color-dark-gray);
     border-radius: var(--radius);
     &:hover {
@@ -245,9 +265,27 @@ defineExpose({ setVal });
     &.drop-in {
       background-color: #ccc;
     }
-    span {
-      opacity: 0.4;
-      padding: 20px 0;
+    > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      position: relative;
+      span {
+        opacity: 0.4;
+        padding: 20px 0;
+      }
+      p {
+        padding: 20px 0;
+      }
+      i {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        font-style: normal;
+        font-size: 12px;
+      }
     }
   }
 }

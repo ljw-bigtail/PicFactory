@@ -83,6 +83,10 @@
     {
       "number": "v0.6.2",
       "content": "<p><b>优化：</b></p><p>&nbsp; &nbsp;拼图工具导出性能提升</p>"
+    },
+    {
+      "number": "v0.6.3",
+      "content": "<p><b>优化：</b></p><p>&nbsp; &nbsp;上传组件性能提升，添加已上传大小，防止上传未完成导致页面卡顿</p>"
     }
   ],
   "versionTemplate": "<p><b>新增：</b></p><p>&nbsp; &nbsp;aaa</p><p><b>优化：</b></p><p>&nbsp; &nbsp;bbb</p><p><b>修复：</b></p><p>&nbsp; &nbsp;ccc</p>",

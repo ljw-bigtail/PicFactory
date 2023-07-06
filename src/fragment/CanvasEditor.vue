@@ -89,6 +89,7 @@
             v-else-if="element.type == 'text'"
           >
             <span
+              class="words"
               :style="{
                 transform: `rotateZ(${element.rotateZ}deg)`,
                 color: `${element.color}`,
@@ -199,14 +200,12 @@ const padding = ref("");
 const background = ref("");
 const paddingColor = ref("");
 const dashedColor = ref("");
-const template = ref(0);
 
 const cellsList = ref();
 const cellsImg = ref();
+const fragmentList = ref([] as any[]);
 
 const inDrag = ref(""); // 挪入的cell index
-
-const fragmentList = ref([] as any[]);
 
 let imgCache: FileOption | null = null;
 let clearIndexForImg: string = "";
@@ -842,7 +841,7 @@ const textChangeHandler = function () {
           position: relative;
           z-index: 1;
         }
-        span {
+        span:not(.words) {
           opacity: 0;
           visibility: hidden;
           transition: 0.5s all;

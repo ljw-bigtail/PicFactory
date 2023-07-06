@@ -48,7 +48,7 @@ const sizeRange = ref();
 const rotateRange = ref();
 const setVal = function () {
   var value = arguments[0];
-  color.value.setVal(value.color);
+  color.value = value.color;
   sizeRange.value.setVal(value.size);
   rotateRange.value.setVal(value.rotateZ / 360);
   emit("update:value", value);

@@ -14,6 +14,7 @@ export default defineConfig({
         gif: path.resolve(__dirname, "gif.html"),
         collage: path.resolve(__dirname, "collage.html"),
         conversion: path.resolve(__dirname, "conversion.html"),
+        csvMove: path.resolve(__dirname, "csv-move.html"),
       },
     },
   },

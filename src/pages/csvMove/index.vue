@@ -75,7 +75,6 @@ import BaseLayout from "@/layouts/BaseLayout.vue";
 import { DropFile } from "@/components/index";
 import Log from "@/fragment/Log.vue";
 import { dropFileType } from "@/type/dropFile";
-import { log } from "console";
 
 const logs = ref([] as { value: string; timestamp: string }[]);
 const message = inject("_message") as Function;
@@ -165,8 +164,8 @@ const shopifyTiles = [
   "Option2 Value",
   "Option3 Name",
   "Option3 Value",
-  "Option4 Name",
-  "Option4 Value",
+  // "Option4 Name",
+  // "Option4 Value",
   "Variant SKU",
   "Variant Grams",
   "Variant Inventory Tracker",
@@ -353,7 +352,8 @@ function arrayToCsv(data: {}[], type: string) {
               value = item["Master image"];
               break;
             case "Image Position":
-              value = item["Master image"] ? (index + 1).toString() : "";
+              value = item["Title*"] ? "1" : "";
+              // value = item["Master image"] ? (index + 1).toString() : "";
               break;
             case "Image Alt Text":
               value = item["Title*"] + item["Tags"];
@@ -377,7 +377,7 @@ function arrayToCsv(data: {}[], type: string) {
               value = item[key];
               break;
           }
-          return value && value != "" ? value : "";
+          return value && value != "" ? value.replace(/[\n\r\f]/g, "") : "";
         });
       });
       break;

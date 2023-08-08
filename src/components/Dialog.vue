@@ -18,6 +18,8 @@
       :class="['dialog-center-box', glass ? 'glass' : '', fullBackground ? 'opacity-bg' : '']"
       :style="{
         backgroundImage: `url(${fullBackground})`,
+        maxWidth,
+        maxHeight,
       }"
     >
       <div class="dialog-close" v-if="needClose && manner == 'simple'" @click="handleClose">
@@ -84,6 +86,14 @@ const props = defineProps({
     // 整个背景替换
     type: String,
     default: "",
+  },
+  maxHeight: {
+    type: String,
+    default: "80vh",
+  },
+  maxWidth: {
+    type: String,
+    default: "80vw",
   },
 });
 
@@ -161,8 +171,6 @@ onMounted(() => {
     will-change: opacity;
     display: flex;
     flex-direction: column;
-    max-width: 80vw;
-    max-height: 80vh;
     min-width: 30vw;
     min-height: 15vh;
     position: relative;

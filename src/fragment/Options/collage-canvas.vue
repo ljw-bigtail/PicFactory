@@ -6,25 +6,17 @@
     </div>
     <Line />
     <div>
-      <span>背景色：</span>
-      <input type="color" v-model="value.background" @change="formChange" />
+      <span>底色：</span>
+      <div>
+        <input type="color" v-model="value.paddingColor" @change="formChange" />
+      </div>
     </div>
-    <div>
-      <span>间距色：</span>
-      <input type="color" v-model="value.paddingColor" @change="formChange" />
-    </div>
-    <div>
-      <span>虚线色：</span>
-      <input type="color" v-model="value.dashedColor" @change="formChange" />
-      <i>透明度20%</i>
-    </div>
-    <Line />
     <div>
       <span>间距：</span>
       <Range v-model="value.margin" @change="rangeChange" />
     </div>
     <div>
-      <span>边框：</span>
+      <span>边距：</span>
       <Range v-model="value.padding" @change="rangeChange" />
     </div>
     <div>
@@ -38,6 +30,27 @@
       清理
       <input type="radio" name="rule" :value="2" v-model="value.rule" @change="formChange" />
       交换
+    </div>
+    <Line />
+    <div>
+      <span
+        >占位图：<i
+          :style="{
+            fontStyle: 'normal',
+            opacity: 0.5,
+            fontSize: '12px',
+            position: 'absolute',
+            transform: 'translate(-120%, 150%)',
+          }"
+          >不渲染</i
+        ></span
+      >
+      <div>
+        <input type="color" v-model="value.background" @change="formChange" />
+        <span>背景</span>
+        <input type="color" v-model="value.dashedColor" @change="formChange" />
+        <span>边框[20%透明]</span>
+      </div>
     </div>
     <Line />
     <div class="template-types">

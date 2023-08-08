@@ -86,6 +86,7 @@ const selectHandler = function () {
   display: flex;
   flex-direction: column;
   margin: 0 var(--space-1);
+  align-items: flex-start !important;
   &-input {
     display: flex;
     align-items: center;

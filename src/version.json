@@ -91,6 +91,10 @@
     {
       "number": "v0.7.0",
       "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;商品数据迁移(shopline->shopify)</p>"
+    },
+    {
+      "number": "v0.8.0",
+      "content": "<p><b>优化：</b></p><p>&nbsp; &nbsp;图片导出性能升级</p>"
     }
   ],
   "versionTemplate": "<p><b>新增：</b></p><p>&nbsp; &nbsp;aaa</p><p><b>优化：</b></p><p>&nbsp; &nbsp;bbb</p><p><b>修复：</b></p><p>&nbsp; &nbsp;ccc</p>",

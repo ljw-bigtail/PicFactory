@@ -66,11 +66,8 @@
 
 <script setup lang="ts">
 import { ref, Ref, inject } from "vue";
-// import csv2json from "csvjson-csv2json";
-// @ts-ignore
 import Papa from "papaparse";
 import { saveAs } from "file-saver";
-import { dateFmt } from "@/utils/utils";
 import BaseLayout from "@/layouts/BaseLayout.vue";
 import { DropFile } from "@/components/index";
 import Log from "@/fragment/Log.vue";
@@ -401,7 +398,6 @@ const handleConversion = async () => {
   const BOM = "\uFEFF";
   const csvBlob = new Blob([BOM + outCSV], { type: "text/csv;charset=utf-8;" });
   await saveAs(csvBlob, `${targetType.value}-${uploadFileName.value}.csv`);
-  console.log(`${targetType.value}-${uploadFileName.value}.csv`);
 
   message({
     type: "success",

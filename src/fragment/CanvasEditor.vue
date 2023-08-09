@@ -87,6 +87,7 @@
           <div
             class="canvas-editor__element__fragment__box__text"
             v-else-if="element.type == 'text'"
+            :data-id="element.id"
           >
             <span
               class="words"
@@ -95,8 +96,9 @@
                 color: `${element.color}`,
                 fontSize: `${Math.floor(element.size * (80 - 12)) + 12}px`,
               }"
-              >{{ element.value }}</span
             >
+              <pre>{{ element.value }}</pre>
+            </span>
             <span class="css-icon delete bold" @click="handleFragmentDel(index)"></span>
           </div>
         </div>
@@ -128,7 +130,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, nextTick } from "vue";
 import { Icon } from "@/components/index";
 
 import CollageImgOption from "./Options/collage-img.vue";
@@ -142,6 +144,7 @@ import {
   DefaultCellOptions,
   templateArr,
 } from "../utils/CanvasFactory";
+import { off } from "process";
 
 type CanvasOption = {
   width: number;
@@ -430,7 +433,7 @@ const getImageParameters = function () {
     fragmentTexts: [...fragmentList.value]
       .filter((item) => item.type === "text")
       .map((item) => {
-        const { size, color, x, y, rotateZ, value } = item;
+        const { size, color, x, y, rotateZ, value, width, height } = item;
         return {
           fontSize: Math.floor(size * (80 - 12)) + 12,
           color,
@@ -438,6 +441,8 @@ const getImageParameters = function () {
           x,
           y,
           rotateZ,
+          width,
+          height,
         };
       }),
     fragmentImgs: [...fragmentList.value]
@@ -538,6 +543,22 @@ const addFragment = function (_data: fragmentProps | fragmentProps[]) {
       };
     })
   );
+  nextTick(function () {
+    // 获取文字贴纸宽高 用来计算旋转中心
+    const canvas_dom = document.querySelector("#canvas-editor__canvas");
+    if (!canvas_dom) return;
+    fragmentList.value.map((e) => {
+      if (e.type === "text") {
+        const { offsetWidth, offsetHeight } = canvas_dom.querySelector(
+          `.canvas-editor__element__fragment__box__text[data-id="${e.id}"]`
+        ) as HTMLElement;
+        e.width = offsetWidth;
+        e.height = offsetHeight;
+        return e;
+      }
+      return e;
+    });
+  });
 };
 // 添加贴纸 end
 defineExpose({ setDropCache, addFragment, getImageParameters });
@@ -566,6 +587,7 @@ const imgMove = function (e: MouseEvent, index: number) {
     function getMax() {
       const { rotateZ, width, height, scale } = cellsImg.value[index];
       const direction = rotateZ % 180 == 0 ? "vertical" : "horizontal";
+      // TODO 缺少旋转后的位移限制切换
       // if ((type == "x" && direction == "vertical") || (type == "y" && direction == "horizontal")) {
       if (type == "x") {
         return width * scale - cellsList.value[index].width;
@@ -588,7 +610,6 @@ const imgMove = function (e: MouseEvent, index: number) {
         return len;
       }
     }
-    // TODO 缺少旋转后的位移限制切换
     if (type == "x") {
       return e.clientX != dragCache.position.x
         ? (function () {
@@ -610,7 +631,6 @@ const imgMove = function (e: MouseEvent, index: number) {
   }
   cellsImg.value[index].x = getSize("x");
   cellsImg.value[index].y = getSize("y");
-  console.log(cellsImg.value[index].x, cellsImg.value[index].y);
   // 因为图片较大，所以这里不需要缓存新的鼠标位置
 };
 // 图片内部挪动 end
@@ -929,17 +949,14 @@ const textChangeHandler = function () {
       &__box {
         position: absolute;
         cursor: pointer;
-        &__text {
-          padding: var(--space-1);
+        &__text .words {
           border-radius: var(--radius-mini);
-          border: var(--border-main);
-          border-style: dashed;
-          border-color: var(--color-white);
+          transition: background 0.3s;
+          display: block;
+          text-align: left;
           &:hover {
-            border-color: var(--color-black);
-          }
-          span {
-            display: block;
+            backdrop-filter: blur(4px);
+            background-color: rgba(255, 255, 255, 0.6);
           }
         }
         img {

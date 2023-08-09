@@ -21,6 +21,7 @@
     "@ffmpeg/core": "^0.10.0",
     "@types/file-saver": "^2.0.5",
     "@types/node": "^17.0.41",
+    "@types/papaparse": "^5.3.7",
     "@vitejs/plugin-vue": "^2.3.3",
     "less": "^4.1.2",
     "typescript": "^5.0.4",

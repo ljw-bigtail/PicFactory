@@ -241,7 +241,7 @@ export const DefaultCanvasStickerOptions = {
   height: 120,
 };
 export const DefaultCanvasTextOptions = {
-  size: 0,
+  size: .2,
   color: "#000000",
 };
 

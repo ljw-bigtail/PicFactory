@@ -93,7 +93,7 @@ const handleClick = () => {
     }
   }
   .btn-group {
-    padding: var(--space-1) 0;
+    padding-top: var(--space-1);
   }
 }
 </style>

@@ -32,8 +32,8 @@
                 :multiDrop="true"
               />
             </div>
-            <Line />
-            <div class="sticker-img">
+            <!-- <Line /> -->
+            <!-- <div class="sticker-img">
               <Accordion.Box v-model:selected="stickerTabSelect">
                 <Accordion.Panel
                   v-for="stickerItem in stickerArr"
@@ -51,42 +51,30 @@
                   </ul>
                 </Accordion.Panel>
               </Accordion.Box>
-            </div>
+            </div> -->
           </Tab.Panel>
         </Tab.Box>
         <div class="btn-group center">
-          <button class="button large C" @click="previewFile()">生成预览</button>
+          <button class="button large C" @click="makeFile('jpg')">下载jpeg</button>
+          <button class="button large C" @click="makeFile('png')">下载png</button>
         </div>
       </div>
       <div class="right">
         <CanvasEditor ref="canvasEditor" :options="canvasForm" />
       </div>
-      <Dialog manner="mac" v-model:show="previewDialog" title="文件下载" maxHeight="96vh">
-        <template v-slot:content>
-          <div id="konva-container">
-            <v-stage :config="configKonva" ref="stage">
-              <v-layer>
-                <v-rect :config="KonvaBackgroundConfig" />
-                <!-- <v-group v-for="item in konvaPart" :key="item" :is="item.type" :config="item.group">
-                  <component :is="item.type" :config="item.config"></component>
-                </v-group> -->
-                <component
-                  v-for="item in konvaPart"
-                  :key="item"
-                  :is="item.type"
-                  :config="item.config"
-                ></component>
-              </v-layer>
-            </v-stage>
-          </div>
-        </template>
-        <template v-slot:footer>
-          <div class="btn-group center">
-            <button class="button large C" @click="makeFile('jpg')">下载jpeg</button>
-            <button class="button large C" @click="makeFile('png')">下载png</button>
-          </div>
-        </template>
-      </Dialog>
+      <div id="konva-container">
+        <v-stage :config="configKonva" ref="stage">
+          <v-layer>
+            <v-rect :config="KonvaBackgroundConfig" />
+            <div v-for="item in konvaPart" :key="item">
+              <v-group :is="item.type" :config="item.group" v-if="item.group">
+                <component :is="item.type" :config="item.config"></component>
+              </v-group>
+              <component v-else :is="item.type" :config="item.config"></component>
+            </div>
+          </v-layer>
+        </v-stage>
+      </div>
     </template>
     <template v-slot:footer>
       <Log :logs="logs" />
@@ -145,7 +133,6 @@ const addLog = (mes: string) => {
   });
 };
 
-const previewDialog = ref(false);
 const configKonva = ref({
   width: canvasForm.value.width,
   height: canvasForm.value.height,
@@ -174,10 +161,10 @@ const KonvaBackgroundConfig = ref({
   fill: canvasForm.value.background,
 });
 
-const previewFile = async function () {
+const deployKonva = async function () {
+  // 设置Konva参数
   konvaPart.value = [];
   const imageParameters = canvasEditor.value.getImageParameters();
-  // const imageParameters = imageParametersTest;
   /**
    * TODO
    * 1. 渲染占位图边框 因为是个圆角 不好弄
@@ -237,8 +224,6 @@ const previewFile = async function () {
         width,
         height,
         fill: item.blockBackgroundColor,
-        x,
-        y,
         // 边框todo
       };
     } else {
@@ -282,18 +267,22 @@ const previewFile = async function () {
     konvaPart.value.push(konvaPartConfig);
   });
   imageParameters.fragmentTexts.forEach((item: any) => {
-    const { fontSize, color, text, x, y, rotateZ } = item;
+    const { fontSize, color, text, x, y, rotateZ, width, height } = item;
     // 文字
     konvaPart.value.push({
       type: konvaComponents[5],
       config: {
         text,
-        x,
-        y,
+        x: x + width / 2,
+        y: y + height / 2,
         fontSize,
-        // fontFamily: "Calibri",
+        fontFamily: "monospace",
         fill: color,
         rotation: rotateZ,
+        offset: {
+          x: width / 2,
+          y: height / 2,
+        },
       },
     });
   });
@@ -311,14 +300,19 @@ const previewFile = async function () {
         image: fragmentImgsSrc[index],
         scaleX: scale,
         scaleY: scale,
-        x,
-        y,
+        x: x + width / 2,
+        y: y + height / 2,
         rotation: rotateZ,
+        offset: {
+          x: width / 2,
+          y: height / 2,
+        },
       },
     });
   });
-  previewDialog.value = true;
 };
+
+// 渲染 下载图片
 
 const stage = ref();
 const mimeTypes = {
@@ -327,6 +321,9 @@ const mimeTypes = {
 };
 
 const makeFile = async function (type: "png" | "jpg") {
+  // 渲染
+  await deployKonva();
+  // 输出图
   const dataURL = stage.value.getStage().toDataURL({
     pixelRatio, // 输出图片分辨率为渲染分辨率的3倍
     mimeType: mimeTypes[type],
@@ -336,7 +333,6 @@ const makeFile = async function (type: "png" | "jpg") {
     type: "success",
     value: `${type.toLocaleUpperCase()}下载完成。`,
   });
-  previewDialog.value = false;
 };
 
 const addFragment = function (opt: {} | {}[]) {
@@ -482,7 +478,9 @@ const handleStickerDrop = async function () {
   }
 }
 #konva-container {
-  margin: var(--space-1);
-  box-shadow: var(--shadow-dark);
+  // margin: var(--space-1);
+  // box-shadow: var(--shadow-dark);
+  position: fixed;
+  left: 1000%;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="drop-file">
+  <div class="drop-file" :data-uploading="uploading">
     <input
       type="file"
       :id="`drop-file-core_${id}`"

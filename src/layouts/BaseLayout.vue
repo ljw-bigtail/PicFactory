@@ -79,8 +79,14 @@ const tools = readonly([
     key: "gif",
   },
   {
-    name: "格式转换",
+    name: "商品迁移",
     classname: "C",
+    link: "./csv-move.html",
+    key: "csv-move",
+  },
+  {
+    name: "格式转换",
+    classname: "A",
     link: "./conversion.html",
     key: "conversion",
   },

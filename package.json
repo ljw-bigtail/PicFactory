@@ -12,6 +12,7 @@
     "coi-serviceworker": "^0.1.6",
     "file-saver": "^2.0.5",
     "konva": "^9.2.0",
+    "papaparse": "^5.4.1",
     "vue": "^3.2.25",
     "vue-konva": "^3.0.2",
     "vuedraggable": "^4.1.0"

@@ -1,6 +1,5 @@
 import { saveAs } from "file-saver";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
-import GIF from "gif.js";
 import { dateFmt } from "./utils";
 
 import { Frame, VideoOption, MusicOption, outType } from "@/type/video";

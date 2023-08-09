@@ -9,11 +9,11 @@
       <Icon type="flip-x" @click="emit('flipX', $event)"></Icon>
       <Icon type="flip-y" @click="emit('flipY')"></Icon>
     </div>
-    <Line type="vertical" />
+    <!-- <Line type="vertical" />
     <div class="icon-group">
       <Icon type="rotate" @click="emit('turnAnti')"></Icon>
       <Icon type="rotate-90" @click="emit('turn')"></Icon>
-    </div>
+    </div> -->
   </div>
 </template>
 

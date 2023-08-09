@@ -42,7 +42,7 @@
             position: 'absolute',
             transform: 'translate(-120%, 150%)',
           }"
-          >不渲染</i
+          >不渲染边框</i
         ></span
       >
       <div>

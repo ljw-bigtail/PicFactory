@@ -11,15 +11,14 @@
     "@ffmpeg/ffmpeg": "^0.10.1",
     "coi-serviceworker": "^0.1.6",
     "file-saver": "^2.0.5",
-    "gif.js": "^0.2.0",
-    "html2canvas": "^1.4.1",
+    "konva": "^9.2.0",
     "vue": "^3.2.25",
+    "vue-konva": "^3.0.2",
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@ffmpeg/core": "^0.10.0",
     "@types/file-saver": "^2.0.5",
-    "@types/gif.js": "^0.2.2",
     "@types/node": "^17.0.41",
     "@vitejs/plugin-vue": "^2.3.3",
     "less": "^4.1.2",

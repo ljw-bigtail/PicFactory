@@ -90,6 +90,27 @@ export const throttle: ThFn = (fn, timer:undefined | number = 50) => {
   return _throttle
 }
 
+/**
+ * 异步加载img
+ */
+export const getImg = (src: string) => {
+  return new Promise(function (res) {
+    if (src && src != "") {
+      const img = new Image();
+      img.onload = function () {
+        res(img);
+      };
+      img.onerror = function () {
+        res("");
+      };
+      img.src = src;
+    } else {
+      res("");
+    }
+  })
+}
+
+
 type FileOption = {
   id: string;
   src: string;

@@ -1,7 +1,7 @@
 import typeimg1 from "@/assets/canvasTypePic/type1.png";
 import typeimg2 from "@/assets/canvasTypePic/type2.png";
 import typeimg3 from "@/assets/canvasTypePic/type3.png";
-// import typeimg4 from "@/assets/canvasTypePic/type4.png";
+import typeimg4 from "@/assets/canvasTypePic/type4.png";
 import typeimg5 from "@/assets/canvasTypePic/type5.png";
 import typeimg6 from "@/assets/canvasTypePic/type6.png";
 import typeimg7 from "@/assets/canvasTypePic/type7.png";
@@ -13,6 +13,7 @@ import typeimg12 from "@/assets/canvasTypePic/type12.png";
 import typeimg13 from "@/assets/canvasTypePic/type13.png";
 import typeimg14 from "@/assets/canvasTypePic/type14.png";
 import typeimg15 from "@/assets/canvasTypePic/type15.png";
+import typeimg16 from "@/assets/canvasTypePic/type16.png";
 
 export const templateArr = [
   {
@@ -42,17 +43,8 @@ export const templateArr = [
       [[1, 0], [2, 2]],
     ],
   },
-  // {
-  //   src: typeimg4,
-  //   qty: [2, 2],
-  //   cells: [
-  //     [[0, 0], [1, 1]],
-  //     [[0, 1], [1, 2]],
-  //     [[1, 0], [2, 2]],
-  //   ],
-  // },
   {
-    src: typeimg5,
+    src: typeimg4,
     qty: [4, 3],
     cells: [
       [[0, 0], [2, 2]],
@@ -64,7 +56,7 @@ export const templateArr = [
     ],
   },
   {
-    src: typeimg6,
+    src: typeimg5,
     qty: [4, 3],
     cells: [
       [[0, 0], [2, 2]],
@@ -76,7 +68,7 @@ export const templateArr = [
     ],
   },
   {
-    src: typeimg7,
+    src: typeimg6,
     qty: [4, 3],
     cells: [
       [[0, 0], [1, 1]],
@@ -88,7 +80,7 @@ export const templateArr = [
     ],
   },
   {
-    src: typeimg8,
+    src: typeimg7,
     qty: [1, 1],
     cells: [
       [[0, 0], [1, 1]],
@@ -99,7 +91,7 @@ export const templateArr = [
     }
   },
   {
-    src: typeimg9,
+    src: typeimg8,
     qty: [4, 4],
     cells: [
       [[0, 0], [1, 1]],
@@ -118,7 +110,7 @@ export const templateArr = [
     ],
   },
   {
-    src: typeimg10,
+    src: typeimg9,
     qty: [3, 3],
     cells: [
       [[0, 0], [1, 1]],
@@ -133,7 +125,7 @@ export const templateArr = [
     ],
   },
   {
-    src: typeimg11,
+    src: typeimg10,
     qty: [3, 3],
     cells: [
       [[0, 0], [2, 2]],
@@ -145,7 +137,7 @@ export const templateArr = [
     ],
   },
   {
-    src: typeimg12,
+    src: typeimg11,
     qty: [3, 3],
     cells: [
       [[0, 0], [1, 1]],
@@ -157,7 +149,7 @@ export const templateArr = [
     ],
   },
   {
-    src: typeimg13,
+    src: typeimg12,
     qty: [3, 3],
     cells: [
       [[0, 0], [1, 1]],
@@ -169,7 +161,7 @@ export const templateArr = [
     ],
   },
   {
-    src: typeimg14,
+    src: typeimg13,
     qty: [3, 3],
     cells: [
       [[0, 0], [2, 3]],
@@ -179,7 +171,7 @@ export const templateArr = [
     ],
   },
   {
-    src: typeimg2,
+    src: typeimg14,
     qty: [4, 2],
     cells: [
       [[0, 0], [3, 2]],
@@ -188,7 +180,7 @@ export const templateArr = [
     ],
   },
   {
-    src: typeimg14,
+    src: typeimg15,
     qty: [4, 3],
     cells: [
       [[0, 0], [3, 3]],
@@ -198,7 +190,7 @@ export const templateArr = [
     ],
   },
   {
-    src: typeimg15,
+    src: typeimg16,
     qty: [3, 6],
     cells: [
       [[0, 0], [2, 4]],
@@ -208,6 +200,16 @@ export const templateArr = [
       [[2, 3], [3, 6]],
     ],
   },
+
+  // {
+  //   src: typeimg4,
+  //   qty: [2, 2],
+  //   cells: [
+  //     [[0, 0], [1, 1]],
+  //     [[0, 1], [1, 2]],
+  //     [[1, 0], [2, 2]],
+  //   ],
+  // },
 ];
 
 export const DefaultCellOptions = {
@@ -273,64 +275,3 @@ export const stickerArr = [
     src: [sticker_2_1,sticker_2_2,sticker_2_3,sticker_2_4,sticker_2_5,sticker_2_6,sticker_2_7,sticker_2_8,sticker_2_9]
   },
 ]
-
-import { saveAs } from "file-saver";
-import html2canvas from "html2canvas";
-
-export class CanvasFactory {
-  box: Element | null;
-  width: number;
-  height: number;
-  constructor(data: { id: string, options: {
-    width: number, 
-    height: number
-  } }) {
-    this.box = null;
-    this.width = data.options.width
-    this.height = data.options.height
-    this._init(data.id);
-  }
-  _init(id: string) {
-    const box = document.querySelector("#" + id);
-    if (!box) {
-      throw new Error("未找到元素" + id);
-    }
-    this.box = box;
-  }
-  _copyCanvas(){
-    if (!this.box) return;
-    const canvas = document.createElement('div')
-    canvas.innerHTML = this.box.outerHTML
-    const scaleWidth = canvas.firstElementChild?.getAttribute('style')?.replace(/^width: ([0-9]*)px; height: ([0-9]*)px;*/, '$1')
-    if(!scaleWidth) return
-    const scale = this.width / parseInt(scaleWidth)
-    canvas.style.transform = `scale(${scale})`
-    // canvas.style.position = 'fixed'
-    // canvas.style.left = '-10000%'
-    // canvas.style.top = '-10000%'
-    document.body.appendChild(canvas)
-    return canvas
-  }
-  toFile(fileType: "png" | "jpg", callback: Function) {
-    // Error loading image : 由于image存在没有src属性的情况
-    const canvas = this._copyCanvas()
-    if (!canvas) return;
-    html2canvas(canvas, {
-      // logging: true,
-      logging: false,
-      width: this.width,
-      height: this.height,
-      scale: 1, // 默认 window.devicePixelRatio 
-    })
-      .then((canvas: any) => {
-        canvas.toBlob(
-          function (blob: Blob) {
-            saveAs(blob, "image." + fileType);
-          },
-          fileType == "png" ? "image/png" : "image/jpeg"
-        );
-        callback()
-      });
-    document.body.removeChild(canvas)
-  }
-}

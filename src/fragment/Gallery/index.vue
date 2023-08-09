@@ -259,14 +259,16 @@ defineExpose({ clearFile, clearSelect, handleSet });
   .gallery-view {
     flex: 1;
     overflow: hidden;
-    min-height: 200px;
     #gallery-img-box {
+      min-height: 200px;
+      border-radius: var(--radius);
       height: max-content;
       display: flex;
       align-items: flex-start;
       flex-wrap: wrap;
       justify-content: flex-start;
-      margin-top: var(--space-1);
+      padding: var(--space-1);
+      background: rgb(238, 238, 238, 0.4);
     }
   }
 }

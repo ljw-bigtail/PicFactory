@@ -196,6 +196,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const width = ref("");
 const height = ref("");
+const scale = ref(1);
 const padding = ref("");
 const background = ref("");
 const paddingColor = ref("");
@@ -255,9 +256,9 @@ const resize = function () {
       1
     ),
   };
-  const scale = Math.max(scale_width, scale_height);
-  width.value = (size_width / scale).toFixed(0) + "px";
-  height.value = (size_height / scale).toFixed(0) + "px";
+  scale.value = Math.max(scale_width, scale_height);
+  width.value = (size_width / scale.value).toFixed(0) + "px";
+  height.value = (size_height / scale.value).toFixed(0) + "px";
   background.value = _background;
   paddingColor.value = _paddingColor;
   dashedColor.value = _dashedColor;
@@ -363,6 +364,92 @@ const moveStop = function () {
   dragCache.type = "";
 };
 
+/**
+ * 返回编辑器参数 用来解析生成canvas
+ */
+const getImageParameters = function () {
+  const {
+    width,
+    height,
+    padding: canvasPadding,
+    paddingColor: canvasBackgroundColor,
+    background: blockBackgroundColor,
+    dashedColor: blockBorderColor,
+    radius: canvasRadius,
+    margin: blockSpace,
+  } = props.options;
+  const canvasScale = scale.value,
+    canvasWidth = width / canvasScale,
+    canvasHeight = height / canvasScale;
+  const data = {
+    canvasWidth,
+    canvasHeight,
+    canvasScale,
+    canvasPadding,
+    canvasBackgroundColor,
+    blocks: Object.keys(cellsList.value).map((index) => {
+      const {
+        width: blockWidth,
+        height: blockHeight,
+        x: blockPositionX,
+        y: blockPositionY,
+      } = cellsList.value[index];
+
+      const blockRadius = (canvasRadius * Math.min(blockWidth, blockHeight)) / 2;
+      const {
+        src: blockImg,
+        width: blockImgWidth,
+        height: blockImgHeight,
+        x: blockImgPositionX,
+        y: blockImgPositionY,
+        scale: blockImgScale,
+        rotateX: blockImgRotateX,
+        rotateY: blockImgRotateY,
+        rotateZ: blockImgRotateZ,
+      } = cellsImg.value[index];
+      return {
+        blockWidth,
+        blockHeight,
+        blockPositionX,
+        blockPositionY,
+        blockBackgroundColor,
+        blockBorderColor,
+        blockRadius,
+        blockSpace,
+        blockImg,
+        blockImgWidth,
+        blockImgHeight,
+        blockImgPositionX,
+        blockImgPositionY,
+        blockImgScale,
+        blockImgRotateX,
+        blockImgRotateY,
+        blockImgRotateZ,
+      };
+    }),
+    fragmentTexts: [...fragmentList.value]
+      .filter((item) => item.type === "text")
+      .map((item) => {
+        const { size, color, x, y, rotateZ, value } = item;
+        return {
+          fontSize: Math.floor(size * (80 - 12)) + 12,
+          color,
+          text: value,
+          x,
+          y,
+          rotateZ,
+        };
+      }),
+    fragmentImgs: [...fragmentList.value]
+      .filter((item) => item.type === "img")
+      .map((item) => {
+        const { width, height, x, y, rotateZ, value, scale } = item;
+        return { width, height, x, y, rotateZ, src: value, scale };
+      }),
+  };
+  return data;
+};
+
 // 图库挪入 start
 const dropStatus = ref(false); // 是否开启drop
 const setDropCache = function (data: FileOption) {
@@ -453,7 +540,7 @@ const addFragment = function (_data: fragmentProps | fragmentProps[]) {
   );
 };
 // 添加贴纸 end
-defineExpose({ setDropCache, addFragment });
+defineExpose({ setDropCache, addFragment, getImageParameters });
 
 // 图片内部挪动 start
 const imgMoveStart = function (e: MouseEvent, index: number) {
@@ -476,8 +563,23 @@ const imgMove = function (e: MouseEvent, index: number) {
   if (dragCache.type !== "img" || dragCache.index == -1) return;
   if (dragCache.index !== index) return;
   function getSize(type: "x" | "y") {
-    function getValByMax(len: number, max_len: number) {
-      // 边界判断 根据边距修改值
+    function getMax() {
+      const { rotateZ, width, height, scale } = cellsImg.value[index];
+      const direction = rotateZ % 180 == 0 ? "vertical" : "horizontal";
+      // if ((type == "x" && direction == "vertical") || (type == "y" && direction == "horizontal")) {
+      if (type == "x") {
+        return width * scale - cellsList.value[index].width;
+      }
+      // if ((type == "y" && direction == "vertical") || (type == "x" && direction == "horizontal")) {
+      if (type == "y") {
+        return height * scale - cellsList.value[index].height;
+      }
+      throw Error("getSize error");
+    }
+    function getValByMax(len: number) {
+      // 边界值
+      const max_len = getMax();
+      // 根据边距修改值
       if (len > 0) {
         return 0;
       } else if (len < -max_len) {
@@ -486,32 +588,29 @@ const imgMove = function (e: MouseEvent, index: number) {
         return len;
       }
     }
+    // TODO 缺少旋转后的位移限制切换
     if (type == "x") {
       return e.clientX != dragCache.position.x
         ? (function () {
-            const disX = e.clientX - (e.target as HTMLElement).offsetLeft;
-            const len = cellsImg.value[index].x + disX - dragCache.position.x;
-            const max_len =
-              cellsImg.value[index].width * cellsImg.value[index].scale -
-              cellsList.value[index].width;
-            return getValByMax(len, max_len);
+            const disX = e.clientX - (e.target as HTMLElement).offsetLeft; // 鼠标位移距离
+            const len = cellsImg.value[index].x - dragCache.position.x + disX; // 图片位移距离
+            return getValByMax(len);
           })()
         : 0;
-    } else if (type == "y") {
+    }
+    if (type == "y") {
       return e.clientY != dragCache.position.y
         ? (function () {
             const disY = e.clientY - (e.target as HTMLElement).offsetTop; // 鼠标位移距离
-            const len = cellsImg.value[index].y + disY - dragCache.position.y; // 图片位移距离
-            const max_len =
-              cellsImg.value[index].height * cellsImg.value[index].scale -
-              cellsList.value[index].height; // 图片位移边距
-            return getValByMax(len, max_len);
+            const len = cellsImg.value[index].y - dragCache.position.y + disY; // 图片位移距离
+            return getValByMax(len);
           })()
         : 0;
     }
   }
   cellsImg.value[index].x = getSize("x");
   cellsImg.value[index].y = getSize("y");
+  console.log(cellsImg.value[index].x, cellsImg.value[index].y);
   // 因为图片较大，所以这里不需要缓存新的鼠标位置
 };
 // 图片内部挪动 end
@@ -645,11 +744,19 @@ const flipYHandler = function () {
 };
 
 const turnAntiHandler = function () {
-  cellsImg.value[selectImgIndex.value].rotateZ -= 90;
+  let rotateZ = (cellsImg.value[selectImgIndex.value].rotateZ - 90) % 360;
+  if (rotateZ < 0) {
+    rotateZ += 360;
+  }
+  cellsImg.value[selectImgIndex.value].rotateZ = rotateZ;
 };
 
 const turnHandler = function () {
-  cellsImg.value[selectImgIndex.value].rotateZ += 90;
+  let rotateZ = (cellsImg.value[selectImgIndex.value].rotateZ + 90) % 360;
+  if (rotateZ < 0) {
+    rotateZ += 360;
+  }
+  cellsImg.value[selectImgIndex.value].rotateZ = rotateZ;
 };
 // 图片编辑end
 

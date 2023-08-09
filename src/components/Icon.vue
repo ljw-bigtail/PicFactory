@@ -39,7 +39,7 @@ const props = defineProps(["type"]);
     transform: translateY(-1px) translateX(1px);
   }
   &.rotate-90 {
-    transform: rotateZ(90deg) translateY(-1px);
+    transform: rotateY(180deg) translateY(-1px);
   }
   &.topping {
     background-image: url("../assets/icon/topping.svg");

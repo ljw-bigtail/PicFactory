@@ -95,6 +95,10 @@
     {
       "number": "v0.8.0",
       "content": "<p><b>优化：</b></p><p>&nbsp; &nbsp;图片导出性能升级</p>"
+    },
+    {
+      "number": "v0.8.1",
+      "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;shopify商品数据字段更新</p>"
     }
   ],
   "versionTemplate": "<p><b>新增：</b></p><p>&nbsp; &nbsp;aaa</p><p><b>优化：</b></p><p>&nbsp; &nbsp;bbb</p><p><b>修复：</b></p><p>&nbsp; &nbsp;ccc</p>",

@@ -195,6 +195,16 @@ const shopifyTiles = [
   "Variant Weight Unit",
   "Variant Tax Code",
   "Cost per item",
+  "Included / 美国",
+  "Price / 美国",
+  "Compare At Price / 美国",
+  "Included / WW-除美+主要",
+  "Price / WW-除美+主要",
+  "Compare At Price / WW-除美+主要",
+  "Included / 国际",
+  "Price / 国际",
+  "Compare At Price / 国际",
+  "Status",
 ];
 
 const shoplineTiles = [
@@ -317,7 +327,8 @@ function arrayToCsv(data: {}[], type: string) {
               break;
             case "Variant Inventory Qty":
               value =
-                item["SKU Inventory Quantity"] && item["SKU Inventory Quantity"] != 0
+                item["SKU Inventory Quantity"] &&
+                item["SKU Inventory Quantity"] != 0
                   ? item["SKU Inventory Quantity"]
                   : "500";
               break;
@@ -332,7 +343,8 @@ function arrayToCsv(data: {}[], type: string) {
               break;
             case "Variant Compare At Price":
               value =
-                item["SKU compare at price"] && item["SKU compare at price"] != "0"
+                item["SKU compare at price"] &&
+                item["SKU compare at price"] != "0"
                   ? item["SKU compare at price"]
                   : item["SKU price"];
               break;
@@ -369,6 +381,14 @@ function arrayToCsv(data: {}[], type: string) {
               break;
             case "Variant Weight Unit":
               value = "g";
+              break;
+            case "Included / 美国":
+            case "Included / WW-除美+主要":
+            case "Included / 国际":
+              value = item["Title*"] ? "TRUE" : '';
+              break;
+            case "Status":
+              value = item["Title*"] ? "active" : '';
               break;
             default:
               value = item[key];

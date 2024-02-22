@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.10.1",
-    "coi-serviceworker": "^0.1.6",
     "file-saver": "^2.0.5",
     "konva": "^9.2.0",
     "papaparse": "^5.4.1",

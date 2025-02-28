@@ -72,7 +72,8 @@
               height: element.height * element.scale + 'px',
               width: element.width * element.scale + 'px',
               position: 'relative',
-              transform: `rotateZ(${element.rotateZ}deg)`,
+              opacity: element.opacity,
+              transform: `rotateX(${element.rotateX}deg) rotateY(${element.rotateY}deg) rotateZ(${element.rotateZ}deg)`,
             }"
           >
             <span class="rotate icon-size" @mousedown.prevent="rotateStart(index, $event)">
@@ -126,15 +127,26 @@
       "
       @change="textChangeHandler"
     />
+    <CollageStickerOption
+      ref="collageStickerOption"
+      v-model:value="collageStickerForm"
+      :visible="!!(selectImgIndex == -1 && selectStickerIndex > -1)"
+      @change="scaleStickerHandler"
+      @flipX="flipXStickerHandler"
+      @flipY="flipYStickerHandler"
+      @reverse="reverseStickerHandler"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, watch, nextTick } from "vue";
 import { Icon } from "@/components/index";
+import { colorReverse } from "@/utils/utils";
 
 import CollageImgOption from "./Options/collage-img.vue";
 import CollageTextOption from "./Options/collage-text.vue";
+import CollageStickerOption from "./Options/collage-sticker.vue";
 
 import {
   DefaultCanvasFactoryOptions,
@@ -144,7 +156,6 @@ import {
   DefaultCellOptions,
   templateArr,
 } from "../utils/CanvasFactory";
-import { off } from "process";
 
 type CanvasOption = {
   width: number;
@@ -533,6 +544,9 @@ const addFragment = function (_data: fragmentProps | fragmentProps[]) {
         width: data.width ?? DefaultCanvasStickerOptions.width,
         height: data.height ?? DefaultCanvasStickerOptions.height,
         scale: DefaultCanvasStickerOptions.scale, // 缩放 0% ～ 100%
+        opacity: DefaultCanvasStickerOptions.opacity, // 透明度 0-1
+        rotateY: 0, // Y轴对称
+        rotateX: 0, // X轴对称
         // public
         x: position * index, // 定位 x
         y: position * index, // 定位 y
@@ -780,6 +794,7 @@ const turnHandler = function () {
 };
 // 图片编辑end
 
+// 贴纸-编辑 start
 // 清除贴纸
 const handleFragmentDel = function (index: number) {
   fragmentList.value.splice(index, 1);
@@ -792,6 +807,34 @@ const selectFragmentHandler = function (e: Event, index: number) {
   stopHandler(e);
   selectStickerIndex.value = index;
 };
+
+const collageStickerOption = ref();
+const collageStickerForm = ref({ 
+  opacity: 1
+ });
+
+const scaleStickerHandler = function () {
+  console.log(selectStickerIndex.value, collageStickerForm.value.opacity);
+  
+  if (selectStickerIndex.value == -1) return;
+  fragmentList.value[selectStickerIndex.value].opacity = collageStickerForm.value.opacity;
+};
+
+const flipXStickerHandler = function () {
+  if (selectStickerIndex.value == -1) return;
+  fragmentList.value[selectStickerIndex.value].rotateY =
+  fragmentList.value[selectStickerIndex.value].rotateY == 0 ? 180 : 0;
+};
+
+const flipYStickerHandler = function () {
+  if (selectStickerIndex.value == -1) return;
+  fragmentList.value[selectStickerIndex.value].rotateX =
+  fragmentList.value[selectStickerIndex.value].rotateX == 0 ? 180 : 0;
+};
+const reverseStickerHandler = async function(){
+  if (selectStickerIndex.value == -1) return;
+  fragmentList.value[selectStickerIndex.value].value = await colorReverse(fragmentList.value[selectStickerIndex.value].value)
+}
 
 // 贴纸图片 拖拽大小 start
 let stickerPositionCache = {
@@ -879,6 +922,7 @@ const rotateMove = function (index: number, event: MouseEvent) {
   };
 };
 // 贴纸图片 拖拽旋转 end
+// 贴纸-编辑 end
 
 // 碎片-文本
 const collageTextForm = ref({

@@ -130,25 +130,22 @@ const autoCropImg = async (base64: string): Promise<string> => {
       }
       canvas.width = img.width;
       canvas.height = img.height;
-      ctx.drawImage(img, 0, 0); //绘制
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data; //读取图片数据
+      ctx.drawImage(img, 0, 0);
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
       let lOffset = canvas.width,
         rOffset = 0,
         tOffset = canvas.height,
         bOffset = 0;
+      
       for (let i = 0; i < canvas.width; i++) {
         for (let j = 0; j < canvas.height; j++) {
           const pos = (i + canvas.width * j) * 4;
-          if (
-            imgData[pos] == 255 ||
-            imgData[pos + 1] == 255 ||
-            imgData[pos + 2] == 255 ||
-            imgData[pos + 3] == 255
-          ) {
-            bOffset = Math.max(j, bOffset); // 找到有色彩的最下端
-            rOffset = Math.max(i, rOffset); // 找到有色彩的最右端
-            tOffset = Math.min(j, tOffset); // 找到有色彩的最上端
-            lOffset = Math.min(i, lOffset); // 找到有色彩的最左端
+          // 检查像素是否不是完全透明的
+          if (imgData[pos + 3] > 0) {
+            bOffset = Math.max(j, bOffset);
+            rOffset = Math.max(i, rOffset);
+            tOffset = Math.min(j, tOffset);
+            lOffset = Math.min(i, lOffset);
           }
         }
       }

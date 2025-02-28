@@ -124,6 +124,35 @@ type ImgsOption = FileOption & {
   rotateZ: number;
 };
 
+
+export const colorReverse = function (src: string): Promise<string> {
+  return new Promise(function (res, rej) {
+    const oCanvas = document.createElement("canvas");
+    const oGc = oCanvas.getContext("2d");
+    if (!oGc) {
+      rej("colorReverse error.");
+      return;
+    }
+    const oImg = new Image();
+    oImg.src = src;
+    oImg.onload = function () {
+      oCanvas.width = oImg.width;
+      oCanvas.height = oImg.height;
+      oGc.drawImage(oImg, 0, 0);
+      const imgData = oGc.getImageData(0, 0, oCanvas.width, oCanvas.height);
+      const data = imgData.data; //读取图片数据
+      for (var i = 0; i < data.length; i += 4) {
+        data[i] = 255 - data[i];
+        data[i + 1] = 255 - data[i + 1];
+        data[i + 2] = 255 - data[i + 2];
+      }
+      //处理完之后，再次输出
+      oGc.putImageData(imgData, 0, 0);
+      res(oCanvas.toDataURL());
+    };
+  });
+};
+
 export default {
   dateFmt,
   uuid,

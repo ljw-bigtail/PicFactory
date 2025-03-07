@@ -5,7 +5,10 @@
       <Range ref="opacityRange" v-model="value.opacity" @change="rangeChange" />
     </div>
     <Line type="vertical" />
-    <Icon type="reverse-color" @click="emit('reverse')"/>
+    <div class="icon-group">
+      <Icon type="reverse-color" @click="emit('reverse')"/>
+      <Icon type="topping" @click="emit('topping')"/>
+    </div>
     <Line type="vertical" />
     <div class="icon-group">
       <Icon type="flip-x" @click="emit('flipX', $event)"></Icon>
@@ -24,7 +27,7 @@ type CanvasImgOption = {
 };
 
 const props = defineProps<{ value: CanvasImgOption; visible: boolean }>();
-const emit = defineEmits(["update:value", "change", "flipX", "flipY", "reverse"]);
+const emit = defineEmits(["update:value", "change", "flipX", "flipY", "reverse", "topping"]);
 
 const stopHandler = function (e: Event) {
   e.stopPropagation();

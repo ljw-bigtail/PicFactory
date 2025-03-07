@@ -59,6 +59,7 @@
           :style="{
             top: element.y + 'px',
             left: element.x + 'px',
+            zIndex: element.zIndex,
           }"
           @click="selectFragmentHandler($event, index)"
           @mousedown="fragmentMoveStart($event, index)"
@@ -135,6 +136,7 @@
       @flipX="flipXStickerHandler"
       @flipY="flipYStickerHandler"
       @reverse="reverseStickerHandler"
+      @topping="toppingStickerHandler"
     />
   </div>
 </template>
@@ -550,6 +552,7 @@ const addFragment = function (_data: fragmentProps | fragmentProps[]) {
         // public
         x: position * index, // 定位 x
         y: position * index, // 定位 y
+        zIndex: 1, // 定位 y
         rotateZ: 0, // 中心旋转
         value: data.value,
         id: data.id,
@@ -557,6 +560,10 @@ const addFragment = function (_data: fragmentProps | fragmentProps[]) {
       };
     })
   );
+  fragmentList.value = fragmentList.value.map((e,i) => {
+    e.zIndex = fragmentList.value.length - i
+    return e
+  })
   nextTick(function () {
     // 获取文字贴纸宽高 用来计算旋转中心
     const canvas_dom = document.querySelector("#canvas-editor__canvas");
@@ -834,6 +841,10 @@ const flipYStickerHandler = function () {
 const reverseStickerHandler = async function(){
   if (selectStickerIndex.value == -1) return;
   fragmentList.value[selectStickerIndex.value].value = await colorReverse(fragmentList.value[selectStickerIndex.value].value)
+}
+const toppingStickerHandler = async function(){
+  if (selectStickerIndex.value == -1) return;
+  fragmentList.value[selectStickerIndex.value].zIndex = Math.max(...fragmentList.value.map(e=>e.zIndex)) + 1
 }
 
 // 贴纸图片 拖拽大小 start

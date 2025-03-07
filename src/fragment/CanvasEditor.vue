@@ -53,19 +53,17 @@
       <div class="canvas-editor__element__fragment">
         <!-- 贴纸 -->
         <div
-          class="canvas-editor__element__fragment__box"
           v-for="(element, index) in fragmentList"
           :key="`fragment_${index}}`"
+          :class="['canvas-editor__element__fragment__box', selectStickerIndex === index ? 'selected' : '']"
           :style="{
             top: element.y + 'px',
             left: element.x + 'px',
             zIndex: element.zIndex,
           }"
-          @click="selectFragmentHandler($event, index)"
           @mousedown="fragmentMoveStart($event, index)"
           @mousemove="fragmentBtnMove(index, $event)"
           @mouseup="mouseEventStop(index, $event)"
-          @mouseleave="mouseEventStop(index, $event)"
         >
           <div
             v-if="element.type == 'img'"
@@ -84,7 +82,8 @@
               <Icon class="icon-size-img" type="enlarge"></Icon>
             </span>
             <span class="css-icon delete bold" @click="handleFragmentDel(index)"></span>
-            <img :src="element.value" :ref="'fragment_img_' + index" />
+            <img :src="element.value" :ref="'fragment_img_' + index" @click="selectFragmentHandler($event, index)"
+            />
           </div>
           <div
             class="canvas-editor__element__fragment__box__text"
@@ -659,9 +658,11 @@ const imgMove = function (e: MouseEvent, index: number) {
 let mouseEventType = -1; // move 0 resize 1 rotate 2
 // 碎片挪动 start
 const collageTextOption = ref();
+const touchFragmentIndex = ref(-1)
 const fragmentMoveStart = function (e: MouseEvent, index: number) {
   stopHandler(e);
   if (mouseEventType > 0) return;
+  touchFragmentIndex.value = index
   // 初始化移动起点
   mouseEventType = 0;
   dragCache = {
@@ -723,6 +724,9 @@ const fragmentMove = function (e: MouseEvent) {
 };
 
 const mouseEventStop = (index: number, event: MouseEvent) => {
+  // if(touchFragmentIndex.value !== index) return
+  touchFragmentIndex.value = -1
+
   switch (mouseEventType) {
     case 0:
       moveStop();
@@ -739,6 +743,8 @@ const mouseEventStop = (index: number, event: MouseEvent) => {
 };
 
 const fragmentBtnMove = function (index: number, event: MouseEvent) {
+  if(touchFragmentIndex.value !== index) return
+
   switch (mouseEventType) {
     // case 0:
     //   break;
@@ -804,6 +810,7 @@ const turnHandler = function () {
 // 贴纸-编辑 start
 // 清除贴纸
 const handleFragmentDel = function (index: number) {
+  touchFragmentIndex.value = index
   fragmentList.value.splice(index, 1);
   selectStickerIndex.value = -1;
 };
@@ -812,7 +819,13 @@ const handleFragmentDel = function (index: number) {
 const selectStickerIndex = ref(-1);
 const selectFragmentHandler = function (e: Event, index: number) {
   stopHandler(e);
-  selectStickerIndex.value = index;
+  if (selectStickerIndex.value == index) {
+    return;
+  }
+  selectStickerIndex.value = -1;
+  setTimeout(() => {
+    selectStickerIndex.value = index;
+  }, 100);
 };
 
 const collageStickerOption = ref();
@@ -853,6 +866,8 @@ let stickerPositionCache = {
   clientY: 0,
 };
 const resizeStart = function (index: number, event: MouseEvent) {
+  stopHandler(event);
+  touchFragmentIndex.value = index
   mouseEventType = 1;
   const { clientX, clientY } = event;
   stickerPositionCache = {
@@ -888,6 +903,8 @@ type Point = {
   y: number;
 };
 const rotateStart = function (index: number, event: MouseEvent) {
+  stopHandler(event);
+  touchFragmentIndex.value = index
   mouseEventType = 2;
   const { clientX, clientY } = event;
   stickerPositionCache = {
@@ -1022,12 +1039,15 @@ const textChangeHandler = function () {
         }
         span:not(.words) {
           opacity: 0;
-          visibility: hidden;
-          transition: 0.5s all;
+          // visibility: hidden;
+          display: none;
+          transition: 0.1s all;
         }
-        &:hover span {
+        // &:hover span {
+        &.selected span {
           opacity: 1;
-          visibility: visible;
+          // visibility: visible;
+          display: inline-block;
         }
         .delete {
           position: absolute;

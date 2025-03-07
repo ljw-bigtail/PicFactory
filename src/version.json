@@ -107,6 +107,10 @@
     {
       "number": "v0.8.3",
       "content": "<p><b>新增：</b></p><p>&nbsp; &nbsp;贴纸置顶</p>"
+    },
+    {
+      "number": "v0.8.4",
+      "content": "<p><b>修复：</b></p><p>&nbsp; &nbsp;贴纸挪动卡顿</p>"
     }
   ],
   "versionTemplate": "<p><b>新增：</b></p><p>&nbsp; &nbsp;aaa</p><p><b>优化：</b></p><p>&nbsp; &nbsp;bbb</p><p><b>修复：</b></p><p>&nbsp; &nbsp;ccc</p>",
